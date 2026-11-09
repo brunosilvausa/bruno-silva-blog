@@ -1,0 +1,44 @@
+/* Bruno Silva USA design system — tokens (generated from tokens.json). Fonts come from next/font in app/layout.jsx. */
+:root {
+  color-scheme: dark;
+  --void: #02070b;
+  --black: #010205;
+  --surface-raised: #101820;
+  --trace: #283038;
+  --trace-strong: #58697b;
+  --steel: #47494d;
+  --volt: #e1fa03;
+  --volt-banner: #e4e705;
+  --volt-halo: rgba(225, 250, 3, 0.45);
+  --on-volt: #02070b;
+  --white: #f8f8f8;
+  --silver: #b0b0b0;
+  --void-scrim: rgba(2, 7, 11, 0.88);
+  --glass-fill: rgba(16, 24, 32, 0.72);
+  --glass-fill-strong: rgba(2, 7, 11, 0.86);
+  --glass-border: rgba(248, 248, 248, 0.14);
+  --alert: #ff7a59;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --radius-none: 0;
+  --radius-sm: 4px;
+  --radius-full: 9999px;
+  --glow-volt: 0 0 16px rgba(225, 250, 3, 0.45);
+  --glow-soft: 0 0 32px rgba(225, 250, 3, 0.18);
+  --duration-fast: 150ms;
+  --duration-base: 300ms;
+  --duration-slow: 600ms;
+  --easing-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --blur-glass: 18px;
+  --blur-strong: 28px;
+  --font-display: var(--font-orbitron), "Eurostile Extended", "Arial Black", sans-serif;
+  --font-label: var(--font-barlow-condensed), "Arial Narrow", sans-serif;
+  --font-body: var(--font-barlow), "Segoe UI", system-ui, sans-serif;
+}

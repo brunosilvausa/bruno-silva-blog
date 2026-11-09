@@ -1,0 +1,80 @@
+# Bruno Silva USA — Blog (Next.js + Sanity)
+
+O blog de Bruno Silva USA: Next.js (App Router, JavaScript) com o design system da marca, e os posts escritos no Sanity, um editor online. Enquanto o Sanity não estiver ligado, o blog mostra posts de exemplo, com uma faixa "Exemplo" no topo.
+
+## O que tem
+
+| Endereço | Página |
+| --- | --- |
+| `/` | Lista de posts (o mais novo em destaque), 9 por página, e a newsletter |
+| `/pagina/2`, `/pagina/3`… | Posts mais antigos |
+| `/posts/<slug>` | O post, com barra de leitura, caixa do autor, newsletter e três posts relacionados |
+| `/pilar/tecnologia`, `/pilar/empreendedorismo`, `/pilar/inovacao`, `/pilar/impacto-global` | Posts de cada pilar |
+| `/newsletter` | Inscrição na newsletter e os últimos posts |
+| `/rss.xml`, `/sitemap.xml`, `/robots.txt` | Feed para leitores de RSS e mapa do site para o Google |
+
+## Como rodar o site
+
+```bash
+npm install
+npm run dev
+```
+
+Abra http://localhost:3000. Para testar a versão de produção: `npm run build` e `npm start`.
+
+## Ligar o Sanity (uma vez)
+
+1. Crie uma conta e um projeto em https://www.sanity.io/manage (o plano gratuito basta). Anote o **Project ID** e use o dataset `production`, que já vem **público** (o site lê os posts sem senha).
+2. Instale e abra o editor:
+   ```bash
+   cd studio
+   cp .env.example .env      # preencha SANITY_STUDIO_PROJECT_ID
+   npm install
+   npm run dev               # abre o editor em http://localhost:3333
+   ```
+3. Publique o editor na internet para escrever de qualquer lugar: `npm run deploy` (dentro de `studio/`). Ele fica em `https://<nome-que-você-escolher>.sanity.studio`.
+4. No site, preencha `NEXT_PUBLIC_SANITY_PROJECT_ID` (e `NEXT_PUBLIC_SANITY_DATASET`, se não for `production`) no `.env.local` e na Vercel (Settings → Environment Variables), e faça um novo deploy. A faixa "Exemplo" some e os posts passam a vir do Sanity.
+
+O site busca os posts no servidor, então não precisa configurar CORS.
+
+## Escrever um post
+
+No editor: Posts → Create. Preencha título, endereço (botão Generate), pilar, data, resumo e texto, e clique em **Publish**. O post aparece no site a partir da data de publicação.
+
+- O texto aceita títulos (H2, H3), listas, negrito, itálico, código, links, imagens com legenda, uma citação e a caixa "Dica / Atenção".
+- Capa é opcional. Sem ela, o cartão usa a bandeira e o ícone do pilar.
+- Crie um Autor (nome, foto e bio) e escolha-o em cada post. Sem autor, o site usa o texto de `author` em `content/site.js`.
+
+## Atualização na hora (opcional)
+
+Sem configurar nada, as páginas se atualizam sozinhas em até 1 minuto depois de publicar. Para atualizar na hora:
+
+1. Gere um segredo longo e coloque em `SANITY_REVALIDATE_SECRET` na Vercel (e faça um novo deploy).
+2. Em sanity.io/manage → API → Webhooks → Create webhook:
+   - URL: `https://<seu-blog>/api/revalidate`
+   - Dataset: `production`; Trigger on: Create, Update, Delete
+   - Filter: `_type in ["post", "author"]`
+   - HTTP method: POST; Secret: o mesmo segredo do passo 1.
+
+O endpoint confere a assinatura do Sanity e recusa pedidos sem ela ou com mais de 5 minutos.
+
+## Newsletter
+
+O formulário chama `POST /api/subscribe`, com as mesmas proteções das outras páginas (só JSON do próprio site, limite de tamanho e de tentativas por IP, sem o e-mail nos logs). Sem provedor (`EMAIL_PROVIDER=none`), nada é guardado e aparece um aviso de exemplo. Para receber inscrições de verdade, escolha `kit`, `mailchimp` ou `brevo` e preencha as chaves (veja `.env.example`).
+
+## Onde editar
+
+- Textos fixos (menu, títulos, newsletter, rodapé, autor padrão): `content/site.js`.
+- Pilares: `lib/pillars.js` (site) e `studio/schemaTypes/post.js` (editor). Os valores precisam ser iguais nos dois.
+- Posts de exemplo: `content/sample-posts.js` (só aparecem sem o Sanity).
+- Estilos próprios do blog: `styles/page.css`. Os arquivos `styles/tokens.css`, `styles/ds.css` e `public/ds.js` são do design system e não devem ser editados.
+
+## Publicar na Vercel
+
+1. Envie o projeto para um repositório no GitHub.
+2. Na Vercel, clique em Import Project e selecione o repositório.
+3. O framework Next.js é detectado automaticamente. Deixe Root Directory, Build Command, Output Directory e Install Command no padrão (a pasta `studio/` fica fora do deploy do site).
+4. Em Settings → Environment Variables, cole as variáveis do `.env.example` que você usa.
+5. Cada push na branch `main` publica sozinho.
+
+Depois de criar ou mudar uma variável de ambiente, faça um novo deploy (Deployments → Redeploy): variáveis `NEXT_PUBLIC_*` só valem a partir da próxima publicação.
