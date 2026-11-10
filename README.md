@@ -74,7 +74,7 @@ Os efeitos vêm do design system (`public/ds.js` e `styles/ds.css`):
 - ScrambleText: o título principal de cada página se "decodifica" ao abrir;
 - MaskReveal: títulos de seção e subtítulos dos posts sobem ao rolar;
 - Ticker: faixa discreta com os quatro pilares, que corre sozinha e acelera com a rolagem;
-- Spotlight e TiltCard: nos cartões de post, uma luz volt segue o mouse, eles inclinam e entram em 3D ao aparecer;
+- Spotlight: nos cartões de post, uma luz volt segue o mouse;
 - OrbitGlow: brilho volt girando atrás do botão "Quero receber" da newsletter.
 
 O corpo dos posts não se mexe. Tudo pausa fora da tela, e quem pede "reduzir movimento" no aparelho vê tudo parado. Para mudar um efeito, atualize o design system e copie de novo os dois arquivos.

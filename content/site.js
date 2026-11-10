@@ -26,7 +26,6 @@ export const site = {
   },
 
   home: {
-    kicker: 'Blog',
     title: { before: 'Tecnologia e negócios ', em: 'direto dos EUA', after: '' },
     text: 'O que eu aprendo empreendendo nos Estados Unidos, explicado em português e sem juridiquês.',
     perPage: 9,
@@ -34,7 +33,6 @@ export const site = {
   },
 
   pillarPage: {
-    kicker: 'Pilar',
     texts: {
       tecnologia: 'Ferramentas, IA e tecnologia que eu uso para trabalhar melhor.',
       empreendedorismo: 'Abrir, organizar e fazer crescer um negócio nos Estados Unidos.',

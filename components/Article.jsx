@@ -56,7 +56,7 @@ export default function Article({ post, fallbackAuthor, shareUrl, prev, next }) 
           </div>
         ) : null}
         <PostNav prev={prev} next={next} />
-        <aside className="bs-author" aria-label="Sobre o autor" data-tilt="4" data-reveal>
+        <aside className="bs-author" aria-label="Sobre o autor">
           <img src={author.image} alt="" width="144" height="144" loading="lazy" decoding="async" />
           <div>
             <div className="bs-author__name">{author.name}</div>

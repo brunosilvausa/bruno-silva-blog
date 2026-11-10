@@ -21,7 +21,7 @@ export function parsePage(value) {
 
 /** SectionHeader texts for a pillar page. */
 export function pillarHeader(pillar) {
-  return { kicker: site.pillarPage.kicker, title: { before: '', em: pillar.label, after: '' }, text: site.pillarPage.texts[pillar.slug] };
+  return { title: { before: '', em: pillar.label, after: '' }, text: site.pillarPage.texts[pillar.slug] };
 }
 
 /**
