@@ -39,7 +39,7 @@ export default async function PostList({ page, pillar, header, current, base = '
   if (page > totalPages) notFound();
   return (
     <Shell current={current}>
-      {/* Header over the flag with CodeReveal in its gaps, then the pillar ticker, then the posts. */}
+      {/* Header over the flag with CodeReveal in its gaps (title, text, buttons only), then the pillar ticker, then the pillar filter and the posts. */}
       <section className="bs-section blog-hero bs-backdrop bs-backdrop--code" aria-labelledby="titulo">
         <svg className="bs-flag" viewBox="0 0 1200 320" preserveAspectRatio="none" aria-hidden="true">
           {STRIPES.map((y) => <rect key={y} x="0" y={y} width="1200" height="15" />)}
@@ -53,17 +53,12 @@ export default async function PostList({ page, pillar, header, current, base = '
               {header.actions.map((a) => <a key={a.href} className={`bs-btn ${a.primary ? 'bs-btn--primary' : 'bs-btn--ghost'}`} href={a.href}>{a.label}</a>)}
             </div>
           ) : null}
-          {header.values?.length ? (
-            <ul className="blog-hero__values" data-reveal="load" style={{ '--i': 3 }}>
-              {header.values.map((v) => <li key={v.title}><b>{v.title}</b><span>{v.text}</span></li>)}
-            </ul>
-          ) : null}
-          <PillarTabs current={pillar ? `/pilar/${pillar.slug}` : '/'} counts={counts} />
         </div>
       </section>
       <Ticker label="Pilares do blog" speed={32} items={PILLARS.map((p) => ({ label: p.label, href: `/pilar/${p.slug}` }))} />
       <section className="bs-section blog-posts" id="posts" aria-label="Posts">
         <div className="bs-container">
+          <PillarTabs current={pillar ? `/pilar/${pillar.slug}` : '/'} counts={counts} />
           {posts.length ? (
             <BlogGrid posts={posts} featureFirst={page === 1} headingLevel={2} spotlight />
           ) : (
