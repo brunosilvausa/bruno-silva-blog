@@ -4,6 +4,7 @@ import { getAdjacent, getAllPosts, getPost, getRelated } from '@/lib/sanity';
 import { pillarOf } from '@/lib/pillars';
 import { absolute } from '@/lib/site-url';
 import { FEED_TYPES } from '@/lib/feed';
+import { AUTHOR, breadcrumb, jsonLd as toJson } from '@/lib/jsonld';
 import Shell from '@/components/Shell';
 import Article from '@/components/Article';
 import NewsletterSignup from '@/components/NewsletterSignup';
@@ -20,7 +21,8 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }) {
   const post = await getPost((await params).slug);
   if (!post) return {};
-  const image = post.cover ? `${post.cover.url}?w=1200&h=630&fit=crop&auto=format` : site.meta.image;
+  // Cover photo when there is one; otherwise the generated brand preview with the post's title.
+  const image = post.cover ? `${post.cover.url}?w=1200&h=630&fit=crop&auto=format` : `/og/posts/${post.slug}`;
   return {
     title: `${post.title} | Bruno Silva USA`,
     description: post.description,
@@ -34,28 +36,35 @@ export async function generateMetadata({ params }) {
       publishedTime: post.publishedAt,
       modifiedTime: post.updatedAt,
       section: pillarOf(post.pillar).label,
-      images: [{ url: image, alt: post.cover?.alt || '' }],
+      images: [{ url: image, width: 1200, height: 630, alt: post.cover?.alt || post.title }],
     },
-    twitter: { card: post.cover ? 'summary_large_image' : 'summary', title: post.title, description: post.description, images: [image] },
+    twitter: { card: 'summary_large_image', title: post.title, description: post.description, images: [image] },
   };
 }
 
 function jsonLd(post) {
-  const data = {
+  const pillar = pillarOf(post.pillar);
+  const url = absolute(`/posts/${post.slug}`);
+  return toJson({
     '@context': 'https://schema.org',
-    '@type': 'BlogPosting',
-    headline: post.title,
-    description: post.description,
-    datePublished: post.publishedAt,
-    dateModified: post.updatedAt,
-    inLanguage: 'pt-BR',
-    articleSection: pillarOf(post.pillar).label,
-    author: { '@type': 'Person', name: post.author?.name || site.author.name },
-    mainEntityOfPage: absolute(`/posts/${post.slug}`),
-    ...(post.cover ? { image: `${post.cover.url}?w=1200&auto=format` } : {}),
-  };
-  // Escape "<" so the JSON can't close the script tag.
-  return JSON.stringify(data).replace(/</g, '\\u003c');
+    '@graph': [
+      {
+        '@type': 'BlogPosting',
+        headline: post.title,
+        description: post.description,
+        datePublished: post.publishedAt,
+        dateModified: post.updatedAt,
+        inLanguage: 'pt-BR',
+        articleSection: pillar.label,
+        author: { '@type': 'Person', name: post.author?.name || site.author.name, url: AUTHOR.url },
+        publisher: AUTHOR,
+        mainEntityOfPage: url,
+        isPartOf: { '@id': absolute('/#blog') },
+        image: post.cover ? `${post.cover.url}?w=1200&auto=format` : absolute(`/og/posts/${post.slug}`),
+      },
+      breadcrumb([{ name: 'Blog', path: '/' }, { name: pillar.label, path: `/pilar/${pillar.slug}` }, { name: post.title, path: `/posts/${post.slug}` }]),
+    ],
+  });
 }
 
 export default async function PostPage({ params }) {

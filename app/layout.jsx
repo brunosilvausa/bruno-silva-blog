@@ -22,9 +22,9 @@ export const metadata = {
     siteName: 'Bruno Silva USA',
     title: site.meta.title,
     description: site.meta.description,
-    images: [{ url: site.meta.image }],
+    images: [{ url: '/og', width: 1200, height: 630, alt: site.meta.title }],
   },
-  twitter: { card: 'summary', title: site.meta.title, description: site.meta.description, images: [site.meta.image] },
+  twitter: { card: 'summary_large_image', title: site.meta.title, description: site.meta.description, images: ['/og'] },
 };
 
 export const viewport = {

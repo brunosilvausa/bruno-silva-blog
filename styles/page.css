@@ -102,3 +102,10 @@ a.bs-article__kicker:hover { text-decoration: underline; text-underline-offset: 
 .bs-section.blog-hero { padding-bottom: var(--space-12); }
 .bs-section.blog-posts { padding-top: var(--space-12); }
 .blog-hero .bs-shead__title { text-wrap: balance; }
+
+/* "Pular para o conteúdo": hidden until the first Tab, then shown over the NavBar. */
+.blog-skip { position: absolute; left: max(16px, env(safe-area-inset-left, 0px)); top: -100px; z-index: 50; padding: var(--space-3) var(--space-4); border-radius: var(--radius-sm);
+  background: var(--volt); color: var(--on-volt); font-family: var(--font-label); font-weight: 600; font-size: 15px; letter-spacing: .08em; text-transform: uppercase; text-decoration: none; }
+.blog-skip:focus { top: calc(12px + env(safe-area-inset-top, 0px)); }
+main#conteudo:focus { outline: none; }
+.bs-prose figure img { height: auto; }

@@ -9,8 +9,9 @@ export default function Shell({ current, children }) {
   return (
     <>
       {usingSanity() ? null : <DemoNote note={site.demoNote} />}
+      <a className="blog-skip" href="#conteudo">Pular para o conteúdo</a>
       <NavBar nav={site.nav} current={current} />
-      <main id="conteudo">{children}</main>
+      <main id="conteudo" tabIndex={-1}>{children}</main>
       <Footer data={site.footer} />
     </>
   );

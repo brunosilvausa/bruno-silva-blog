@@ -1,4 +1,5 @@
 import { safeHref } from '@/lib/safe-href';
+import { imageSrcSet } from '@/lib/image';
 
 // Renders the post body (Portable Text from Sanity) into the design system's .bs-prose markup.
 // Supported: paragraphs, h2/h3 (h4 shows as h3), quotes, bullet and numbered lists, bold, italic, code,
@@ -53,7 +54,16 @@ function Figure({ value }) {
   const src = `${value.url}?w=1360&fit=max&auto=format`;
   return (
     <figure>
-      <img src={src} alt={value.alt || ''} width={value.width} height={value.height} loading="lazy" decoding="async" />
+      <img
+        src={src}
+        srcSet={imageSrcSet(value.url, [640, 960, 1360])}
+        sizes="(max-width: 728px) calc(100vw - 48px), 680px"
+        alt={value.alt || ''}
+        width={value.width}
+        height={value.height}
+        loading="lazy"
+        decoding="async"
+      />
       {value.caption ? <figcaption>{value.caption}</figcaption> : null}
     </figure>
   );

@@ -12,8 +12,9 @@ O blog de Bruno Silva USA: Next.js (App Router, JavaScript) com o design system 
 | `/pilar/tecnologia`, `/pilar/empreendedorismo`, `/pilar/inovacao`, `/pilar/impacto-global` | Posts de cada pilar |
 | `/newsletter` | Inscrição na newsletter e os últimos posts |
 | `/privacidade`, `/termos` | Política de privacidade e termos de uso, que valem para todos os sites Bruno Silva USA |
-| `/rss.xml`, `/sitemap.xml`, `/robots.txt` | Feed para leitores de RSS e mapa do site para o Google |
+| `/rss.xml`, `/sitemap.xml`, `/robots.txt` | Feed de RSS com o texto completo dos 20 posts mais novos, e mapa do site para o Google |
 | `/manifest.webmanifest` | Nome e ícones para "Adicionar à tela de início" no celular |
+| `/og`, `/og/pilar/<pilar>`, `/og/posts/<slug>` | Imagem de prévia (WhatsApp, redes) gerada no visual da marca, para páginas e posts sem capa |
 
 No celular, a barra do topo esconde os pilares; no lugar dela, a página inicial e as dos pilares mostram uma faixa rolável com "Todos" e os quatro pilares. O botão Compartilhar abre a tela de compartilhar do celular (WhatsApp, Instagram…); no computador, copia o link.
 
