@@ -8,10 +8,14 @@ O blog de Bruno Silva USA: Next.js (App Router, JavaScript) com o design system 
 | --- | --- |
 | `/` | Lista de posts (o mais novo em destaque), 9 por página, e a newsletter |
 | `/pagina/2`, `/pagina/3`… | Posts mais antigos |
-| `/posts/<slug>` | O post, com barra de leitura, caixa do autor, newsletter e três posts relacionados |
+| `/posts/<slug>` | O post, com barra de leitura, índice "Neste post" (com 3 ou mais subtítulos H2), botão Compartilhar, post anterior e próximo, caixa do autor, newsletter e três posts relacionados |
 | `/pilar/tecnologia`, `/pilar/empreendedorismo`, `/pilar/inovacao`, `/pilar/impacto-global` | Posts de cada pilar |
 | `/newsletter` | Inscrição na newsletter e os últimos posts |
+| `/privacidade`, `/termos` | Política de privacidade e termos de uso, que valem para todos os sites Bruno Silva USA |
 | `/rss.xml`, `/sitemap.xml`, `/robots.txt` | Feed para leitores de RSS e mapa do site para o Google |
+| `/manifest.webmanifest` | Nome e ícones para "Adicionar à tela de início" no celular |
+
+No celular, a barra do topo esconde os pilares; no lugar dela, a página inicial e as dos pilares mostram uma faixa rolável com "Todos" e os quatro pilares. O botão Compartilhar abre a tela de compartilhar do celular (WhatsApp, Instagram…); no computador, copia o link.
 
 ## Como rodar o site
 
@@ -65,6 +69,8 @@ O formulário chama `POST /api/subscribe`, com as mesmas proteções das outras 
 ## Onde editar
 
 - Textos fixos (menu, títulos, newsletter, rodapé, autor padrão): `content/site.js`.
+- Privacidade e Termos: `content/legal.js` (e-mail de contato, seções e a data `updated`). É um modelo baseado no que os sites fazem hoje: se passar a usar analytics, cookies ou outro serviço que receba dados, atualize o texto. Para uma versão definitiva, peça a revisão de um advogado.
+- Ícones do site (aba, tela de início do celular): `app/icon.png`, `app/apple-icon.png` e `public/img/icon-512.png` / `icon-maskable-512.png`, nomes e cores em `app/manifest.js`.
 - Pilares: `lib/pillars.js` (site) e `studio/schemaTypes/post.js` (editor). Os valores precisam ser iguais nos dois.
 - Posts de exemplo: `content/sample-posts.js` (só aparecem sem o Sanity).
 - Estilos próprios do blog: `styles/page.css`. Os arquivos `styles/tokens.css`, `styles/ds.css` e `public/ds.js` são do design system e não devem ser editados.

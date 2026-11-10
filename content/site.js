@@ -73,6 +73,6 @@ export const site = {
       { title: 'Acompanhe', links: [{ label: 'Newsletter', href: '/newsletter' }, { label: 'RSS', href: '/rss.xml' }, { label: 'Todos os links', href: URL_BIO }] },
     ],
     copyright: '© 2026 Bruno Silva USA',
-    legal: [{ label: 'Privacidade', href: '#' }, { label: 'Termos', href: '#' }],
+    legal: [{ label: 'Privacidade', href: '/privacidade' }, { label: 'Termos', href: '/termos' }],
   },
 };

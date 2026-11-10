@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import { site } from '@/content/site';
-import { getAllPosts, getPost, getRelated } from '@/lib/sanity';
+import { getAdjacent, getAllPosts, getPost, getRelated } from '@/lib/sanity';
 import { pillarOf } from '@/lib/pillars';
 import { absolute } from '@/lib/site-url';
 import { FEED_TYPES } from '@/lib/feed';
@@ -60,11 +60,11 @@ function jsonLd(post) {
 export default async function PostPage({ params }) {
   const post = await getPost((await params).slug);
   if (!post) notFound();
-  const related = await getRelated(post, 3);
+  const [related, { prev, next }] = await Promise.all([getRelated(post, 3), getAdjacent(post)]);
   return (
     <Shell>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(post) }} />
-      <Article post={post} fallbackAuthor={site.author} shareUrl={absolute(`/posts/${post.slug}`)} />
+      <Article post={post} fallbackAuthor={site.author} shareUrl={absolute(`/posts/${post.slug}`)} prev={prev} next={next} />
       <NewsletterSignup data={site.newsletter} />
       {related.length ? (
         <section className="bs-section" aria-labelledby="h-relacionados">

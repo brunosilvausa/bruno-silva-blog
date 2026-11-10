@@ -1,11 +1,15 @@
 import PortableText from './PortableText';
 import ShareButton from './ShareButton';
+import TableOfContents from './TableOfContents';
+import PostNav from './PostNav';
+import { tableOfContents } from '@/lib/headings';
 import { imageSize, imageSrcSet, imageUrl } from '@/lib/image';
 import { pillarOf } from '@/lib/pillars';
 import { formatDate } from '@/lib/format';
 
 /** DS ArticleLayout: reading-progress bar, 680px column, header with byline, prose body and author box. */
-export default function Article({ post, fallbackAuthor, shareUrl }) {
+export default function Article({ post, fallbackAuthor, shareUrl, prev, next }) {
+  const toc = tableOfContents(post.body);
   const pillar = pillarOf(post.pillar);
   const author = {
     name: post.author?.name || fallbackAuthor.name,
@@ -42,7 +46,8 @@ export default function Article({ post, fallbackAuthor, shareUrl }) {
               {post.cover.caption ? <figcaption>{post.cover.caption}</figcaption> : null}
             </figure>
           ) : null}
-          <PortableText value={post.body} />
+          <TableOfContents items={toc.items} />
+          <PortableText value={post.body} ids={toc.ids} />
         </div>
         {shareUrl ? (
           <div className="blog-share">
@@ -50,6 +55,7 @@ export default function Article({ post, fallbackAuthor, shareUrl }) {
             <ShareButton url={shareUrl} title={post.title} text={post.lead || post.description} />
           </div>
         ) : null}
+        <PostNav prev={prev} next={next} />
         <aside className="bs-author" aria-label="Sobre o autor">
           <img src={author.image} alt="" width="144" height="144" loading="lazy" decoding="async" />
           <div>

@@ -61,3 +61,39 @@ a.bs-article__kicker:hover { text-decoration: underline; text-underline-offset: 
 .blog-share__status { flex-basis: 100%; font-size: 14px; color: var(--volt); }
 .blog-share__status:empty { display: none; }
 @media (max-width: 560px) { .blog-share .bs-btn { flex: 1 1 100%; justify-content: center; min-height: 48px; } }
+
+/* Índice do post ("Neste post"): aberto no computador, recolhido no celular. */
+.blog-toc { margin: var(--space-8) 0; border: 1px solid var(--trace); border-left: 3px solid var(--volt); border-radius: var(--radius-sm); background: var(--black); }
+.blog-toc--open { padding: var(--space-4) var(--space-6); }
+.blog-toc__title, .blog-toc summary { margin: 0; font-family: var(--font-label); font-weight: 600; font-size: 15px; letter-spacing: .08em; text-transform: uppercase; color: var(--volt); }
+.blog-toc ol { list-style: none; margin: var(--space-2) 0 0; padding: 0; }
+.blog-toc li { margin: 0; padding: 0; }
+.blog-toc li::before, .blog-toc li::marker { content: none; }
+.bs-prose .blog-toc a { display: flex; align-items: center; min-height: 44px; font-size: 17px; line-height: 24px; color: var(--white); text-decoration: none; }
+.bs-prose .blog-toc a:hover { color: var(--volt); text-decoration: underline; text-underline-offset: 3px; }
+.blog-toc--fold { display: none; }
+.blog-toc--fold summary { display: flex; align-items: center; gap: var(--space-2); min-height: 52px; padding: 0 var(--space-4); cursor: pointer; list-style: none; }
+.blog-toc--fold summary::-webkit-details-marker { display: none; }
+.blog-toc--fold summary span { color: var(--silver); font-weight: 500; letter-spacing: .04em; text-transform: none; }
+.blog-toc--fold summary::after { content: ""; width: 8px; height: 8px; margin-left: auto; border-right: 2px solid var(--volt); border-bottom: 2px solid var(--volt); transform: rotate(45deg) translateY(-2px); transition: transform var(--duration-fast, 150ms) var(--easing-standard, ease); }
+.blog-toc--fold[open] summary::after { transform: rotate(225deg) translateY(-2px); }
+.blog-toc--fold nav { padding: 0 var(--space-4) var(--space-3); }
+@media (max-width: 720px) { .blog-toc--open { display: none; } .blog-toc--fold { display: block; } }
+@media (prefers-reduced-motion: reduce) { .blog-toc--fold summary::after { transition: none; } }
+
+/* Post anterior e próximo, antes da caixa do autor. */
+.blog-adjacent { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); margin-top: var(--space-8); }
+.blog-adjacent__link { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-4) var(--space-6); border: 1px solid var(--trace); border-radius: var(--radius-sm); background: var(--black); color: var(--white); text-decoration: none; transition: border-color var(--duration-fast, 150ms) var(--easing-standard, ease); }
+.blog-adjacent__link--next { text-align: right; align-items: flex-end; }
+.blog-adjacent__link:hover { border-color: var(--volt); }
+.blog-adjacent__link:hover .blog-adjacent__title { color: var(--volt); }
+.blog-adjacent__dir { display: inline-flex; align-items: center; gap: var(--space-2); font-family: var(--font-label); font-weight: 600; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; color: var(--silver); }
+.blog-adjacent__dir svg { width: 16px; height: 16px; fill: none; stroke: var(--volt); stroke-width: 2; }
+.blog-adjacent__kicker { font-family: var(--font-label); font-weight: 600; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--volt); }
+.blog-adjacent__title { font-family: var(--font-display); font-weight: 800; font-size: 17px; line-height: 1.25; text-transform: uppercase; overflow-wrap: break-word; }
+@media (max-width: 560px) { .blog-adjacent { grid-template-columns: 1fr; } .blog-adjacent__empty { display: none; } }
+@media (prefers-reduced-motion: reduce) { .blog-adjacent__link { transition: none; } }
+
+/* Privacidade e Termos. */
+.blog-legal__updated { margin: var(--space-4) 0 0; font-family: var(--font-label); font-weight: 600; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; color: var(--silver); }
+.blog-legal { padding-bottom: var(--space-16); }

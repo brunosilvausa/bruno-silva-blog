@@ -37,10 +37,10 @@ function Spans({ block }) {
   });
 }
 
-function Block({ block }) {
+function Block({ block, id }) {
   const content = <Spans block={block} />;
   switch (block.style) {
-    case 'h2': return <h2>{content}</h2>;
+    case 'h2': return <h2 id={id}>{content}</h2>;
     case 'h3':
     case 'h4': return <h3>{content}</h3>;
     case 'blockquote': return <blockquote>{content}</blockquote>;
@@ -77,14 +77,15 @@ function group(blocks) {
   return out;
 }
 
-export default function PortableText({ value }) {
+/** `ids` (optional) maps H2 blocks to anchor ids, from lib/headings.js. */
+export default function PortableText({ value, ids }) {
   return group(value).map((node, i) => {
     const key = node?._key || i;
     if (node?.list) {
       const Tag = node.list === 'number' ? 'ol' : 'ul';
       return <Tag key={key}>{node.items.map((item, j) => <li key={item._key || j}><Spans block={item} /></li>)}</Tag>;
     }
-    if (node?._type === 'block') return <Block key={key} block={node} />;
+    if (node?._type === 'block') return <Block key={key} block={node} id={ids?.get(node)} />;
     if (node?._type === 'image') return <Figure key={key} value={node} />;
     if (node?._type === 'callout') return <Callout key={key} value={node} />;
     return null;
