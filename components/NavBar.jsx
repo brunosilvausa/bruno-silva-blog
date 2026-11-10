@@ -11,7 +11,7 @@ export default function NavBar({ nav, current }) {
             <li key={l.href}><a href={l.href} aria-current={l.href === current ? 'page' : undefined}>{l.label}</a></li>
           ))}
         </ul>
-        <a className="bs-btn bs-btn--primary bs-btn--sm" href={nav.cta.href} aria-current={nav.cta.href === current ? 'page' : undefined}>{nav.cta.label}</a>
+        <a className="bs-btn bs-btn--shiny bs-btn--sm" href={nav.cta.href} aria-current={nav.cta.href === current ? 'page' : undefined}>{nav.cta.label}</a>
       </div>
     </nav>
   );
