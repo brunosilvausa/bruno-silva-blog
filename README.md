@@ -32,7 +32,7 @@ Abra http://localhost:3000. Para testar a versão de produção: `npm run build`
    npm install
    npm run dev               # abre o editor em http://localhost:3333
    ```
-3. Publique o editor na internet para escrever de qualquer lugar: `npm run deploy` (dentro de `studio/`). Ele fica em `https://<nome-que-você-escolher>.sanity.studio`.
+3. Publique o editor na internet para escrever de qualquer lugar: `npm run deploy` (dentro de `studio/`). Ele já está em https://bruno-silva-blog.sanity.studio (o endereço fica gravado em `studio/sanity.cli.js`).
 4. No site, preencha `NEXT_PUBLIC_SANITY_PROJECT_ID` (e `NEXT_PUBLIC_SANITY_DATASET`, se não for `production`) no `.env.local` e na Vercel (Settings → Environment Variables), e faça um novo deploy. A faixa "Exemplo" some e os posts passam a vir do Sanity.
 
 O site busca os posts no servidor, então não precisa configurar CORS.
