@@ -1039,22 +1039,23 @@ a.bs-ticker__item:focus-visible { outline: 2px solid var(--volt); outline-offset
 /* OrbitGlow around the submit button of a capture form; full width when the form stacks on phones. */
 @media (max-width: 560px) { .bs-capture__row > .bs-orbit { display: grid; width: 100%; } }
 
-/* ShinyButton (Button variant .bs-btn--shiny): a dark button whose border carries a volt shine that circles it every 3s,
-   with a faint dot weave following the shine. On hover or keyboard focus the shine opens wider and the inside lights up.
-   Still with reduced motion; browsers without @property show a still volt border. One per view, never inside an OrbitGlow. */
+/* ShinyButton (Button variant .bs-btn--shiny): a volt button (on-volt text, like primary) whose border carries a bright
+   white-volt shine that circles it every 3s, with a faint dark dot weave following the shine. On hover or keyboard focus the
+   shine opens wider and the volt glow appears. Still with reduced motion; browsers without @property show a plain volt button.
+   One per view, never inside an OrbitGlow. */
 @property --bs-shine-angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
 @property --bs-shine-offset { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
-@property --bs-shine-pct { syntax: "<percentage>"; initial-value: 5%; inherits: false; }
-.bs-btn--shiny { position: relative; isolation: isolate; overflow: hidden; color: var(--white); border: 2px solid transparent;
-  background: linear-gradient(var(--black), var(--black)) padding-box,
-    conic-gradient(from calc(var(--bs-shine-angle) - var(--bs-shine-offset)), var(--trace-strong), var(--volt) var(--bs-shine-pct), #f6ffc4 calc(var(--bs-shine-pct) * 2), var(--volt) calc(var(--bs-shine-pct) * 3), var(--trace-strong) calc(var(--bs-shine-pct) * 4)) border-box;
+@property --bs-shine-pct { syntax: "<percentage>"; initial-value: 6%; inherits: false; }
+.bs-btn--shiny { position: relative; isolation: isolate; overflow: hidden; color: var(--on-volt); border: 2px solid transparent;
+  background: linear-gradient(var(--volt), var(--volt)) padding-box,
+    conic-gradient(from calc(var(--bs-shine-angle) - var(--bs-shine-offset)), var(--volt), #ffffff var(--bs-shine-pct), var(--white) calc(var(--bs-shine-pct) * 2), #9aad00 calc(var(--bs-shine-pct) * 3), var(--volt) calc(var(--bs-shine-pct) * 4)) border-box;
   animation: bs-shine-turn 3s linear infinite;
   transition: --bs-shine-offset 800ms cubic-bezier(.25, 1, .5, 1), --bs-shine-pct 800ms cubic-bezier(.25, 1, .5, 1), box-shadow var(--duration-base) var(--easing-standard), transform var(--duration-fast) var(--easing-standard); }
-.bs-btn--shiny::after { content: ""; position: absolute; inset: 2px; z-index: -1; pointer-events: none; border-radius: inherit; opacity: .35;
-  background: radial-gradient(circle at 2px 2px, var(--volt) .5px, transparent 0) 0 0 / 4px 4px;
+.bs-btn--shiny::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; border-radius: inherit; opacity: .22;
+  background: radial-gradient(circle at 2px 2px, var(--on-volt) .6px, transparent 0) 0 0 / 4px 4px;
   -webkit-mask-image: conic-gradient(from calc(var(--bs-shine-angle) + 45deg), #000, transparent 12% 88%, #000);
   mask-image: conic-gradient(from calc(var(--bs-shine-angle) + 45deg), #000, transparent 12% 88%, #000); }
-.bs-btn--shiny:is(:hover, :focus-visible) { --bs-shine-pct: 20%; --bs-shine-offset: 95deg; box-shadow: inset 0 -1ex 1.25rem -6px rgba(225, 250, 3, .45); }
+.bs-btn--shiny:is(:hover, :focus-visible) { --bs-shine-pct: 18%; --bs-shine-offset: 95deg; box-shadow: var(--glow-volt); }
 @keyframes bs-shine-turn { to { --bs-shine-angle: 360deg; } }
 @media (prefers-reduced-motion: reduce) { .bs-btn--shiny, .bs-btn--shiny::after { animation: none; } }
 .bs-reduced .bs-btn--shiny { animation: none; }
