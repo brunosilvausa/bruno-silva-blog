@@ -7,9 +7,9 @@ import { PILLARS } from '@/lib/pillars';
  * a sideways-scrolling row of "Todos" + the four pillars. The current one is highlighted and
  * scrolled into view. `current` is the active href ("/" or "/pilar/<slug>").
  */
-export default function PillarTabs({ current = '/', label = 'Filtrar por pilar' }) {
+export default function PillarTabs({ current = '/', label = 'Filtrar por pilar', counts = {} }) {
   const row = useRef(null);
-  const items = [{ href: '/', label: 'Todos' }, ...PILLARS.map((p) => ({ href: `/pilar/${p.slug}`, label: p.label }))];
+  const items = [{ href: '/', label: 'Todos', n: counts.all }, ...PILLARS.map((p) => ({ href: `/pilar/${p.slug}`, label: p.label, n: counts[p.value] }))];
 
   useEffect(() => {
     const ul = row.current;
@@ -23,7 +23,10 @@ export default function PillarTabs({ current = '/', label = 'Filtrar por pilar' 
       <ul ref={row}>
         {items.map((i) => (
           <li key={i.href}>
-            <a href={i.href} aria-current={i.href === current ? 'page' : undefined}>{i.label}</a>
+            <a href={i.href} aria-current={i.href === current ? 'page' : undefined}>
+              {i.label}
+              {Number.isFinite(i.n) ? <span className="blog-pillars__n" aria-label={`${i.n} ${i.n === 1 ? 'post' : 'posts'}`}>{i.n}</span> : null}
+            </a>
           </li>
         ))}
       </ul>

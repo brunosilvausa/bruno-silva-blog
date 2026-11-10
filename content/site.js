@@ -25,9 +25,19 @@ export const site = {
     cta: { label: 'Quero receber', href: '/newsletter' },
   },
 
+  // Links da seção "Trabalhe comigo" da página /sobre.
+  work: [{ label: 'Curso', href: URL_CURSO }, { label: 'Consultoria', href: URL_CONSULTORIA }, { label: 'IA do Zero', href: URL_IA_DO_ZERO }, { label: 'Todos os links', href: URL_BIO }],
+
   home: {
     title: { before: 'Tecnologia e negócios ', em: 'direto dos EUA', after: '' },
     text: 'O que eu aprendo empreendendo nos Estados Unidos, explicado em português e sem juridiquês.',
+    // Botões e valores do topo da página inicial.
+    actions: [{ label: 'Ver os posts', href: '#posts', primary: true }, { label: 'Receber por e-mail', href: '/newsletter' }],
+    values: [
+      { title: 'Em português', text: 'Sem juridiquês e sem jargão.' },
+      { title: 'Prático', text: 'Exemplos para usar no mesmo dia.' },
+      { title: 'Direto dos EUA', text: 'De quem empreende aqui.' },
+    ],
     perPage: 9,
     empty: 'Nenhum post publicado ainda.',
   },
@@ -46,6 +56,8 @@ export const site = {
     name: 'Bruno Silva',
     image: '/img/avatar.webp',
     bio: 'Guru da tecnologia, empreendedor e brasileiro nos Estados Unidos. Escreve sobre tecnologia e negócios toda semana.',
+    aboutHref: '/sobre',
+    aboutLabel: 'Sobre o Bruno',
   },
 
   newsletter: {
@@ -68,7 +80,7 @@ export const site = {
     columns: [
       { title: 'Blog', links: PILLARS.map((p) => ({ label: p.label, href: `/pilar/${p.slug}` })) },
       { title: 'Trabalhe comigo', links: [{ label: 'Curso', href: URL_CURSO }, { label: 'Consultoria', href: URL_CONSULTORIA }, { label: 'IA do Zero', href: URL_IA_DO_ZERO }] },
-      { title: 'Acompanhe', links: [{ label: 'Newsletter', href: '/newsletter' }, { label: 'RSS', href: '/rss.xml' }, { label: 'Todos os links', href: URL_BIO }] },
+      { title: 'Acompanhe', links: [{ label: 'Sobre', href: '/sobre' }, { label: 'Newsletter', href: '/newsletter' }, { label: 'RSS', href: '/rss.xml' }, { label: 'Todos os links', href: URL_BIO }] },
     ],
     copyright: '© 2026 Bruno Silva USA',
     legal: [{ label: 'Privacidade', href: '/privacidade' }, { label: 'Termos', href: '/termos' }],

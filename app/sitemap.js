@@ -10,6 +10,7 @@ export default async function sitemap() {
   return [
     { url: absolute('/'), lastModified: newest, changeFrequency: 'weekly', priority: 1 },
     { url: absolute('/newsletter'), changeFrequency: 'monthly', priority: 0.6 },
+    { url: absolute('/sobre'), changeFrequency: 'monthly', priority: 0.6 },
     { url: absolute('/privacidade'), changeFrequency: 'yearly', priority: 0.2 },
     { url: absolute('/termos'), changeFrequency: 'yearly', priority: 0.2 },
     ...PILLARS.map((p) => ({ url: absolute(`/pilar/${p.slug}`), lastModified: newest, changeFrequency: 'weekly', priority: 0.7 })),

@@ -11,6 +11,7 @@ O blog de Bruno Silva USA: Next.js (App Router, JavaScript) com o design system 
 | `/posts/<slug>` | O post, com barra de leitura, índice "Neste post" (com 3 ou mais subtítulos H2), botão Compartilhar, post anterior e próximo, caixa do autor, newsletter e três posts relacionados |
 | `/pilar/tecnologia`, `/pilar/empreendedorismo`, `/pilar/inovacao`, `/pilar/impacto-global` | Posts de cada pilar |
 | `/newsletter` | Inscrição na newsletter e os últimos posts |
+| `/sobre` | Quem escreve o blog, como os posts são escritos, links de trabalho e contato (texto em `content/about.js`) |
 | `/privacidade`, `/termos` | Política de privacidade e termos de uso, que valem para todos os sites Bruno Silva USA |
 | `/rss.xml`, `/sitemap.xml`, `/robots.txt` | Feed de RSS com o texto completo dos 20 posts mais novos, e mapa do site para o Google |
 | `/manifest.webmanifest` | Nome e ícones para "Adicionar à tela de início" no celular |
@@ -83,6 +84,8 @@ O corpo dos posts não se mexe. Tudo pausa fora da tela, e quem pede "reduzir mo
 ## Onde editar
 
 - Textos fixos (menu, títulos, newsletter, rodapé, autor padrão): `content/site.js`.
+- Topo da página inicial (botões e os três valores): `home.actions` e `home.values` em `content/site.js`.
+- Página Sobre: `content/about.js`. Para mostrar números (anos de experiência, alunos…), preencha `facts`; vazio, o bloco não aparece.
 - Privacidade e Termos: `content/legal.js` (e-mail de contato, seções e a data `updated`). É um modelo baseado no que os sites fazem hoje: se passar a usar analytics, cookies ou outro serviço que receba dados, atualize o texto. Para uma versão definitiva, peça a revisão de um advogado.
 - Ícones do site (aba, tela de início do celular): `app/icon.png`, `app/apple-icon.png` e `public/img/icon-512.png` / `icon-maskable-512.png`, nomes e cores em `app/manifest.js`.
 - Pilares: `lib/pillars.js` (site) e `studio/schemaTypes/post.js` (editor). Os valores precisam ser iguais nos dois.

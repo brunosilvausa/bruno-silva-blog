@@ -104,8 +104,43 @@ a.bs-article__kicker:hover { text-decoration: underline; text-underline-offset: 
 .blog-hero .bs-shead__title { text-wrap: balance; }
 
 /* "Pular para o conteúdo": hidden until the first Tab, then shown over the NavBar. */
-.blog-skip { position: absolute; left: max(16px, env(safe-area-inset-left, 0px)); top: -100px; z-index: 50; padding: var(--space-3) var(--space-4); border-radius: var(--radius-sm);
+.blog-skip { display: inline-flex; align-items: center; min-height: 44px; box-sizing: border-box; position: absolute; left: max(16px, env(safe-area-inset-left, 0px)); top: -100px; z-index: 50; padding: var(--space-3) var(--space-4); border-radius: var(--radius-sm);
   background: var(--volt); color: var(--on-volt); font-family: var(--font-label); font-weight: 600; font-size: 15px; letter-spacing: .08em; text-transform: uppercase; text-decoration: none; }
 .blog-skip:focus { top: calc(12px + env(safe-area-inset-top, 0px)); }
 main#conteudo:focus { outline: none; }
 .bs-prose figure img { height: auto; }
+
+/* Topo da página inicial: botões e os três valores. */
+.blog-hero__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-3); margin-top: var(--space-8); }
+.blog-hero__values { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); max-width: 760px; margin: var(--space-8) auto 0; padding: 0; list-style: none; }
+.blog-hero__values li { display: flex; flex-direction: column; gap: var(--space-1); padding: var(--space-3) var(--space-4); border-left: 2px solid var(--volt); background: var(--void-scrim); text-align: left; }
+.blog-hero__values b { font-family: var(--font-label); font-weight: 600; font-size: 15px; letter-spacing: .08em; text-transform: uppercase; color: var(--white); }
+.blog-hero__values span { font-size: 14px; line-height: 20px; color: var(--silver); }
+.bs-section > .bs-container > .blog-hero__actions, .bs-section > .bs-container > .blog-hero__values { margin-top: var(--space-8); }
+@media (max-width: 640px) {
+  .blog-hero__actions .bs-btn { flex: 1 1 100%; justify-content: center; min-height: 48px; }
+  .blog-hero__values { grid-template-columns: 1fr; gap: var(--space-2); }
+}
+
+/* Filtro por pilar em todas as larguras, com a contagem de posts. */
+.blog-pillars { display: block; }
+.bs-section > .bs-container > .blog-pillars { margin-top: var(--space-8); }
+.blog-pillars ul { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+.blog-pillars a { display: inline-flex; align-items: center; gap: var(--space-2); min-height: 44px; padding: 0 var(--space-4); border: 1px solid var(--trace); border-radius: var(--radius-sm); background: var(--black); font-family: var(--font-label); font-weight: 600; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; color: var(--silver); text-decoration: none; white-space: nowrap; transition: border-color var(--duration-fast) var(--easing-standard), color var(--duration-fast) var(--easing-standard); }
+.blog-pillars a:hover { border-color: var(--volt); color: var(--white); }
+.blog-pillars a[aria-current="page"] { background: var(--volt); border-color: var(--volt); color: var(--on-volt); }
+.blog-pillars__n { font-size: 12px; letter-spacing: 0; padding: 1px 6px; border-radius: var(--radius-full); background: var(--surface-raised); color: var(--silver); }
+.blog-pillars a[aria-current="page"] .blog-pillars__n { background: rgba(2, 7, 11, .16); color: var(--on-volt); }
+@media (max-width: 720px) { .blog-pillars ul { flex-wrap: nowrap; justify-content: flex-start; } }
+
+/* Página Sobre e link "Sobre o Bruno" na caixa do autor. */
+.blog-about { padding-bottom: var(--space-12); }
+.blog-about__photo { width: 96px; height: 96px; border-radius: var(--radius-full); display: block; margin-bottom: var(--space-6); }
+.blog-about__facts { display: flex; flex-wrap: wrap; gap: var(--space-6); margin: var(--space-6) 0 0; padding: 0; list-style: none; }
+.blog-about__facts li { display: flex; flex-direction: column; }
+.blog-about__facts b { font-family: var(--font-display); font-weight: 800; font-size: 28px; color: var(--volt); }
+.blog-about__facts span { font-family: var(--font-label); font-weight: 600; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; color: var(--silver); }
+.blog-about__links { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+.bs-prose .blog-about__links a { text-decoration: none; }
+.blog-author__more { display: inline-flex; align-items: center; gap: var(--space-2); margin-top: var(--space-2); color: var(--volt); }
+@media (pointer: coarse) { .blog-author__more { min-height: 44px; } }

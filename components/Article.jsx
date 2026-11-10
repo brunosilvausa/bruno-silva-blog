@@ -10,6 +10,9 @@ import { formatDate } from '@/lib/format';
 /** DS ArticleLayout: reading-progress bar, 680px column, header with byline, prose body and author box. */
 export default function Article({ post, fallbackAuthor, shareUrl, prev, next }) {
   const toc = tableOfContents(post.body);
+  // Show "Atualizado em" only for a real revision: a later calendar day, at least a day after publishing.
+  const revised = post.updatedAt && formatDate(post.updatedAt) !== formatDate(post.publishedAt)
+    && new Date(post.updatedAt) - new Date(post.publishedAt) > 24 * 3600 * 1000;
   const pillar = pillarOf(post.pillar);
   const author = {
     name: post.author?.name || fallbackAuthor.name,
@@ -26,7 +29,7 @@ export default function Article({ post, fallbackAuthor, shareUrl, prev, next }) 
           {post.lead ? <p className="bs-article__lead" data-mask="lines">{post.lead}</p> : null}
           <div className="bs-article__byline">
             <img src={author.image} alt="" width="72" height="72" decoding="async" />
-            <span><b>{author.name}</b> • <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time> • {post.minutes} min de leitura</span>
+            <span><b>{author.name}</b> • <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time> • {post.minutes} min de leitura{revised ? <> • Atualizado em <time dateTime={post.updatedAt}>{formatDate(post.updatedAt)}</time></> : null}</span>
           </div>
         </header>
         <div className="bs-prose">
@@ -61,6 +64,7 @@ export default function Article({ post, fallbackAuthor, shareUrl, prev, next }) 
           <div>
             <div className="bs-author__name">{author.name}</div>
             <p className="bs-author__bio">{author.bio}</p>
+            {fallbackAuthor.aboutHref ? <a className="bs-link blog-author__more" href={fallbackAuthor.aboutHref}>{fallbackAuthor.aboutLabel} <svg className="bs-btn__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></a> : null}
           </div>
         </aside>
       </article>

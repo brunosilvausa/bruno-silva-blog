@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import { site } from '@/content/site';
-import { getPosts } from '@/lib/sanity';
+import { getPillarCounts, getPosts } from '@/lib/sanity';
 import Shell from './Shell';
 import SectionHeader from './SectionHeader';
 import BlogGrid from './BlogGrid';
@@ -31,7 +31,10 @@ export function pillarHeader(pillar) {
 export default async function PostList({ page, pillar, header, current, base = '' }) {
   if (!page) notFound();
   const perPage = site.home.perPage;
-  const { posts, total } = await getPosts({ offset: (page - 1) * perPage, limit: perPage, pillar: pillar?.value ?? null });
+  const [{ posts, total }, counts] = await Promise.all([
+    getPosts({ offset: (page - 1) * perPage, limit: perPage, pillar: pillar?.value ?? null }),
+    getPillarCounts(PILLARS.map((p) => p.value)).catch(() => ({})),
+  ]);
   const totalPages = Math.max(1, Math.ceil(total / perPage));
   if (page > totalPages) notFound();
   return (
@@ -45,11 +48,21 @@ export default async function PostList({ page, pillar, header, current, base = '
         <div className="bs-container">
           <CodeDivider className="bs-shead-divider" />
           <SectionHeader level={1} id="titulo" kicker={header.kicker} title={header.title} text={header.text} />
-          <PillarTabs current={pillar ? `/pilar/${pillar.slug}` : '/'} />
+          {header.actions?.length ? (
+            <div className="blog-hero__actions" data-reveal="load" style={{ '--i': 2 }}>
+              {header.actions.map((a) => <a key={a.href} className={`bs-btn ${a.primary ? 'bs-btn--primary' : 'bs-btn--ghost'}`} href={a.href}>{a.label}</a>)}
+            </div>
+          ) : null}
+          {header.values?.length ? (
+            <ul className="blog-hero__values" data-reveal="load" style={{ '--i': 3 }}>
+              {header.values.map((v) => <li key={v.title}><b>{v.title}</b><span>{v.text}</span></li>)}
+            </ul>
+          ) : null}
+          <PillarTabs current={pillar ? `/pilar/${pillar.slug}` : '/'} counts={counts} />
         </div>
       </section>
       <Ticker label="Pilares do blog" speed={32} items={PILLARS.map((p) => ({ label: p.label, href: `/pilar/${p.slug}` }))} />
-      <section className="bs-section blog-posts" aria-label="Posts">
+      <section className="bs-section blog-posts" id="posts" aria-label="Posts">
         <div className="bs-container">
           {posts.length ? (
             <BlogGrid posts={posts} featureFirst={page === 1} headingLevel={2} spotlight />
