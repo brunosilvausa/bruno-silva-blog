@@ -25,7 +25,7 @@ export default function NewsletterSignup({ data, latestHref, formId = 'email-new
             </ul>
           </div>
           <div>
-            <EmailForm id={formId} label={data.form.label} button={data.form.button} note={data.form.note} />
+            <EmailForm id={formId} label={data.form.label} button={data.form.button} note={data.form.note} orbit />
             {latestHref ? <a className="bs-link bs-news__last" href={latestHref}>{data.lastLabel} <Arrow /></a> : null}
           </div>
         </div>

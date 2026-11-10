@@ -9,6 +9,7 @@ import Article from '@/components/Article';
 import NewsletterSignup from '@/components/NewsletterSignup';
 import SectionHeader from '@/components/SectionHeader';
 import BlogGrid from '@/components/BlogGrid';
+import CodeDivider from '@/components/CodeDivider';
 
 export const revalidate = 60;
 
@@ -69,8 +70,9 @@ export default async function PostPage({ params }) {
       {related.length ? (
         <section className="bs-section" aria-labelledby="h-relacionados">
           <div className="bs-container">
+            <CodeDivider className="bs-shead-divider" />
             <SectionHeader id="h-relacionados" kicker="Continue lendo" title={{ before: 'Posts ', em: 'relacionados', after: '' }} />
-            <BlogGrid posts={related} headingLevel={3} />
+            <BlogGrid posts={related} headingLevel={3} spotlight />
           </div>
         </section>
       ) : null}

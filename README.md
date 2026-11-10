@@ -68,12 +68,14 @@ O formulário chama `POST /api/subscribe`, com as mesmas proteções das outras 
 
 ## Movimento
 
-Os efeitos vêm do design system (`public/ds.js` e `styles/ds.css`, componentes ScrambleText, MaskReveal, ParticleField, TiltCard e Ticker):
-- o título principal de cada página se "decodifica" ao abrir;
-- os títulos de seção, a frase de abertura e os subtítulos dos posts sobem palavra por palavra ao rolar;
-- partículas volt reagem ao mouse e à rolagem atrás do cabeçalho da home e dos pilares;
-- a faixa com os quatro pilares corre sozinha e acelera com a rolagem;
-- os cartões inclinam com brilho sob o mouse e entram em 3D ao aparecer.
+Os efeitos vêm do design system (`public/ds.js` e `styles/ds.css`):
+- CodeDivider (o ornamento `</>`) acima do título da home e dos pilares, e antes de "Posts relacionados";
+- CodeReveal: caracteres hex entre as listras da bandeira atrás do cabeçalho, que acendem em volt sob o mouse;
+- ScrambleText: o título principal de cada página se "decodifica" ao abrir;
+- MaskReveal: títulos de seção e subtítulos dos posts sobem ao rolar;
+- Ticker: faixa discreta com os quatro pilares, que corre sozinha e acelera com a rolagem;
+- Spotlight e TiltCard: nos cartões de post, uma luz volt segue o mouse, eles inclinam e entram em 3D ao aparecer;
+- OrbitGlow: brilho volt girando atrás do botão "Quero receber" da newsletter.
 
 O corpo dos posts não se mexe. Tudo pausa fora da tela, e quem pede "reduzir movimento" no aparelho vê tudo parado. Para mudar um efeito, atualize o design system e copie de novo os dois arquivos.
 

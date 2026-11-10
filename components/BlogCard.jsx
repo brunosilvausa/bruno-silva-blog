@@ -32,7 +32,7 @@ function Cover({ post, pillar, featured }) {
 }
 
 /** DS BlogCard: the whole card is one link. `featured` spans the row (newest post). `headingLevel` keeps the outline right. */
-export default function BlogCard({ post, featured = false, headingLevel = 3 }) {
+export default function BlogCard({ post, featured = false, headingLevel = 3, spotlight = false }) {
   const pillar = pillarOf(post.pillar);
   const Heading = `h${headingLevel}`;
   const date = formatDate(post.publishedAt);
@@ -47,7 +47,7 @@ export default function BlogCard({ post, featured = false, headingLevel = 3 }) {
     </>
   );
   return (
-    <a className={`bs-bcard${featured ? ' bs-bcard--featured' : ''}`} href={`/posts/${post.slug}`} data-reveal data-tilt={featured ? '4' : '6'}>
+    <a className={`bs-bcard${featured ? ' bs-bcard--featured' : ''}${spotlight ? ' bs-spotlight' : ''}`} href={`/posts/${post.slug}`} data-reveal data-tilt={featured ? '4' : '6'}>
       <Cover post={post} pillar={pillar} featured={featured} />
       {featured ? <div className="bs-bcard__body">{text}</div> : text}
     </a>

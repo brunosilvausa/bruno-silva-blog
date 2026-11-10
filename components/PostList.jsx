@@ -8,6 +8,9 @@ import Pagination from './Pagination';
 import NewsletterSignup from './NewsletterSignup';
 import PillarTabs from './PillarTabs';
 import Ticker from './Ticker';
+import CodeDivider from './CodeDivider';
+
+const STRIPES = [13, 59, 105, 150, 196, 242, 288];
 import { PILLARS } from '@/lib/pillars';
 
 /** A page number from the URL: a positive integer, or null. */
@@ -33,18 +36,23 @@ export default async function PostList({ page, pillar, header, current, base = '
   if (page > totalPages) notFound();
   return (
     <Shell current={current}>
-      {/* Header over the reactive particle field, then the pillar ticker, then the posts. */}
-      <section className="bs-section blog-hero" aria-labelledby="titulo" data-particles>
+      {/* Header over the flag with CodeReveal in its gaps, then the pillar ticker, then the posts. */}
+      <section className="bs-section blog-hero bs-backdrop bs-backdrop--code" aria-labelledby="titulo">
+        <svg className="bs-flag" viewBox="0 0 1200 320" preserveAspectRatio="none" aria-hidden="true">
+          {STRIPES.map((y) => <rect key={y} x="0" y={y} width="1200" height="15" />)}
+        </svg>
+        <div className="bs-code" aria-hidden="true"></div>
         <div className="bs-container">
+          <CodeDivider className="bs-shead-divider" />
           <SectionHeader level={1} id="titulo" kicker={header.kicker} title={header.title} text={header.text} />
           <PillarTabs current={pillar ? `/pilar/${pillar.slug}` : '/'} />
         </div>
       </section>
-      <Ticker label="Pilares do blog" items={PILLARS.map((p) => ({ label: p.label, href: `/pilar/${p.slug}` }))} />
+      <Ticker label="Pilares do blog" speed={32} items={PILLARS.map((p) => ({ label: p.label, href: `/pilar/${p.slug}` }))} />
       <section className="bs-section blog-posts" aria-label="Posts">
         <div className="bs-container">
           {posts.length ? (
-            <BlogGrid posts={posts} featureFirst={page === 1} headingLevel={2} />
+            <BlogGrid posts={posts} featureFirst={page === 1} headingLevel={2} spotlight />
           ) : (
             <p className="blog-empty">{site.home.empty}</p>
           )}

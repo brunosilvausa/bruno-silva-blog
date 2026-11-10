@@ -1,7 +1,7 @@
 /* @ds-bundle: {"format":4,"namespace":"BrunoSilvaUSA","components":[]} */
 /* Bruno Silva USA ships CSS components (classes in bundle.css) plus this small motion helper.
    BrunoSilvaUSA.reveal(root): elements with [data-reveal] fade up when they scroll into view;
-   [data-draw] SVG paths draw themselves; [data-progress] bars follow the reading position; .bs-spotlight cards inside [data-spotlight] light up under the pointer; .bs-orbit glows turn only while on screen; .bs-code fields light up under the pointer; .bs-compare gets its phone switch; .bs-chat demos play while on screen; .bs-beams traces are drawn and pulse; showcase demos and [data-count] numbers animate on screen. Motion pack: [data-scramble] titles decode, [data-mask] text rises word by word, [data-particles] hosts get a reactive dash field, [data-tilt] cards lean and glare (and enter in 3D), .bs-ticker rows loop with the scroll. Runs once on load; call it again after adding content.
+   [data-draw] SVG paths draw themselves; [data-progress] bars follow the reading position; .bs-spotlight cards inside [data-spotlight] light up under the pointer; .bs-orbit glows turn only while on screen; .bs-code fields light up under the pointer; .bs-compare gets its phone switch; .bs-chat demos play while on screen; .bs-beams traces are drawn and pulse; showcase demos and [data-count] numbers animate on screen. Motion pack: [data-scramble] titles decode, [data-mask] text rises word by word, [data-tilt] cards lean and glare (and enter in 3D), .bs-ticker rows loop with the scroll. Runs once on load; call it again after adding content.
    Without this script, or with reduced motion requested, everything is simply visible. */
 (function () {
   var doc = document.documentElement;
@@ -252,7 +252,7 @@
     }, { threshold: 0.6 });
     els.forEach(function (el) { io.observe(el); });
   }
-  /* ---- Motion pack: scramble, mask reveal, particles, tilt, ticker. All skip work with reduced motion and pause off screen. ---- */
+  /* ---- Motion pack: scramble, mask reveal, tilt, ticker. All skip work with reduced motion and pause off screen. ---- */
   var fine = !!(window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches);
   function onScreen(el) { var r = el.getBoundingClientRect(); return r.bottom > 0 && r.top < window.innerHeight; }
   function textNodes(el) {
@@ -339,86 +339,6 @@
       io.observe(el);
     });
   }
-  /* Particles: [data-particles] gets a canvas of short volt and silver dashes behind its content. They drift, scatter away
-     from the pointer (or a finger), jolt with the scroll speed and spring back. Runs only while on screen; drawn still with
-     reduced motion. */
-  function particles(root) {
-    (root || document).querySelectorAll("[data-particles]").forEach(function (host) {
-      if (host._bsPt) return; host._bsPt = true;
-      var cv = document.createElement("canvas"), c = cv.getContext && cv.getContext("2d");
-      if (!c) return;
-      cv.className = "bs-particles"; cv.setAttribute("aria-hidden", "true"); host.insertBefore(cv, host.firstChild);
-      var css = getComputedStyle(document.documentElement);
-      var cols = [css.getPropertyValue("--volt").trim() || "#e1fa03", css.getPropertyValue("--silver").trim() || "#b0b0b0", css.getPropertyValue("--trace-strong").trim() || "#58697b"];
-      var W = 0, H = 0, ps = [], px = -9999, py = -9999, pon = false, live = false, raf = 0, lastY = window.scrollY, t0 = 0;
-      function build() {
-        var gap = W < 640 ? 44 : 60, jit = gap * 0.5; ps = [];
-        for (var y = gap / 2; y < H + gap; y += gap) for (var x = gap / 2; x < W + gap; x += gap) {
-          var ox = x + (Math.random() - 0.5) * jit * 2, oy = y + (Math.random() - 0.5) * jit * 2, r = Math.random();
-          ps.push({ ox: ox, oy: oy, x: ox, y: oy, vx: 0, vy: 0, w: 1.4 + Math.random() * 1.2, h: 5 + Math.random() * 8,
-            rot: Math.random() * Math.PI, ph: Math.random() * 6.28, col: r < 0.45 ? 0 : r < 0.75 ? 1 : 2, a: r < 0.45 ? 0.75 : 0.45 });
-        }
-      }
-      function draw() {
-        c.clearRect(0, 0, W, H);
-        for (var g = 0; g < 3; g++) {
-          c.fillStyle = cols[g]; c.globalAlpha = g === 0 ? 0.8 : 0.45; c.beginPath();
-          for (var i = 0; i < ps.length; i++) {
-            var p = ps[i]; if (p.col !== g) continue;
-            var sp = Math.sqrt(p.vx * p.vx + p.vy * p.vy), ang = sp > 0.4 ? Math.atan2(p.vy, p.vx) + Math.PI / 2 : p.rot;
-            var hw = p.w / 2, hh = (p.h + Math.min(sp * 0.8, 10)) / 2, cs = Math.cos(ang), sn = Math.sin(ang);
-            c.moveTo(p.x + (-hw * cs - -hh * sn), p.y + (-hw * sn + -hh * cs));
-            c.lineTo(p.x + (hw * cs - -hh * sn), p.y + (hw * sn + -hh * cs));
-            c.lineTo(p.x + (hw * cs - hh * sn), p.y + (hw * sn + hh * cs));
-            c.lineTo(p.x + (-hw * cs - hh * sn), p.y + (-hw * sn + hh * cs));
-            c.closePath();
-          }
-          c.fill();
-        }
-        c.globalAlpha = 1;
-      }
-      function size() {
-        var dpr = Math.min(window.devicePixelRatio || 1, 2);
-        W = host.clientWidth; H = host.clientHeight;
-        cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
-        c.setTransform(dpr, 0, 0, dpr, 0, 0); build(); draw();
-      }
-      function frame(now) {
-        raf = 0;
-        if (!live || document.hidden) return;
-        var t = (now - t0) / 1000, b = cv.getBoundingClientRect(), mx = px - b.left, my = py - b.top, R = W < 640 ? 90 : 130, R2 = R * R;
-        for (var i = 0; i < ps.length; i++) {
-          var p = ps[i];
-          if (pon) {
-            var dx = p.x - mx, dy = p.y - my, d2 = dx * dx + dy * dy;
-            if (d2 < R2 && d2 > 0.01) { var d = Math.sqrt(d2), f = Math.pow((R - d) / R, 2) * 6; p.vx += dx / d * f; p.vy += dy / d * f; }
-          }
-          var hx = p.ox + Math.sin(t * 0.6 + p.ph) * 3, hy = p.oy + Math.cos(t * 0.5 + p.ph) * 3;
-          p.vx = (p.vx + (hx - p.x) * 0.06) * 0.82; p.vy = (p.vy + (hy - p.y) * 0.06) * 0.82;
-          p.x += p.vx; p.y += p.vy;
-        }
-        draw();
-        raf = requestAnimationFrame(frame);
-      }
-      function wake() { if (live && !raf && !document.hidden) raf = requestAnimationFrame(frame); }
-      size();
-      if ("ResizeObserver" in window) new ResizeObserver(function () { if (host.clientWidth !== W || host.clientHeight !== H) size(); }).observe(host);
-      if (reduce) return;
-      t0 = performance.now();
-      window.addEventListener("pointermove", function (e) { px = e.clientX; py = e.clientY; pon = true; }, { passive: true });
-      document.documentElement.addEventListener("pointerleave", function () { pon = false; });
-      window.addEventListener("pointerup", function (e) { if (e.pointerType !== "mouse") pon = false; }, { passive: true });
-      window.addEventListener("scroll", function () {
-        var dy = window.scrollY - lastY; lastY = window.scrollY;
-        if (!live) return;
-        var k = Math.max(-14, Math.min(14, dy * 0.18));
-        for (var i = 0; i < ps.length; i++) ps[i].vy -= k * (0.5 + (i % 7) / 7);
-      }, { passive: true });
-      document.addEventListener("visibilitychange", wake);
-      if ("IntersectionObserver" in window) new IntersectionObserver(function (es) { live = es[0].isIntersecting; wake(); }).observe(host);
-      else { live = true; wake(); }
-    });
-  }
   /* Tilt: [data-tilt] (max degrees, default 6) leans toward the pointer with a volt glare, on fine pointers. When it also has
      [data-reveal] it enters in 3D the first time it scrolls into view (phones included); cards already on screen at load stay put. */
   function tilt(root) {
@@ -492,7 +412,7 @@
       else { live = true; wake(); }
     });
   }
-  window.BrunoSilvaUSA = { reveal: reveal, progress: progress, spotlight: spotlight, orbit: orbit, code: code, compare: compare, chat: chat, beams: beams, showcase: showcase, count: count, scramble: scramble, mask: mask, particles: particles, tilt: tilt, ticker: ticker };
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { reveal(); progress(); spotlight(); orbit(); code(); compare(); chat(); beams(); showcase(); count(); scramble(); mask(); particles(); tilt(); ticker(); });
-  else { reveal(); progress(); spotlight(); orbit(); code(); compare(); chat(); beams(); showcase(); count(); scramble(); mask(); particles(); tilt(); ticker(); }
+  window.BrunoSilvaUSA = { reveal: reveal, progress: progress, spotlight: spotlight, orbit: orbit, code: code, compare: compare, chat: chat, beams: beams, showcase: showcase, count: count, scramble: scramble, mask: mask, tilt: tilt, ticker: ticker };
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { reveal(); progress(); spotlight(); orbit(); code(); compare(); chat(); beams(); showcase(); count(); scramble(); mask(); tilt(); ticker(); });
+  else { reveal(); progress(); spotlight(); orbit(); code(); compare(); chat(); beams(); showcase(); count(); scramble(); mask(); tilt(); ticker(); }
 })();
