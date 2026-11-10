@@ -97,3 +97,8 @@ a.bs-article__kicker:hover { text-decoration: underline; text-underline-offset: 
 /* Privacidade e Termos. */
 .blog-legal__updated { margin: var(--space-4) 0 0; font-family: var(--font-label); font-weight: 600; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; color: var(--silver); }
 .blog-legal { padding-bottom: var(--space-16); }
+
+/* Motion (design system): cabeçalho com partículas, faixa de pilares, posts. */
+.bs-section.blog-hero { padding-bottom: var(--space-12); }
+.bs-section.blog-posts { padding-top: var(--space-12); }
+.blog-hero .bs-shead__title { text-wrap: balance; }

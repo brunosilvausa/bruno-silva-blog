@@ -22,8 +22,8 @@ export default function Article({ post, fallbackAuthor, shareUrl, prev, next }) 
       <article className="bs-article">
         <header>
           <a className="bs-article__kicker" href={`/pilar/${pillar.slug}`}>{pillar.label}</a>
-          <h1 className="bs-article__title">{post.title}</h1>
-          {post.lead ? <p className="bs-article__lead">{post.lead}</p> : null}
+          <h1 className="bs-article__title" data-scramble="load">{post.title}</h1>
+          {post.lead ? <p className="bs-article__lead" data-mask="lines">{post.lead}</p> : null}
           <div className="bs-article__byline">
             <img src={author.image} alt="" width="72" height="72" decoding="async" />
             <span><b>{author.name}</b> • <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time> • {post.minutes} min de leitura</span>
@@ -56,7 +56,7 @@ export default function Article({ post, fallbackAuthor, shareUrl, prev, next }) 
           </div>
         ) : null}
         <PostNav prev={prev} next={next} />
-        <aside className="bs-author" aria-label="Sobre o autor">
+        <aside className="bs-author" aria-label="Sobre o autor" data-tilt="4" data-reveal>
           <img src={author.image} alt="" width="144" height="144" loading="lazy" decoding="async" />
           <div>
             <div className="bs-author__name">{author.name}</div>

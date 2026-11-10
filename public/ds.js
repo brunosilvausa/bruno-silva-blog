@@ -1,7 +1,7 @@
 /* @ds-bundle: {"format":4,"namespace":"BrunoSilvaUSA","components":[]} */
 /* Bruno Silva USA ships CSS components (classes in bundle.css) plus this small motion helper.
    BrunoSilvaUSA.reveal(root): elements with [data-reveal] fade up when they scroll into view;
-   [data-draw] SVG paths draw themselves; [data-progress] bars follow the reading position; .bs-spotlight cards inside [data-spotlight] light up under the pointer; .bs-orbit glows turn only while on screen; .bs-code fields light up under the pointer; .bs-compare gets its phone switch; .bs-chat demos play while on screen; .bs-beams traces are drawn and pulse; showcase demos and [data-count] numbers animate on screen. Runs once on load; call it again after adding content.
+   [data-draw] SVG paths draw themselves; [data-progress] bars follow the reading position; .bs-spotlight cards inside [data-spotlight] light up under the pointer; .bs-orbit glows turn only while on screen; .bs-code fields light up under the pointer; .bs-compare gets its phone switch; .bs-chat demos play while on screen; .bs-beams traces are drawn and pulse; showcase demos and [data-count] numbers animate on screen. Motion pack: [data-scramble] titles decode, [data-mask] text rises word by word, [data-particles] hosts get a reactive dash field, [data-tilt] cards lean and glare (and enter in 3D), .bs-ticker rows loop with the scroll. Runs once on load; call it again after adding content.
    Without this script, or with reduced motion requested, everything is simply visible. */
 (function () {
   var doc = document.documentElement;
@@ -252,7 +252,247 @@
     }, { threshold: 0.6 });
     els.forEach(function (el) { io.observe(el); });
   }
-  window.BrunoSilvaUSA = { reveal: reveal, progress: progress, spotlight: spotlight, orbit: orbit, code: code, compare: compare, chat: chat, beams: beams, showcase: showcase, count: count };
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { reveal(); progress(); spotlight(); orbit(); code(); compare(); chat(); beams(); showcase(); count(); });
-  else { reveal(); progress(); spotlight(); orbit(); code(); compare(); chat(); beams(); showcase(); count(); }
+  /* ---- Motion pack: scramble, mask reveal, particles, tilt, ticker. All skip work with reduced motion and pause off screen. ---- */
+  var fine = !!(window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches);
+  function onScreen(el) { var r = el.getBoundingClientRect(); return r.bottom > 0 && r.top < window.innerHeight; }
+  function textNodes(el) {
+    var w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), out = [], n;
+    while ((n = w.nextNode())) if (n.nodeValue.trim()) out.push(n);
+    return out;
+  }
+  /* Scramble: [data-scramble] decodes its text from random glyphs, left to right (about 1.3s). data-scramble="load" runs at
+     once; any other value runs the first time it scrolls into view. The text nodes are only re-written in place, the box keeps
+     its height, and screen readers get the real text through aria-label while it runs. */
+  var GLYPHS = "01</>{}_#$%&*+=";
+  function scramble(root) {
+    (root || document).querySelectorAll("[data-scramble]").forEach(function (el) {
+      if (el._bsScr || reduce) return; el._bsScr = true;
+      function run() {
+        var nodes = textNodes(el).map(function (n) { return { node: n, text: n.nodeValue }; });
+        var total = 0; nodes.forEach(function (x) { total += x.text.length; });
+        if (!total) return;
+        var own = el.hasAttribute("aria-label");
+        if (!own) el.setAttribute("aria-label", el.textContent.replace(/\s+/g, " ").trim());
+        el.style.minHeight = el.offsetHeight + "px";
+        el.classList.add("is-scrambling");
+        var shown = 0, step = Math.max(1, Math.ceil(total / 40));
+        function paint() {
+          var i = 0;
+          nodes.forEach(function (x) {
+            var s = "";
+            for (var k = 0; k < x.text.length; k++, i++) {
+              var ch = x.text.charAt(k);
+              s += i < shown || /\s/.test(ch) ? ch : GLYPHS.charAt(Math.floor(Math.random() * GLYPHS.length));
+            }
+            x.node.nodeValue = s;
+          });
+        }
+        paint();
+        var t = setInterval(function () {
+          shown += step;
+          if (shown < total) return paint();
+          clearInterval(t);
+          nodes.forEach(function (x) { x.node.nodeValue = x.text; });
+          el.style.minHeight = ""; el.classList.remove("is-scrambling");
+          if (!own) el.removeAttribute("aria-label");
+        }, 34);
+      }
+      /* Measure with the real font: wait for web fonts before locking the height. */
+      function start() {
+        var f = document.fonts, cs = getComputedStyle(el);
+        if (!f || !f.load) return run();
+        f.load(cs.fontStyle + " " + cs.fontWeight + " " + cs.fontSize + " " + cs.fontFamily, el.textContent).then(run, run);
+      }
+      if (el.getAttribute("data-scramble") === "load" || !("IntersectionObserver" in window)) return start();
+      var io = new IntersectionObserver(function (es) { if (es[0].isIntersecting) { io.disconnect(); start(); } }, { threshold: 0.6 });
+      io.observe(el);
+    });
+  }
+  /* Mask reveal: [data-mask="words"|"lines"] wraps each word in a clipping window; the words rise into place when the block
+     scrolls into view, one after another (words) or a line at a time (lines). Blocks already on screen are left alone. */
+  function mask(root) {
+    (root || document).querySelectorAll("[data-mask]").forEach(function (el) {
+      if (el._bsMask || reduce || !("IntersectionObserver" in window)) return; el._bsMask = true;
+      if (onScreen(el)) return;
+      var byLine = el.getAttribute("data-mask") === "lines", words = [];
+      textNodes(el).forEach(function (t) {
+        var frag = document.createDocumentFragment();
+        t.nodeValue.split(/(\s+)/).forEach(function (p) {
+          if (!p) return;
+          if (/^\s+$/.test(p)) return frag.appendChild(document.createTextNode(p));
+          var w = document.createElement("span"), i = document.createElement("span");
+          w.className = "bs-mask__w"; i.className = "bs-mask__i"; i.textContent = p;
+          w.appendChild(i); frag.appendChild(w); words.push(w);
+        });
+        t.parentNode.replaceChild(frag, t);
+      });
+      var line = -1, top = null;
+      words.forEach(function (w, k) {
+        var y = w.getBoundingClientRect().top;
+        if (top === null || y > top + 4) { line++; top = y; }
+        w.firstChild.style.transitionDelay = Math.min(byLine ? line * 110 : k * 55, 1400) + "ms";
+      });
+      el.classList.add("bs-mask");
+      var io = new IntersectionObserver(function (es) {
+        if (es[0].isIntersecting) { el.classList.add("is-visible"); io.disconnect(); }
+      }, { rootMargin: "0px 0px -12% 0px" });
+      io.observe(el);
+    });
+  }
+  /* Particles: [data-particles] gets a canvas of short volt and silver dashes behind its content. They drift, scatter away
+     from the pointer (or a finger), jolt with the scroll speed and spring back. Runs only while on screen; drawn still with
+     reduced motion. */
+  function particles(root) {
+    (root || document).querySelectorAll("[data-particles]").forEach(function (host) {
+      if (host._bsPt) return; host._bsPt = true;
+      var cv = document.createElement("canvas"), c = cv.getContext && cv.getContext("2d");
+      if (!c) return;
+      cv.className = "bs-particles"; cv.setAttribute("aria-hidden", "true"); host.insertBefore(cv, host.firstChild);
+      var css = getComputedStyle(document.documentElement);
+      var cols = [css.getPropertyValue("--volt").trim() || "#e1fa03", css.getPropertyValue("--silver").trim() || "#b0b0b0", css.getPropertyValue("--trace-strong").trim() || "#58697b"];
+      var W = 0, H = 0, ps = [], px = -9999, py = -9999, pon = false, live = false, raf = 0, lastY = window.scrollY, t0 = 0;
+      function build() {
+        var gap = W < 640 ? 44 : 60, jit = gap * 0.5; ps = [];
+        for (var y = gap / 2; y < H + gap; y += gap) for (var x = gap / 2; x < W + gap; x += gap) {
+          var ox = x + (Math.random() - 0.5) * jit * 2, oy = y + (Math.random() - 0.5) * jit * 2, r = Math.random();
+          ps.push({ ox: ox, oy: oy, x: ox, y: oy, vx: 0, vy: 0, w: 1.4 + Math.random() * 1.2, h: 5 + Math.random() * 8,
+            rot: Math.random() * Math.PI, ph: Math.random() * 6.28, col: r < 0.45 ? 0 : r < 0.75 ? 1 : 2, a: r < 0.45 ? 0.75 : 0.45 });
+        }
+      }
+      function draw() {
+        c.clearRect(0, 0, W, H);
+        for (var g = 0; g < 3; g++) {
+          c.fillStyle = cols[g]; c.globalAlpha = g === 0 ? 0.8 : 0.45; c.beginPath();
+          for (var i = 0; i < ps.length; i++) {
+            var p = ps[i]; if (p.col !== g) continue;
+            var sp = Math.sqrt(p.vx * p.vx + p.vy * p.vy), ang = sp > 0.4 ? Math.atan2(p.vy, p.vx) + Math.PI / 2 : p.rot;
+            var hw = p.w / 2, hh = (p.h + Math.min(sp * 0.8, 10)) / 2, cs = Math.cos(ang), sn = Math.sin(ang);
+            c.moveTo(p.x + (-hw * cs - -hh * sn), p.y + (-hw * sn + -hh * cs));
+            c.lineTo(p.x + (hw * cs - -hh * sn), p.y + (hw * sn + -hh * cs));
+            c.lineTo(p.x + (hw * cs - hh * sn), p.y + (hw * sn + hh * cs));
+            c.lineTo(p.x + (-hw * cs - hh * sn), p.y + (-hw * sn + hh * cs));
+            c.closePath();
+          }
+          c.fill();
+        }
+        c.globalAlpha = 1;
+      }
+      function size() {
+        var dpr = Math.min(window.devicePixelRatio || 1, 2);
+        W = host.clientWidth; H = host.clientHeight;
+        cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+        c.setTransform(dpr, 0, 0, dpr, 0, 0); build(); draw();
+      }
+      function frame(now) {
+        raf = 0;
+        if (!live || document.hidden) return;
+        var t = (now - t0) / 1000, b = cv.getBoundingClientRect(), mx = px - b.left, my = py - b.top, R = W < 640 ? 90 : 130, R2 = R * R;
+        for (var i = 0; i < ps.length; i++) {
+          var p = ps[i];
+          if (pon) {
+            var dx = p.x - mx, dy = p.y - my, d2 = dx * dx + dy * dy;
+            if (d2 < R2 && d2 > 0.01) { var d = Math.sqrt(d2), f = Math.pow((R - d) / R, 2) * 6; p.vx += dx / d * f; p.vy += dy / d * f; }
+          }
+          var hx = p.ox + Math.sin(t * 0.6 + p.ph) * 3, hy = p.oy + Math.cos(t * 0.5 + p.ph) * 3;
+          p.vx = (p.vx + (hx - p.x) * 0.06) * 0.82; p.vy = (p.vy + (hy - p.y) * 0.06) * 0.82;
+          p.x += p.vx; p.y += p.vy;
+        }
+        draw();
+        raf = requestAnimationFrame(frame);
+      }
+      function wake() { if (live && !raf && !document.hidden) raf = requestAnimationFrame(frame); }
+      size();
+      if ("ResizeObserver" in window) new ResizeObserver(function () { if (host.clientWidth !== W || host.clientHeight !== H) size(); }).observe(host);
+      if (reduce) return;
+      t0 = performance.now();
+      window.addEventListener("pointermove", function (e) { px = e.clientX; py = e.clientY; pon = true; }, { passive: true });
+      document.documentElement.addEventListener("pointerleave", function () { pon = false; });
+      window.addEventListener("pointerup", function (e) { if (e.pointerType !== "mouse") pon = false; }, { passive: true });
+      window.addEventListener("scroll", function () {
+        var dy = window.scrollY - lastY; lastY = window.scrollY;
+        if (!live) return;
+        var k = Math.max(-14, Math.min(14, dy * 0.18));
+        for (var i = 0; i < ps.length; i++) ps[i].vy -= k * (0.5 + (i % 7) / 7);
+      }, { passive: true });
+      document.addEventListener("visibilitychange", wake);
+      if ("IntersectionObserver" in window) new IntersectionObserver(function (es) { live = es[0].isIntersecting; wake(); }).observe(host);
+      else { live = true; wake(); }
+    });
+  }
+  /* Tilt: [data-tilt] (max degrees, default 6) leans toward the pointer with a volt glare, on fine pointers. When it also has
+     [data-reveal] it enters in 3D the first time it scrolls into view (phones included); cards already on screen at load stay put. */
+  function tilt(root) {
+    (root || document).querySelectorAll("[data-tilt]").forEach(function (el) {
+      if (el._bsTilt || reduce) return; el._bsTilt = true;
+      if (el.hasAttribute("data-reveal") && onScreen(el)) el.classList.add("is-visible");
+      if (!fine) return;
+      var max = parseFloat(el.getAttribute("data-tilt")) || 6, x = 0, y = 0, q = false;
+      function paint() {
+        q = false;
+        var b = el.getBoundingClientRect(), fx = Math.min(1, Math.max(0, (x - b.left) / b.width)), fy = Math.min(1, Math.max(0, (y - b.top) / b.height));
+        el.style.setProperty("--ry", ((fx - 0.5) * 2 * max).toFixed(2) + "deg");
+        el.style.setProperty("--rx", ((0.5 - fy) * 2 * max).toFixed(2) + "deg");
+        el.style.setProperty("--gx", (fx * 100).toFixed(1) + "%");
+        el.style.setProperty("--gy", (fy * 100).toFixed(1) + "%");
+      }
+      el.addEventListener("pointerenter", function () { el.style.transitionDelay = "0ms"; el.classList.add("is-tilting"); });
+      el.addEventListener("pointermove", function (e) { x = e.clientX; y = e.clientY; if (!q) { q = true; requestAnimationFrame(paint); } });
+      el.addEventListener("pointerleave", function () { el.classList.remove("is-tilting"); el.style.setProperty("--rx", "0deg"); el.style.setProperty("--ry", "0deg"); });
+    });
+  }
+  /* Ticker: .bs-ticker loops its .bs-ticker__group sideways forever (copies are added, hidden from screen readers and Tab).
+     Scrolling the page pushes it faster, scrolling back reverses it; it eases to a stop under the pointer or keyboard focus.
+     data-speed (px/s, default 40), data-direction="right". Reduced motion: a still row that scrolls by hand. */
+  function ticker(root) {
+    (root || document).querySelectorAll(".bs-ticker").forEach(function (box) {
+      if (box._bsTk) return; box._bsTk = true;
+      var track = box.querySelector(".bs-ticker__track"), group = track && track.querySelector(".bs-ticker__group");
+      if (!group) return;
+      if (reduce) { box.classList.add("is-static"); return; }
+      var speed = parseFloat(box.getAttribute("data-speed")) || 40, dir = box.getAttribute("data-direction") === "right" ? 1 : -1;
+      var loop = 0, off = 0, rate = 0, push = 0, held = false, live = false, raf = 0, last = 0, lastY = window.scrollY;
+      function fill() {
+        track.querySelectorAll(".bs-ticker__group[aria-hidden]").forEach(function (n) { n.remove(); });
+        var gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+        loop = group.getBoundingClientRect().width + gap;
+        for (var i = 0, need = Math.ceil(box.clientWidth / Math.max(1, loop)) + 1; i < need; i++) {
+          var cl = group.cloneNode(true); cl.setAttribute("aria-hidden", "true");
+          cl.querySelectorAll("a, button").forEach(function (a) { a.setAttribute("tabindex", "-1"); });
+          track.appendChild(cl);
+        }
+      }
+      function tick(now) {
+        raf = live && !document.hidden ? requestAnimationFrame(tick) : 0;
+        var dt = last ? Math.min((now - last) / 1000, 0.05) : 0; last = now;
+        rate += ((held ? 0 : 1) - rate) * (1 - Math.exp(-dt / 0.19));
+        if (held && rate < 0.02) rate = 0;
+        push *= Math.exp(-dt / 0.4);
+        off += (dir * rate - push * (held ? 0 : 1)) * speed * dt;
+        if (loop > 0) { off = off % loop; if (off > 0) off -= loop; }
+        track.style.transform = "translate3d(" + off.toFixed(2) + "px,0,0)";
+      }
+      function wake() { if (live && !raf && !document.hidden) { last = 0; raf = requestAnimationFrame(tick); } }
+      fill();
+      if ("ResizeObserver" in window) new ResizeObserver(fill).observe(box);
+      box.addEventListener("pointerenter", function (e) { if (e.pointerType === "mouse") held = true; });
+      box.addEventListener("pointerleave", function () { held = false; });
+      box.addEventListener("focusin", function (e) {
+        held = true;
+        var b = box.getBoundingClientRect(), r = e.target.getBoundingClientRect(), pad = 24, d = 0;
+        if (r.left < b.left + pad) d = b.left + pad - r.left; else if (r.right > b.right - pad) d = b.right - pad - r.right;
+        if (d) { off += d; track.style.transform = "translate3d(" + off.toFixed(2) + "px,0,0)"; }
+      });
+      box.addEventListener("focusout", function () { held = false; });
+      window.addEventListener("scroll", function () {
+        var dy = window.scrollY - lastY; lastY = window.scrollY;
+        if (live) push = Math.max(-6, Math.min(6, push + dy * 0.02));
+      }, { passive: true });
+      document.addEventListener("visibilitychange", wake);
+      if ("IntersectionObserver" in window) new IntersectionObserver(function (es) { live = es[0].isIntersecting; wake(); }, { rootMargin: "96px" }).observe(box);
+      else { live = true; wake(); }
+    });
+  }
+  window.BrunoSilvaUSA = { reveal: reveal, progress: progress, spotlight: spotlight, orbit: orbit, code: code, compare: compare, chat: chat, beams: beams, showcase: showcase, count: count, scramble: scramble, mask: mask, particles: particles, tilt: tilt, ticker: ticker };
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { reveal(); progress(); spotlight(); orbit(); code(); compare(); chat(); beams(); showcase(); count(); scramble(); mask(); particles(); tilt(); ticker(); });
+  else { reveal(); progress(); spotlight(); orbit(); code(); compare(); chat(); beams(); showcase(); count(); scramble(); mask(); particles(); tilt(); ticker(); }
 })();

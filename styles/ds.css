@@ -973,3 +973,52 @@ a.bs-pill:hover { border-color: var(--volt); }
 .bs-pillars--grid .bs-pillar:nth-child(even) { border-left: 1px solid var(--silver); }
 .bs-pillars--grid .bs-pillar img { height: 40px; }
 .bs-pillars--grid .bs-pillar span { font-size: 13px; line-height: 16px; letter-spacing: .06em; }
+
+/* =====================================================================================================
+   MOTION PACK — ScrambleText, MaskReveal, ParticleField, TiltCard, Ticker (driven by components/bundle.js)
+   ===================================================================================================== */
+/* ScrambleText: the decoding glyphs glow volt while they settle. */
+[data-scramble].is-scrambling { text-shadow: 0 0 14px var(--volt-halo); }
+
+/* MaskReveal: each word rises from behind a clipping window. */
+.bs-mask__w { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: .12em; margin-bottom: -.12em; }
+.bs-mask__i { display: inline-block; transform: translateY(110%); transition: transform 800ms cubic-bezier(.19, 1, .22, 1); will-change: transform; }
+.bs-mask.is-visible .bs-mask__i { transform: none; }
+
+/* ParticleField: the canvas sits behind the host's content and fades out toward the bottom. */
+[data-particles] { position: relative; isolation: isolate; }
+.bs-particles { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; pointer-events: none;
+  -webkit-mask-image: linear-gradient(180deg, #000 55%, transparent); mask-image: linear-gradient(180deg, #000 55%, transparent); }
+
+/* TiltCard: one transform built from the pointer tilt (--rx/--ry), the hover lift (--ts) and the 3D entrance (--in-*). */
+[data-tilt] { --rx: 0deg; --ry: 0deg; --ts: 1; --in-y: 0px; --in-rx: 0deg; --gx: 50%; --gy: 50%;
+  position: relative; transform-origin: 50% 100%;
+  transform: perspective(900px) translateY(var(--in-y)) rotateX(calc(var(--rx) + var(--in-rx))) rotateY(var(--ry)) scale(var(--ts));
+  transition: transform 450ms var(--easing-out), opacity var(--duration-slow) var(--easing-out); }
+.bs-js [data-tilt][data-reveal], .bs-js [data-tilt][data-reveal].is-visible {
+  transform: perspective(900px) translateY(var(--in-y)) rotateX(calc(var(--rx) + var(--in-rx))) rotateY(var(--ry)) scale(var(--ts));
+  transition: transform 900ms var(--easing-out), opacity var(--duration-slow) var(--easing-out); }
+.bs-js [data-tilt][data-reveal]:not(.is-visible) { --in-y: 48px; --in-rx: 16deg; opacity: 0; }
+[data-tilt].is-tilting, .bs-js [data-tilt][data-reveal].is-tilting { --ts: 1.02; transition: transform 140ms linear, opacity var(--duration-slow) var(--easing-out); }
+[data-tilt]::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 2; opacity: 0;
+  background: radial-gradient(circle at var(--gx) var(--gy), rgba(225, 250, 3, .16), transparent 60%);
+  transition: opacity var(--duration-base) var(--easing-standard); }
+[data-tilt].is-tilting::after { opacity: 1; }
+[data-tilt]:focus-visible { --rx: 0deg; --ry: 0deg; }
+.bs-reduced [data-tilt], .bs-reduced [data-tilt][data-reveal] { transform: none !important; opacity: 1 !important; }
+
+/* Ticker: an endless row of big outlined words; links fill volt on hover or focus. */
+.bs-ticker { position: relative; overflow: hidden; padding-block: var(--space-4); background: var(--black); border-block: 1px solid var(--trace);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+.bs-ticker__track { display: flex; width: max-content; column-gap: var(--space-8); will-change: transform; }
+.bs-ticker__group { display: flex; align-items: center; column-gap: var(--space-8); margin: 0; padding: 0; list-style: none; }
+.bs-ticker__group li { display: flex; align-items: center; column-gap: var(--space-8); flex: none; }
+.bs-ticker__group li::after { content: "</>"; font-family: var(--font-display); font-weight: 800; font-size: 18px; line-height: 1; color: var(--volt); filter: drop-shadow(0 0 6px var(--volt-halo)); }
+.bs-ticker__item { display: inline-flex; align-items: center; min-height: 44px; font-family: var(--font-display); font-weight: 900; font-size: clamp(28px, 5vw, 56px); line-height: 1.1;
+  letter-spacing: .02em; text-transform: uppercase; white-space: nowrap; text-decoration: none; color: transparent; -webkit-text-stroke: 1px var(--silver);
+  transition: color var(--duration-fast) var(--easing-standard), -webkit-text-stroke-color var(--duration-fast) var(--easing-standard); }
+a.bs-ticker__item:hover, a.bs-ticker__item:focus-visible { color: var(--volt); -webkit-text-stroke-color: var(--volt); }
+a.bs-ticker__item:focus-visible { outline: 2px solid var(--volt); outline-offset: 4px; }
+.bs-ticker.is-static { overflow-x: auto; -webkit-mask-image: none; mask-image: none; }
+.bs-ticker.is-static .bs-ticker__track { transform: none !important; padding-inline: var(--space-6); }
+@media (prefers-reduced-motion: reduce) { .bs-mask__i { transform: none !important; transition: none; } }

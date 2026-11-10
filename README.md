@@ -66,6 +66,17 @@ O endpoint confere a assinatura do Sanity e recusa pedidos sem ela ou com mais d
 
 O formulário chama `POST /api/subscribe`, com as mesmas proteções das outras páginas (só JSON do próprio site, limite de tamanho e de tentativas por IP, sem o e-mail nos logs). Sem provedor (`EMAIL_PROVIDER=none`), nada é guardado e aparece um aviso de exemplo. Para receber inscrições de verdade, escolha `kit`, `mailchimp` ou `brevo` e preencha as chaves (veja `.env.example`).
 
+## Movimento
+
+Os efeitos vêm do design system (`public/ds.js` e `styles/ds.css`, componentes ScrambleText, MaskReveal, ParticleField, TiltCard e Ticker):
+- o título principal de cada página se "decodifica" ao abrir;
+- os títulos de seção, a frase de abertura e os subtítulos dos posts sobem palavra por palavra ao rolar;
+- partículas volt reagem ao mouse e à rolagem atrás do cabeçalho da home e dos pilares;
+- a faixa com os quatro pilares corre sozinha e acelera com a rolagem;
+- os cartões inclinam com brilho sob o mouse e entram em 3D ao aparecer.
+
+O corpo dos posts não se mexe. Tudo pausa fora da tela, e quem pede "reduzir movimento" no aparelho vê tudo parado. Para mudar um efeito, atualize o design system e copie de novo os dois arquivos.
+
 ## Onde editar
 
 - Textos fixos (menu, títulos, newsletter, rodapé, autor padrão): `content/site.js`.

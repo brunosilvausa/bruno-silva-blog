@@ -18,7 +18,7 @@ export default function NewsletterSignup({ data, latestHref, formId = 'email-new
         <div className="bs-news bs-glass bs-glass--strong" data-reveal>
           <div>
             <span className="bs-shead__kicker">{data.kicker}</span>
-            <Heading className="bs-news__title" id={`${formId}-titulo`}><Title value={data.title} /></Heading>
+            <Heading className="bs-news__title" id={`${formId}-titulo`} {...(level === 1 ? { 'data-scramble': 'load' } : { 'data-mask': 'lines' })}><Title value={data.title} /></Heading>
             <p className="bs-news__text">{data.text}</p>
             <ul className="bs-news__list">
               {data.benefits.map((b) => <li key={b}><Check /><span>{b}</span></li>)}

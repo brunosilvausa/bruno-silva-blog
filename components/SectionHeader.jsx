@@ -6,7 +6,7 @@ export default function SectionHeader({ kicker, title, id, text, level = 2, cent
   return (
     <header className={`bs-shead${center ? ' bs-shead--center' : ''}`} data-reveal="load">
       <div className="bs-shead__kicker">{kicker}</div>
-      <Heading className="bs-shead__title" id={id}><Title value={title} /></Heading>
+      <Heading className="bs-shead__title" id={id} {...(level === 1 ? { 'data-scramble': 'load' } : { 'data-mask': 'lines' })}><Title value={title} /></Heading>
       {text ? <p className="bs-shead__text">{text}</p> : null}
     </header>
   );

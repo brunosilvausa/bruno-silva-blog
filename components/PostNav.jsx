@@ -4,7 +4,7 @@ function Item({ post, dir }) {
   if (!post) return <span className="blog-adjacent__empty" aria-hidden="true" />;
   const label = dir === 'prev' ? 'Anterior' : 'Próximo';
   return (
-    <a className={`blog-adjacent__link blog-adjacent__link--${dir}`} href={`/posts/${post.slug}`} rel={dir}>
+    <a className={`blog-adjacent__link blog-adjacent__link--${dir}`} href={`/posts/${post.slug}`} rel={dir} data-tilt="5" data-reveal>
       <span className="blog-adjacent__dir">
         {dir === 'prev' ? <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6" /></svg> : null}
         {label}

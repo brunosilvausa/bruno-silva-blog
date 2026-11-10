@@ -7,6 +7,8 @@ import BlogGrid from './BlogGrid';
 import Pagination from './Pagination';
 import NewsletterSignup from './NewsletterSignup';
 import PillarTabs from './PillarTabs';
+import Ticker from './Ticker';
+import { PILLARS } from '@/lib/pillars';
 
 /** A page number from the URL: a positive integer, or null. */
 export function parsePage(value) {
@@ -31,10 +33,16 @@ export default async function PostList({ page, pillar, header, current, base = '
   if (page > totalPages) notFound();
   return (
     <Shell current={current}>
-      <section className="bs-section" aria-labelledby="titulo">
+      {/* Header over the reactive particle field, then the pillar ticker, then the posts. */}
+      <section className="bs-section blog-hero" aria-labelledby="titulo" data-particles>
         <div className="bs-container">
           <SectionHeader level={1} id="titulo" kicker={header.kicker} title={header.title} text={header.text} />
           <PillarTabs current={pillar ? `/pilar/${pillar.slug}` : '/'} />
+        </div>
+      </section>
+      <Ticker label="Pilares do blog" items={PILLARS.map((p) => ({ label: p.label, href: `/pilar/${p.slug}` }))} />
+      <section className="bs-section blog-posts" aria-label="Posts">
+        <div className="bs-container">
           {posts.length ? (
             <BlogGrid posts={posts} featureFirst={page === 1} headingLevel={2} />
           ) : (

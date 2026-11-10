@@ -47,7 +47,7 @@ export default function BlogCard({ post, featured = false, headingLevel = 3 }) {
     </>
   );
   return (
-    <a className={`bs-bcard${featured ? ' bs-bcard--featured' : ''}`} href={`/posts/${post.slug}`} data-reveal>
+    <a className={`bs-bcard${featured ? ' bs-bcard--featured' : ''}`} href={`/posts/${post.slug}`} data-reveal data-tilt={featured ? '4' : '6'}>
       <Cover post={post} pillar={pillar} featured={featured} />
       {featured ? <div className="bs-bcard__body">{text}</div> : text}
     </a>
