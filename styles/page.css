@@ -26,3 +26,5 @@ a.bs-article__kicker:hover { text-decoration: underline; text-underline-offset: 
 @media (max-width: 560px) { .blog-pages { justify-content: center; } .blog-pages > span:empty { display: none; } }
 .bs-field__error:empty { display: none; }
 @media (pointer: coarse) { .bs-news__last, a.bs-article__kicker { display: inline-flex; align-items: center; min-height: 44px; } }
+/* Capa colorida dentro do post (nos cartões da lista ela continua em preto e branco). */
+.bs-prose figure.blog-cover img { filter: none; }

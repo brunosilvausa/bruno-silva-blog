@@ -25,7 +25,8 @@ export default function Article({ post, fallbackAuthor }) {
         </header>
         <div className="bs-prose">
           {post.cover ? (
-            <figure>
+            // The cover keeps its colours inside the post; cards (and images in the text) stay black and white.
+            <figure className="blog-cover">
               <img src={`${post.cover.url}?w=1360&fit=max&auto=format`} alt={post.cover.alt} fetchPriority="high" decoding="async" />
               {post.cover.caption ? <figcaption>{post.cover.caption}</figcaption> : null}
             </figure>

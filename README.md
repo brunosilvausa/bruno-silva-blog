@@ -42,7 +42,7 @@ O site busca os posts no servidor, então não precisa configurar CORS.
 No editor: Posts → Create. Preencha título, endereço (botão Generate), pilar, data, resumo e texto, e clique em **Publish**. O post aparece no site a partir da data de publicação.
 
 - O texto aceita títulos (H2, H3), listas, negrito, itálico, código, links, imagens com legenda, uma citação e a caixa "Dica / Atenção".
-- Capa é opcional. Sem ela, o cartão usa a bandeira e o ícone do pilar.
+- Capa é opcional. Sem ela, o cartão usa a bandeira e o ícone do pilar. Na lista de posts a capa aparece em preto e branco; dentro do post, colorida.
 - Crie um Autor (nome, foto e bio) e escolha-o em cada post. Sem autor, o site usa o texto de `author` em `content/site.js`.
 
 ## Atualização na hora (opcional)
