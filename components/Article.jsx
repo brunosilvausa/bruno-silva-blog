@@ -1,9 +1,11 @@
 import PortableText from './PortableText';
+import ShareButton from './ShareButton';
+import { imageSize, imageSrcSet, imageUrl } from '@/lib/image';
 import { pillarOf } from '@/lib/pillars';
 import { formatDate } from '@/lib/format';
 
 /** DS ArticleLayout: reading-progress bar, 680px column, header with byline, prose body and author box. */
-export default function Article({ post, fallbackAuthor }) {
+export default function Article({ post, fallbackAuthor, shareUrl }) {
   const pillar = pillarOf(post.pillar);
   const author = {
     name: post.author?.name || fallbackAuthor.name,
@@ -27,12 +29,27 @@ export default function Article({ post, fallbackAuthor }) {
           {post.cover ? (
             // The cover keeps its colours inside the post; cards (and images in the text) stay black and white.
             <figure className="blog-cover">
-              <img src={`${post.cover.url}?w=1360&fit=max&auto=format`} alt={post.cover.alt} fetchPriority="high" decoding="async" />
+              {/* Phones get a 640px file, desktops up to 1360px; width/height reserve the space so the text doesn't jump. */}
+              <img
+                src={imageUrl(post.cover.url, 1360, { fit: 'max' })}
+                srcSet={imageSrcSet(post.cover.url, [640, 960, 1360])}
+                sizes="(max-width: 728px) calc(100vw - 48px), 680px"
+                {...(imageSize(post.cover.url) || {})}
+                alt={post.cover.alt}
+                fetchPriority="high"
+                decoding="async"
+              />
               {post.cover.caption ? <figcaption>{post.cover.caption}</figcaption> : null}
             </figure>
           ) : null}
           <PortableText value={post.body} />
         </div>
+        {shareUrl ? (
+          <div className="blog-share">
+            <p>Gostou? Mande para alguém</p>
+            <ShareButton url={shareUrl} title={post.title} text={post.lead || post.description} />
+          </div>
+        ) : null}
         <aside className="bs-author" aria-label="Sobre o autor">
           <img src={author.image} alt="" width="144" height="144" loading="lazy" decoding="async" />
           <div>

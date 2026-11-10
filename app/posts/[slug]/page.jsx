@@ -3,6 +3,7 @@ import { site } from '@/content/site';
 import { getAllPosts, getPost, getRelated } from '@/lib/sanity';
 import { pillarOf } from '@/lib/pillars';
 import { absolute } from '@/lib/site-url';
+import { FEED_TYPES } from '@/lib/feed';
 import Shell from '@/components/Shell';
 import Article from '@/components/Article';
 import NewsletterSignup from '@/components/NewsletterSignup';
@@ -22,7 +23,7 @@ export async function generateMetadata({ params }) {
   return {
     title: `${post.title} | Bruno Silva USA`,
     description: post.description,
-    alternates: { canonical: `/posts/${post.slug}` },
+    alternates: { canonical: `/posts/${post.slug}`, types: FEED_TYPES },
     openGraph: {
       type: 'article',
       locale: 'pt_BR',
@@ -63,7 +64,7 @@ export default async function PostPage({ params }) {
   return (
     <Shell>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(post) }} />
-      <Article post={post} fallbackAuthor={site.author} />
+      <Article post={post} fallbackAuthor={site.author} shareUrl={absolute(`/posts/${post.slug}`)} />
       <NewsletterSignup data={site.newsletter} />
       {related.length ? (
         <section className="bs-section" aria-labelledby="h-relacionados">

@@ -1,3 +1,4 @@
+import { FEED_TYPES } from '@/lib/feed';
 import { permanentRedirect } from 'next/navigation';
 import { site } from '@/content/site';
 import PostList, { parsePage } from '@/components/PostList';
@@ -6,7 +7,7 @@ export const revalidate = 60;
 
 export async function generateMetadata({ params }) {
   const { n } = await params;
-  return { title: `Página ${n} | ${site.meta.title}`, alternates: { canonical: `/pagina/${n}` } };
+  return { title: `Página ${n} | ${site.meta.title}`, alternates: { canonical: `/pagina/${n}`, types: FEED_TYPES } };
 }
 
 export default async function HomePage({ params }) {

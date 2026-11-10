@@ -1,3 +1,4 @@
+import { FEED_TYPES } from '@/lib/feed';
 import { notFound } from 'next/navigation';
 import { site } from '@/content/site';
 import { PILLARS, pillarBySlug } from '@/lib/pillars';
@@ -16,7 +17,7 @@ export async function generateMetadata({ params }) {
   return {
     title: `${pillar.label} | ${site.meta.title}`,
     description: site.pillarPage.texts[pillar.slug],
-    alternates: { canonical: `/pilar/${pillar.slug}` },
+    alternates: { canonical: `/pilar/${pillar.slug}`, types: FEED_TYPES },
   };
 }
 

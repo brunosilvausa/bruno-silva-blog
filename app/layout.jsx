@@ -5,6 +5,7 @@ import '@/styles/ds.css';
 import '@/styles/page.css';
 import { site } from '@/content/site';
 import { siteUrl } from '@/lib/site-url';
+import { FEED_TYPES } from '@/lib/feed';
 
 const orbitron = Orbitron({ subsets: ['latin'], weight: ['700', '800', '900'], variable: '--font-orbitron', display: 'swap' });
 const barlow = Barlow({ subsets: ['latin'], weight: ['400', '500', '600'], variable: '--font-barlow', display: 'swap' });
@@ -14,8 +15,7 @@ export const metadata = {
   metadataBase: siteUrl(),
   title: site.meta.title,
   description: site.meta.description,
-  icons: { icon: '/img/monogram.png' },
-  alternates: { types: { 'application/rss+xml': [{ url: '/rss.xml', title: 'Blog Bruno Silva USA' }] } },
+  alternates: { types: FEED_TYPES },
   openGraph: {
     type: 'website',
     locale: 'pt_BR',

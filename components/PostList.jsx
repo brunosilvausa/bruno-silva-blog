@@ -6,6 +6,7 @@ import SectionHeader from './SectionHeader';
 import BlogGrid from './BlogGrid';
 import Pagination from './Pagination';
 import NewsletterSignup from './NewsletterSignup';
+import PillarTabs from './PillarTabs';
 
 /** A page number from the URL: a positive integer, or null. */
 export function parsePage(value) {
@@ -33,6 +34,7 @@ export default async function PostList({ page, pillar, header, current, base = '
       <section className="bs-section" aria-labelledby="titulo">
         <div className="bs-container">
           <SectionHeader level={1} id="titulo" kicker={header.kicker} title={header.title} text={header.text} />
+          <PillarTabs current={pillar ? `/pilar/${pillar.slug}` : '/'} />
           {posts.length ? (
             <BlogGrid posts={posts} featureFirst={page === 1} headingLevel={2} />
           ) : (

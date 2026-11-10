@@ -1,3 +1,4 @@
+import { FEED_TYPES } from '@/lib/feed';
 import { notFound, permanentRedirect } from 'next/navigation';
 import { site } from '@/content/site';
 import { pillarBySlug } from '@/lib/pillars';
@@ -9,7 +10,7 @@ export async function generateMetadata({ params }) {
   const { pilar, n } = await params;
   const pillar = pillarBySlug(pilar);
   if (!pillar) return {};
-  return { title: `${pillar.label}, página ${n} | ${site.meta.title}`, alternates: { canonical: `/pilar/${pillar.slug}/pagina/${n}` } };
+  return { title: `${pillar.label}, página ${n} | ${site.meta.title}`, alternates: { canonical: `/pilar/${pillar.slug}/pagina/${n}`, types: FEED_TYPES } };
 }
 
 export default async function PillarPageN({ params }) {

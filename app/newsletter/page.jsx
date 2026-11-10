@@ -1,3 +1,4 @@
+import { FEED_TYPES } from '@/lib/feed';
 import { site } from '@/content/site';
 import { getPosts } from '@/lib/sanity';
 import Shell from '@/components/Shell';
@@ -10,7 +11,7 @@ export const revalidate = 60;
 export const metadata = {
   title: site.newsletter.page.title,
   description: site.newsletter.text,
-  alternates: { canonical: '/newsletter' },
+  alternates: { canonical: '/newsletter', types: FEED_TYPES },
 };
 
 // Newsletter page: NewsletterSignup → BlogCard grid of recent posts (DS "Newsletter page").

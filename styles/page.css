@@ -28,3 +28,36 @@ a.bs-article__kicker:hover { text-decoration: underline; text-underline-offset: 
 @media (pointer: coarse) { .bs-news__last, a.bs-article__kicker { display: inline-flex; align-items: center; min-height: 44px; } }
 /* Capa colorida dentro do post (nos cartões da lista ela continua em preto e branco). */
 .bs-prose figure.blog-cover img { filter: none; }
+.bs-prose figure.blog-cover img { height: auto; }
+
+/* Celular. */
+/* Títulos encolhem com a tela: palavras longas (EMPREENDEDORISMO) cabem sem rolagem lateral. */
+.bs-shead__title, .bs-article__title, .bs-bcard__title { overflow-wrap: break-word; }
+@media (max-width: 560px) { .bs-shead__title, .bs-article__title { font-size: clamp(22px, 6.6vw, 32px); } }
+/* Barra de navegação mais baixa no celular: mais espaço para o texto. */
+@media (max-width: 720px) {
+  .bs-nav__inner { min-height: 60px; gap: var(--space-4); }
+  html { scroll-padding-top: calc(61px + var(--space-4)); }
+}
+/* Tablet com toque: links da barra com 44px de altura. */
+@media (pointer: coarse) and (min-width: 721px) { .bs-nav__links a { display: inline-flex; align-items: center; min-height: 44px; padding-block: 0; box-sizing: border-box; } }
+
+/* Filtro por pilar no celular (a barra esconde os links dos pilares abaixo de 720px). */
+.blog-pillars { display: none; }
+@media (max-width: 720px) {
+  .blog-pillars { display: block; margin-inline: calc(-1 * max(24px, env(safe-area-inset-left, 0px))); }
+  .bs-section > .bs-container > .blog-pillars { margin-top: var(--space-6); }
+  .bs-section > .bs-container > .blog-pillars + * { margin-top: var(--space-8); }
+  .blog-pillars ul { display: flex; gap: var(--space-2); margin: 0; padding: 0 max(24px, env(safe-area-inset-left, 0px)); list-style: none; overflow-x: auto; scroll-snap-type: x proximity; scroll-padding-inline: 24px; scrollbar-width: none; }
+  .blog-pillars ul::-webkit-scrollbar { display: none; }
+  .blog-pillars li { flex: none; scroll-snap-align: start; }
+  .blog-pillars a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 var(--space-4); border: 1px solid var(--trace); border-radius: var(--radius-sm); background: var(--black); font-family: var(--font-label); font-weight: 600; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; color: var(--silver); text-decoration: none; white-space: nowrap; }
+  .blog-pillars a[aria-current="page"] { background: var(--volt); border-color: var(--volt); color: var(--on-volt); }
+}
+
+/* Compartilhar, no fim do post. */
+.blog-share { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-3) var(--space-4); margin-top: var(--space-12); padding-top: var(--space-6); border-top: 1px solid var(--trace); }
+.blog-share p { margin: 0 auto 0 0; font-family: var(--font-label); font-weight: 600; font-size: 15px; letter-spacing: .08em; text-transform: uppercase; color: var(--silver); }
+.blog-share__status { flex-basis: 100%; font-size: 14px; color: var(--volt); }
+.blog-share__status:empty { display: none; }
+@media (max-width: 560px) { .blog-share .bs-btn { flex: 1 1 100%; justify-content: center; min-height: 48px; } }
