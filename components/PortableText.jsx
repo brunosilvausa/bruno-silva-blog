@@ -29,6 +29,10 @@ function Spans({ block }) {
     for (const mark of span.marks || []) {
       if (DECORATORS[mark]) { node = DECORATORS[mark](node, `${key}-${mark}`); continue; }
       const def = defs[mark];
+      if (def?._type === 'termLink') {
+        node = <a key={`${key}-${mark}`} className="bs-term" href={`/glossario/${def.slug}`} data-term-short={def.short}>{node}</a>;
+        continue;
+      }
       if (def?._type === 'link') {
         const href = safeHref(def.href, '');
         if (!href) continue;

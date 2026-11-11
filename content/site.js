@@ -77,6 +77,8 @@ export const site = {
       { title: 'Trabalhe comigo', links: [{ label: 'Curso', href: URL_CURSO }, { label: 'Consultoria', href: URL_CONSULTORIA }, { label: 'IA do Zero', href: URL_IA_DO_ZERO }] },
       { title: 'Acompanhe', links: [{ label: 'Sobre', href: '/sobre' }, { label: 'Newsletter', href: '/newsletter' }, { label: 'RSS', href: '/rss.xml' }, { label: 'Todos os links', href: URL_BIO }] },
     ],
+    // Added to the "Blog" column after the pillars, only when there is content.
+    extra: { series: { label: 'Séries', href: '/series' }, glossary: { label: 'Glossário', href: '/glossario' } },
     copyright: '© 2026 Bruno Silva USA',
     legal: [{ label: 'Privacidade', href: '/privacidade' }, { label: 'Termos', href: '/termos' }],
   },

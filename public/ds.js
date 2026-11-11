@@ -656,9 +656,73 @@
       update();
     });
   }
+  /* TermTip: a reused balloon with the short definition of a glossary link (a.bs-term[data-term-short]). Fine pointers only
+     (hover + keyboard focus); on touch the link just navigates. Opens on pointerenter/focus, closes on pointerleave/blur/Escape/scroll,
+     sits above the term (below when there is no room) and stays 8px inside the window edges. aria-describedby while open. */
+  function terms(root) {
+    var links = (root || document).querySelectorAll("a.bs-term[data-term-short]");
+    if (!links.length || !window.matchMedia || !window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+    var tip = document.getElementById("bs-termtip"), current = null, byFocus = false;
+    if (!tip) {
+      tip = document.createElement("div"); tip.id = "bs-termtip"; tip.className = "bs-termtip"; tip.setAttribute("role", "tooltip"); tip.hidden = true;
+      document.body.appendChild(tip);
+    }
+    function hide() {
+      if (current) current.removeAttribute("aria-describedby");
+      current = null; tip.hidden = true; tip.classList.remove("is-open");
+    }
+    function place(a) {
+      var r = a.getBoundingClientRect(), w = tip.offsetWidth, h = tip.offsetHeight, vw = document.documentElement.clientWidth, gap = 8;
+      var left = Math.min(Math.max(8, r.left + r.width / 2 - w / 2), Math.max(8, vw - w - 8));
+      var above = r.top - h - gap >= 8, top = above ? r.top - h - gap : r.bottom + gap;
+      tip.classList.toggle("is-below", !above);
+      tip.style.left = Math.round(left + window.pageXOffset) + "px"; tip.style.top = Math.round(top + window.pageYOffset) + "px";
+    }
+    function show(a, focus) {
+      if (current === a) { if (focus) byFocus = true; return; }
+      hide();
+      var text = a.getAttribute("data-term-short"); if (!text) return;
+      current = a; byFocus = !!focus; tip.textContent = text; tip.hidden = false;
+      a.setAttribute("aria-describedby", tip.id);
+      place(a); tip.classList.add("is-open");
+    }
+    links.forEach(function (a) {
+      if (a._bsTt) return; a._bsTt = true;
+      a.addEventListener("pointerenter", function () { show(a); });
+      a.addEventListener("focus", function () { show(a, true); });
+      a.addEventListener("pointerleave", function () { if (current === a) hide(); });
+      a.addEventListener("blur", function () { if (current === a) hide(); });
+    });
+    if (!document._bsTtKeys) {
+      document._bsTtKeys = true;
+      document.addEventListener("keydown", function (e) { if (e.key === "Escape") hide(); });
+      /* A keyboard focus scrolls the term into view after it opens the balloon: follow the term instead of closing. */
+      window.addEventListener("scroll", function () { if (current && byFocus) place(current); else hide(); }, { passive: true });
+    }
+  }
+  /* Glossary filter: input.bs-gloss__filter (shown by this script) hides li[data-term] that do not contain the typed text
+     (lowercase, no accents), hides letter groups left empty and shows .bs-gloss__empty when nothing matches. Without the script
+     the field stays hidden and the whole list is shown. */
+  function glossaryFilter(root) {
+    (root || document).querySelectorAll(".bs-gloss").forEach(function (box) {
+      var input = box.querySelector(".bs-gloss__filter"); if (!input || input._bsGf) return; input._bsGf = true;
+      var wrap = input.closest(".bs-gloss__filterbox"), empty = box.querySelector(".bs-gloss__empty");
+      var items = Array.prototype.slice.call(box.querySelectorAll("li[data-term]")), groups = Array.prototype.slice.call(box.querySelectorAll("[data-letter]"));
+      if (wrap) wrap.hidden = false; else input.hidden = false;
+      function fold(s) { return String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim(); }
+      function run() {
+        var q = fold(input.value), shown = 0;
+        items.forEach(function (li) { var ok = !q || li.getAttribute("data-term").indexOf(q) >= 0; li.hidden = !ok; if (ok) shown++; });
+        groups.forEach(function (g) { g.hidden = !g.querySelector("li[data-term]:not([hidden])"); });
+        if (empty) empty.hidden = shown > 0;
+      }
+      input.addEventListener("input", run);
+      run();
+    });
+  }
   /* The WebGL headers start once the page is idle (or after 1.5s), so building the scene never delays the first paint or input. */
   function later(fn) { if ("requestIdleCallback" in window) requestIdleCallback(function () { fn(); }, { timeout: 1500 }); else setTimeout(function () { fn(); }, 200); }
-  window.BrunoSilvaUSA = { reveal: reveal, progress: progress, spotlight: spotlight, orbit: orbit, code: code, compare: compare, chat: chat, beams: beams, showcase: showcase, count: count, scramble: scramble, mask: mask, tilt: tilt, ticker: ticker, terrain: terrain, neural: neural, prompts: prompts, checklists: checklists };
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { reveal(); progress(); spotlight(); orbit(); code(); compare(); chat(); beams(); showcase(); count(); scramble(); mask(); tilt(); ticker(); later(terrain); later(neural); prompts(); checklists(); });
-  else { reveal(); progress(); spotlight(); orbit(); code(); compare(); chat(); beams(); showcase(); count(); scramble(); mask(); tilt(); ticker(); later(terrain); later(neural); prompts(); checklists(); }
+  window.BrunoSilvaUSA = { reveal: reveal, progress: progress, spotlight: spotlight, orbit: orbit, code: code, compare: compare, chat: chat, beams: beams, showcase: showcase, count: count, scramble: scramble, mask: mask, tilt: tilt, ticker: ticker, terrain: terrain, neural: neural, prompts: prompts, checklists: checklists, terms: terms, glossaryFilter: glossaryFilter };
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { reveal(); progress(); spotlight(); orbit(); code(); compare(); chat(); beams(); showcase(); count(); scramble(); mask(); tilt(); ticker(); later(terrain); later(neural); prompts(); checklists(); terms(); glossaryFilter(); });
+  else { reveal(); progress(); spotlight(); orbit(); code(); compare(); chat(); beams(); showcase(); count(); scramble(); mask(); tilt(); ticker(); later(terrain); later(neural); prompts(); checklists(); terms(); glossaryFilter(); }
 })();

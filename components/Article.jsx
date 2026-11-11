@@ -2,6 +2,8 @@ import PortableText from './PortableText';
 import ShareButton from './ShareButton';
 import TableOfContents from './TableOfContents';
 import PostNav from './PostNav';
+import SeriesBar from './SeriesBar';
+import SeriesNext from './SeriesNext';
 import { tableOfContents } from '@/lib/headings';
 import { imageSize, imageSrcSet, imageUrl } from '@/lib/image';
 import { pillarOf } from '@/lib/pillars';
@@ -31,6 +33,7 @@ export default function Article({ post, fallbackAuthor, shareUrl, prev, next }) 
             <img src={author.image} alt="" width="72" height="72" decoding="async" />
             <span><b>{author.name}</b> • <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time> • {post.minutes} min de leitura{revised ? <> • Atualizado em <time dateTime={post.updatedAt}>{formatDate(post.updatedAt)}</time></> : null}</span>
           </div>
+          <SeriesBar series={post.series} />
         </header>
         <div className="bs-prose">
           {post.cover ? (
@@ -58,6 +61,7 @@ export default function Article({ post, fallbackAuthor, shareUrl, prev, next }) 
             <ShareButton url={shareUrl} title={post.title} text={post.lead || post.description} />
           </div>
         ) : null}
+        <SeriesNext series={post.series} />
         <PostNav prev={prev} next={next} />
         <aside className="bs-author" aria-label="Sobre o autor">
           <img src={author.image} alt="" width="144" height="144" loading="lazy" decoding="async" />

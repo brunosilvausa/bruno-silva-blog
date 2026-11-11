@@ -61,6 +61,32 @@ No campo Texto do post, abra o menu de inserir bloco e escolha **Prompt**. Preen
 
 No blog, **Copiar prompt** copia somente o texto original da caixa, preservando espaços, parágrafos e quebras de linha, para colar em uma IA. O resultado aparece como "Copiado!". Se o navegador bloquear a cópia, a caixa avisa e o botão permite tentar novamente. A cópia depende do acesso à área de transferência do navegador em HTTPS (ou localhost).
 
+## Glossário e séries
+
+### Criar um Termo (glossário)
+
+No editor: Termo → Create. Preencha:
+- **Termo**: a sigla ou palavra como aparece nos posts (ex.: EIN);
+- **Endereço** (botão Generate);
+- **Nome completo** (opcional, ex.: Employer Identification Number);
+- **Definição curta**: uma ou duas frases (até 220 caracteres), que aparecem no balãozinho ao passar o mouse ou focar o termo com o teclado (no celular, o toque abre a página do termo);
+- **Explicação** (opcional): o texto da página do termo;
+- **Outras grafias** (as variações): outras formas de escrever o mesmo termo (ex.: "EINs", "número de EIN"). O nome completo só é ligado se você também o colocar aqui.
+
+Depois de **Publish**, o termo ganha a página `/glossario/<endereço>` e passa a ser ligado sozinho nos posts. O link automático aparece **só na primeira vez** que o termo surge em cada post, para não poluir a leitura. Ele **nunca** liga dentro de títulos (H2, H3), links, código, caixas de prompt, caixas Dica/Atenção, checklists e legendas de imagem, nem no resumo do post e no RSS. Parágrafos, citações e itens de lista são ligados normalmente.
+
+### Criar uma Série
+
+No editor: Série → Create. Preencha título, endereço, descrição e, se quiser, capa. Em **Posts da série**, adicione de **2 a 30** posts e **arraste para definir a ordem de leitura** (o primeiro da lista é a Parte 1). Um post só deve estar em **uma** série; o Studio avisa se ele já estiver em outra. Posts ainda não publicados (ou com data futura) ficam de fora e a numeração se ajusta sozinha; uma série sem nenhum post publicado não aparece no site.
+
+### Onde aparecem
+
+- `/glossario`: todos os termos em ordem alfabética; `/glossario/<termo>`: a página de cada termo.
+- `/series`: lista das séries; `/series/<série>`: a página de cada série, com as partes em ordem.
+- Dentro do post: o termo vira link com balão e, se o post está numa série, uma faixa "Parte 2 de 3" no topo e a próxima parte no fim.
+- Rodapé: os links "Séries" e "Glossário" (coluna Blog) **só aparecem quando já existe conteúdo**. O mapa do site (`/sitemap.xml`) também só lista páginas que existem.
+- Depois de mudar o editor, rode `npm run deploy` (dentro de `studio/`) para publicar os novos tipos.
+
 ## Atualização na hora (opcional)
 
 Sem configurar nada, as páginas se atualizam sozinhas em até 1 minuto depois de publicar. Para atualizar na hora:
@@ -69,8 +95,10 @@ Sem configurar nada, as páginas se atualizam sozinhas em até 1 minuto depois d
 2. Em sanity.io/manage → API → Webhooks → Create webhook:
    - URL: `https://<seu-blog>/api/revalidate`
    - Dataset: `production`; Trigger on: Create, Update, Delete
-   - Filter: `_type in ["post", "author"]`
+   - Filter: `_type in ["post", "author", "term", "series"]`
    - HTTP method: POST; Secret: o mesmo segredo do passo 1.
+
+Se você já criou o webhook antes, edite o filtro em sanity.io/manage para incluir `term` e `series`; senão termos e séries novos aparecem só depois de até 1 minuto.
 
 O endpoint confere a assinatura do Sanity e recusa pedidos sem ela ou com mais de 5 minutos.
 

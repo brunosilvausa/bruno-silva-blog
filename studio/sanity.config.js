@@ -17,6 +17,11 @@ export default defineConfig({
           .title('Conteúdo')
           .items([
             S.documentTypeListItem('post').title('Posts'),
+            S.documentTypeListItem('series').title('Séries'),
+            S.listItem()
+              .title('Glossário')
+              .schemaType('term')
+              .child(S.documentTypeList('term').title('Glossário').defaultOrdering([{ field: 'term', direction: 'asc' }])),
             S.documentTypeListItem('author').title('Autores'),
           ]),
     }),

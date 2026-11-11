@@ -1,10 +1,11 @@
 import { notFound, permanentRedirect } from 'next/navigation';
 import { site } from '@/content/site';
-import { getAdjacent, getAllPosts, getPost, getRedirect, getRelated } from '@/lib/sanity';
+import { getAdjacent, getAllPosts, getPost, getRedirect, getRelated, getTerms } from '@/lib/sanity';
+import { linkTerms } from '@/lib/terms';
 import { pillarOf } from '@/lib/pillars';
 import { absolute } from '@/lib/site-url';
 import { FEED_TYPES } from '@/lib/feed';
-import { AUTHOR, breadcrumb, jsonLd as toJson } from '@/lib/jsonld';
+import { AUTHOR, breadcrumb, jsonLd as toJson, seriesRef } from '@/lib/jsonld';
 import Shell from '@/components/Shell';
 import Article from '@/components/Article';
 import NewsletterSignup from '@/components/NewsletterSignup';
@@ -61,7 +62,7 @@ function jsonLd(post) {
         author: { '@type': 'Person', name: post.author?.name || site.author.name, url: AUTHOR.url },
         publisher: AUTHOR,
         mainEntityOfPage: url,
-        isPartOf: { '@id': absolute('/#blog') },
+        isPartOf: post.series ? [{ '@id': absolute('/#blog') }, seriesRef(post.series)] : { '@id': absolute('/#blog') },
         image: post.cover ? `${post.cover.url}?w=1200&auto=format` : absolute(`/og/posts/${post.slug}`),
       },
       breadcrumb([{ name: 'Blog', path: '/' }, { name: pillar.label, path: `/pilar/${pillar.slug}` }, { name: post.title, path: `/posts/${post.slug}` }]),
@@ -78,11 +79,12 @@ export default async function PostPage({ params }) {
     if (moved) permanentRedirect(`/posts/${moved}`);
     notFound();
   }
-  const [related, { prev, next }] = await Promise.all([getRelated(post, 3), getAdjacent(post)]);
+  const [related, { prev, next }, terms] = await Promise.all([getRelated(post, 3), getAdjacent(post), getTerms().catch(() => [])]);
+  const linkedPost = { ...post, body: linkTerms(post.body, terms) };
   return (
     <Shell>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(post) }} />
-      <Article post={post} fallbackAuthor={site.author} shareUrl={absolute(`/posts/${post.slug}`)} prev={prev} next={next} />
+      <Article post={linkedPost} fallbackAuthor={site.author} shareUrl={absolute(`/posts/${post.slug}`)} prev={prev} next={next} />
       <NewsletterSignup data={site.newsletter} />
       {related.length ? (
         <section className="bs-section" aria-labelledby="h-relacionados">
