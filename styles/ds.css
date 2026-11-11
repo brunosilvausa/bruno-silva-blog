@@ -1060,7 +1060,8 @@ a.bs-ticker__item:focus-visible { outline: 2px solid var(--volt); outline-offset
 @media (prefers-reduced-motion: reduce) { .bs-btn--shiny, .bs-btn--shiny::after { animation: none; } }
 .bs-reduced .bs-btn--shiny { animation: none; }
 
-/* Terrain3D: a [data-terrain] canvas behind a .bs-backdrop header draws a volt wireframe terrain (components/bundle.js). Once the
+/* Terrain3D and NeuralNet: a canvas.bs-terrain with [data-terrain] (a volt wireframe terrain) or [data-neural] (a tunnel of
+   neurons with running signals) behind a .bs-backdrop header, drawn by components/bundle.js. Once the
    terrain runs, the section gets .has-terrain: its flag and CodeReveal step aside, a scrim darkens the middle behind the text and
    fades the top and bottom into void, and the header grows to most of the screen with its content centred. */
 .bs-terrain { position: absolute; inset: 0; z-index: 0; display: block; width: 100%; height: 100%; pointer-events: none; }

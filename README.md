@@ -72,7 +72,7 @@ O formulário chama `POST /api/subscribe`, com as mesmas proteções das outras 
 
 Os efeitos vêm do design system (`public/ds.js` e `styles/ds.css`):
 - CodeDivider (o ornamento `</>`) acima do título da home e dos pilares, e antes de "Posts relacionados";
-- Terrain3D: no cabeçalho da home e dos pilares, um terreno de montanhas em linhas volt desenhado em 3D (WebGL, sem biblioteca), que a câmera sobrevoa; ao rolar ela acelera e mergulha, e com o mouse se inclina para o lado. Sem WebGL, volta a bandeira com o CodeReveal;
+- NeuralNet: no cabeçalho da home e dos pilares, uma rede neural em 3D (WebGL, sem biblioteca): camadas de neurônios ligados por linhas volt, com sinais correndo pelas conexões. A câmera atravessa a rede; ao rolar ela acelera e a rede gira mais, e com o mouse a câmera se inclina. Sem WebGL, volta a bandeira com o CodeReveal. (O design system também tem o Terrain3D, um terreno em wireframe, que este blog não usa.);
 - CodeReveal: caracteres hex entre as listras da bandeira, que acendem em volt sob o mouse (no cabeçalho, só quando o navegador não tem WebGL);
 - ScrambleText: o título principal de cada página se "decodifica" ao abrir;
 - MaskReveal: títulos de seção e subtítulos dos posts sobem ao rolar;

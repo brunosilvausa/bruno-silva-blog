@@ -45,7 +45,7 @@ export default async function PostList({ page, pillar, header, current, base = '
           {STRIPES.map((y) => <rect key={y} x="0" y={y} width="1200" height="15" />)}
         </svg>
         <div className="bs-code" aria-hidden="true"></div>
-        <canvas className="bs-terrain" data-terrain aria-hidden="true"></canvas>
+        <canvas className="bs-terrain" data-neural aria-hidden="true"></canvas>
         <div className="bs-container">
           <CodeDivider className="bs-shead-divider" />
           <SectionHeader level={1} id="titulo" kicker={header.kicker} title={header.title} text={header.text} />
