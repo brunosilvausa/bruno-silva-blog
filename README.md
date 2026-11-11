@@ -48,10 +48,16 @@ O site busca os posts no servidor, então não precisa configurar CORS.
 No editor: Posts → Create. Preencha título, endereço (botão Generate), pilar, data, resumo e texto, e clique em **Publish**. O post aparece no site a partir da data de publicação.
 
 - O texto aceita títulos (H2, H3), listas, negrito, itálico, código, links, imagens com legenda, uma citação, a caixa "Dica / Atenção" e o **Prompt para copiar**.
-- Prompt para copiar: no texto, clique em **+** (Insert) → Prompt para copiar. Escreva o prompt exatamente como o leitor deve usar; as quebras de linha são mantidas. O rótulo é opcional (ex.: "Peça assim"). No site ele vira um cartão com o botão "Copiar"; no RSS, uma citação.
+- Prompt para copiar: no texto, clique em **+** (Insert) → Prompt. Escreva o prompt exatamente como o leitor deve usar; as quebras de linha são mantidas. O título é opcional (ex.: "Peça assim"); rótulos de prompts anteriores continuam funcionando. No site ele vira um cartão com o botão "Copiar prompt"; no RSS, texto com título e quebras de linha.
 - SEO (opcional, grupo fechado no fim do post): **Título para o Google** (até 60 caracteres), **Descrição para o Google** (até 160) e **Imagem de compartilhamento** (1200 × 630). Mudam só a aba do navegador, o Google e os links compartilhados; o título do post continua o mesmo. Sem eles, o site usa o título, o resumo e a capa (ou a imagem gerada com a marca).
 - Capa é opcional. Sem ela, o cartão usa a bandeira e o ícone do pilar. A capa aparece colorida na lista de posts e dentro do post.
 - Crie um Autor (nome, foto e bio) e escolha-o em cada post. Sem autor, o site usa o texto de `author` em `content/site.js`.
+
+### Inserir um prompt para o leitor copiar
+
+No campo Texto do post, abra o menu de inserir bloco e escolha **Prompt**. Preencha o texto do prompt; o título é opcional e, quando vazio, a caixa mostra "Prompt". O texto é obrigatório e não pode conter apenas espaços. Você pode inserir várias caixas no mesmo post.
+
+No blog, **Copiar prompt** copia somente o texto original da caixa, preservando espaços, parágrafos e quebras de linha, para colar em uma IA. O resultado aparece como "Copiado!". Se o navegador bloquear a cópia, a caixa avisa e o botão permite tentar novamente. A cópia depende do acesso à área de transferência do navegador em HTTPS (ou localhost).
 
 ## Atualização na hora (opcional)
 

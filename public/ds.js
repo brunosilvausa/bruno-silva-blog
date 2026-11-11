@@ -587,7 +587,7 @@
      where the clipboard is blocked it selects the text instead and says so. */
   function prompts(root) {
     (root || document).querySelectorAll(".bs-prompt").forEach(function (card) {
-      if (card._bsPr) return; card._bsPr = true;
+      if (card._bsPr || card.dataset.promptManaged === "react") return; card._bsPr = true;
       var btn = card.querySelector(".bs-prompt__copy"), text = card.querySelector(".bs-prompt__text");
       var label = btn && btn.querySelector(".bs-prompt__copy-label"), status = card.querySelector(".bs-prompt__status"), timer = 0;
       if (!btn || !text || !label) return;
