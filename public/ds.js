@@ -582,7 +582,38 @@
     if ("IntersectionObserver" in window) new IntersectionObserver(function (es) { live = es[0].isIntersecting; wake(); }).observe(host); else { live = true; wake(); }
   });
   }
-  window.BrunoSilvaUSA = { reveal: reveal, progress: progress, spotlight: spotlight, orbit: orbit, code: code, compare: compare, chat: chat, beams: beams, showcase: showcase, count: count, scramble: scramble, mask: mask, tilt: tilt, ticker: ticker, terrain: terrain, neural: neural };
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { reveal(); progress(); spotlight(); orbit(); code(); compare(); chat(); beams(); showcase(); count(); scramble(); mask(); tilt(); ticker(); terrain(); neural(); });
-  else { reveal(); progress(); spotlight(); orbit(); code(); compare(); chat(); beams(); showcase(); count(); scramble(); mask(); tilt(); ticker(); terrain(); neural(); }
+  /* PromptCard: each .bs-prompt gets a working "Copiar" button (hidden until this script runs, so without it the card is just
+     text to select). It copies the .bs-prompt__text, turns volt with "Copiado" for 2 seconds and announces it to screen readers;
+     where the clipboard is blocked it selects the text instead and says so. */
+  function prompts(root) {
+    (root || document).querySelectorAll(".bs-prompt").forEach(function (card) {
+      if (card._bsPr || card.dataset.promptManaged === "react") return; card._bsPr = true;
+      var btn = card.querySelector(".bs-prompt__copy"), text = card.querySelector(".bs-prompt__text");
+      var label = btn && btn.querySelector(".bs-prompt__copy-label"), status = card.querySelector(".bs-prompt__status"), timer = 0;
+      if (!btn || !text || !label) return;
+      btn.hidden = false;
+      function done(ok) {
+        label.textContent = ok ? "Copiado" : "Selecionado";
+        btn.classList.toggle("is-done", ok);
+        if (status) status.textContent = ok ? "Prompt copiado." : "Não deu para copiar. O texto ficou selecionado: copie com o teclado.";
+        clearTimeout(timer);
+        timer = setTimeout(function () { label.textContent = "Copiar"; btn.classList.remove("is-done"); if (status) status.textContent = ""; }, 2000);
+      }
+      function select() {
+        var r = document.createRange(), s = window.getSelection(), ok = false;
+        r.selectNodeContents(text); s.removeAllRanges(); s.addRange(r);
+        try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+        if (ok) s.removeAllRanges();
+        done(ok);
+      }
+      btn.addEventListener("click", function () {
+        var t = text.textContent;
+        if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(t).then(function () { done(true); }, select);
+        else select();
+      });
+    });
+  }
+  window.BrunoSilvaUSA = { reveal: reveal, progress: progress, spotlight: spotlight, orbit: orbit, code: code, compare: compare, chat: chat, beams: beams, showcase: showcase, count: count, scramble: scramble, mask: mask, tilt: tilt, ticker: ticker, terrain: terrain, neural: neural, prompts: prompts };
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { reveal(); progress(); spotlight(); orbit(); code(); compare(); chat(); beams(); showcase(); count(); scramble(); mask(); tilt(); ticker(); terrain(); neural(); prompts(); });
+  else { reveal(); progress(); spotlight(); orbit(); code(); compare(); chat(); beams(); showcase(); count(); scramble(); mask(); tilt(); ticker(); terrain(); neural(); prompts(); }
 })();

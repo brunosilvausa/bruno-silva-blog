@@ -58,12 +58,12 @@ test('real GROQ projections preserve reading time across cards, full articles an
   const originalFetch = globalThis.fetch;
   const body = [
     { _type: 'block', children: [{ _type: 'span', text: 'word '.repeat(195) }] },
-    { _type: 'prompt', title: 'Title '.repeat(3), text: 'prompt '.repeat(200) },
+    { _type: 'prompt', label: 'Label '.repeat(3), text: 'prompt '.repeat(200) },
     { _type: 'callout', text: 'tip '.repeat(3) },
     { _type: 'image', caption: 'caption '.repeat(3), asset: { _ref: 'huge-image' } },
   ]; // 195 + 3 + 200 + 3 + 3 = 404 words => 3 minutes.
-  const post = { _id: 'live', _type: 'post', title: 'Live', slug: { current: 'live' }, pillar: 'ia', publishedAt: '2020-01-02T00:00:00Z', body };
-  const dataset = [post,
+  const post = { _id: 'live', _type: 'post', title: 'Live', slug: { current: 'live' }, pillar: 'ia', publishedAt: '2020-01-02T00:00:00Z', body, seoTitle: 'Search title', seoDescription: 'Search description', ogImage: { alt: 'Social image', asset: { _ref: 'social-image' } } };
+  const dataset = [{ _id: 'social-image', _type: 'sanity.imageAsset', url: 'https://cdn.sanity.io/social.jpg' }, post,
     { ...post, _id: 'older', slug: { current: 'older' }, publishedAt: '2020-01-01T00:00:00Z' },
     { ...post, _id: 'future', publishedAt: '2099-01-01T00:00:00Z' },
     { ...post, _id: 'no-date', publishedAt: undefined },
@@ -82,7 +82,11 @@ test('real GROQ projections preserve reading time across cards, full articles an
     const listed = await getPosts({ pillar: 'ia' });
     assert.equal(listed.total, 2);
     assert.deepEqual(listed.posts.map(({ slug, minutes }) => [slug, minutes]), [['live', 3], ['older', 3]]);
-    assert.equal((await getPost('live')).minutes, 3);
+    const full = await getPost('live');
+    assert.equal(full.minutes, 3);
+    assert.equal(full.seoTitle, 'Search title');
+    assert.equal(full.description, 'Search description');
+    assert.deepEqual(full.ogImage, { url: 'https://cdn.sanity.io/social.jpg', alt: 'Social image' });
     assert.deepEqual((await getAllPosts()).map(({ slug, minutes }) => [slug, minutes]), [['live', 3], ['other', 3], ['older', 3]]);
     assert.deepEqual((await getRelated({ slug: 'live', pillar: 'ia' }, 1)).map(({ slug, minutes }) => [slug, minutes]), [['older', 3]]);
     const adjacent = await getAdjacent({ slug: 'live', publishedAt: post.publishedAt });
@@ -94,4 +98,12 @@ test('real GROQ projections preserve reading time across cards, full articles an
       if (value === undefined) delete process.env[key]; else process.env[key] = value;
     }
   }
+});
+
+test('legacy prompt labels survive RSS/plain extraction and new titles take precedence', () => {
+  const legacy = { _type: 'prompt', label: '  Peça <assim>  ', text: '  Original\n ' };
+  assert.equal(portableTextToPlain([legacy]), 'Peça <assim>\n  Original\n ');
+  assert.equal(portableTextToHtml([legacy]), '<p><strong>Peça &lt;assim&gt;:</strong><br>  Original<br> </p>');
+  assert.equal(portableTextToPlain([{ ...legacy, title: ' Novo ' }]), 'Novo\n  Original\n ');
+  assert.equal(portableTextToPlain([{ ...legacy, title: ' \n ' }]), 'Peça <assim>\n  Original\n ');
 });

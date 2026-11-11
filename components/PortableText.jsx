@@ -75,6 +75,7 @@ function Callout({ value }) {
   return <div className="bs-callout"><b>{value.tone === 'atencao' ? 'Atenção' : 'Dica'}</b>{withBreaks(value.text, value._key)}</div>;
 }
 
+
 /** Groups consecutive list items into <ul>/<ol>; nested levels are shown flat. */
 function group(blocks) {
   const out = [];

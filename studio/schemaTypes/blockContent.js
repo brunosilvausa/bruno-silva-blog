@@ -13,9 +13,11 @@ export const blockContent = defineType({
       type: 'object',
       fields: [
         defineField({ name: 'title', title: 'Título (opcional)', type: 'string' }),
+        defineField({ name: 'label', title: 'Rótulo anterior (opcional)', type: 'string', description: 'Compatibilidade com prompts já criados. Usado quando não há título.' }),
         defineField({
           name: 'text',
           title: 'Texto do prompt',
+          description: 'O texto exato que o leitor vai copiar. As quebras de linha são mantidas.',
           type: 'text',
           rows: 8,
           validation: (rule) => rule.required().custom((value) => (
@@ -26,8 +28,8 @@ export const blockContent = defineType({
         }),
       ],
       preview: {
-        select: { title: 'title', text: 'text' },
-        prepare: ({ title, text }) => ({ title: title?.trim() || 'Prompt', subtitle: text }),
+        select: { title: 'title', label: 'label', text: 'text' },
+        prepare: ({ title, label, text }) => ({ title: title?.trim() || label?.trim() || 'Prompt', subtitle: text }),
       },
     }),
     defineArrayMember({
