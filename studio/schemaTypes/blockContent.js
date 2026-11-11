@@ -1,7 +1,7 @@
 import { defineArrayMember, defineField, defineType } from 'sanity';
 
 // The post body. Only what the blog renders (components/PortableText.jsx): paragraphs, two heading levels,
-// quotes, lists, bold/italic/code, links, images with caption, "Dica / Atenção" and Prompt boxes.
+// quotes, lists, bold/italic/code, links, images with caption, "Dica / Atenção", Prompt and Checklist boxes.
 export const blockContent = defineType({
   name: 'blockContent',
   title: 'Texto',
@@ -101,6 +101,32 @@ export const blockContent = defineType({
       preview: {
         select: { tone: 'tone', text: 'text' },
         prepare: ({ tone, text }) => ({ title: tone === 'atencao' ? 'Atenção' : 'Dica', subtitle: text }),
+      },
+    }),
+    defineArrayMember({
+      name: 'checklist',
+      title: 'Checklist',
+      type: 'object',
+      fields: [
+        defineField({
+          name: 'title',
+          title: 'Título',
+          type: 'string',
+          description: 'Opcional, curto. Ex.: "Teste de sete dias". Sem ele, aparece "Checklist".',
+          validation: (rule) => rule.max(60),
+        }),
+        defineField({
+          name: 'items',
+          title: 'Itens',
+          type: 'array',
+          of: [{ type: 'string', validation: (rule) => rule.max(160) }],
+          description: 'Um passo por item, até 12. O leitor marca no site e o navegador dele lembra.',
+          validation: (rule) => rule.required().min(1).max(12),
+        }),
+      ],
+      preview: {
+        select: { title: 'title', items: 'items' },
+        prepare: ({ title, items }) => ({ title: `Checklist: ${title || 'Checklist'}`, subtitle: `${(items || []).length} itens` }),
       },
     }),
   ],

@@ -16,6 +16,7 @@ const ul = (...items) => items.map((t) => block('normal', [span(t)], { listItem:
 const ol = (...items) => items.map((t) => block('normal', [span(t)], { listItem: 'number', level: 1 }));
 const callout = (tone, text) => ({ _type: 'callout', _key: key(), tone, text });
 const prompt = (label, text) => ({ _type: 'prompt', _key: key(), label, text });
+const checklist = (title, items) => ({ _type: 'checklist', _key: key(), title, items });
 
 export const SAMPLE_POSTS = [
   {
@@ -88,6 +89,7 @@ export const SAMPLE_POSTS = [
       ...ol('Anote os passos que você faz à mão', 'Escolha a ferramenta de automação', 'Monte o fluxo com dados de teste', 'Deixe rodar uma semana e confira'),
       p('Para o primeiro passo, peça ajuda à IA para listar o que você faz à mão:'),
       prompt('Peça assim', 'Vou descrever uma tarefa que faço toda semana. Liste os passos em ordem, numerados, e marque quais dependem de uma decisão minha.\n\nTarefa: copiar os pedidos do formulário do site para a planilha de controle.'),
+      checklist('Antes de automatizar', ['A tarefa se repete toda semana', 'Os passos estão anotados', 'Tenho dados de teste', 'Sei conferir se o resultado está certo']),
       quote('Automatize o que você já entende, não o que ainda está confuso.'),
     ],
   },

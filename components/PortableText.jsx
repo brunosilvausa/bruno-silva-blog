@@ -4,7 +4,8 @@ import PromptBlock from '@/components/PromptBlock';
 
 // Renders the post body (Portable Text from Sanity) into the design system's .bs-prose markup.
 // Supported: paragraphs, h2/h3 (h4 shows as h3), quotes, bullet and numbered lists, bold, italic, code,
-// underline, strike-through, links, images with caption, "callout" (Dica / Atenção) and "prompt" boxes.
+// underline, strike-through, links, images with caption, "callout" (Dica / Atenção) and "prompt" boxes, and the
+// checklist (DS Checklist: public/ds.js remembers the ticked items in the reader's browser).
 // Unknown block types are skipped instead of breaking the page.
 
 const DECORATORS = {
@@ -76,6 +77,27 @@ function Callout({ value }) {
 }
 
 
+function Checklist({ value }) {
+  const items = (value?.items || []).filter((t) => typeof t === 'string' && t.trim());
+  if (!items.length) return null;
+  const title = (value.title || '').trim() || 'Checklist';
+  const id = `checklist-${value._key}`;
+  return (
+    <div className="bs-checklist" data-checklist={value._key} role="group" aria-labelledby={id}>
+      <div className="bs-checklist__head">
+        <p className="bs-checklist__title" id={id}>{title}</p>
+        <span className="bs-checklist__count" aria-live="polite" hidden></span>
+      </div>
+      <ul className="bs-checklist__list">
+        {items.map((t, i) => (
+          <li key={i}><label className="bs-checklist__item"><input type="checkbox" className="bs-checklist__box" /><span>{t}</span></label></li>
+        ))}
+      </ul>
+      <button type="button" className="bs-checklist__reset" hidden>Recomeçar</button>
+    </div>
+  );
+}
+
 /** Groups consecutive list items into <ul>/<ol>; nested levels are shown flat. */
 function group(blocks) {
   const out = [];
@@ -101,6 +123,7 @@ export default function PortableText({ value, ids }) {
     if (node?._type === 'image') return <Figure key={key} value={node} />;
     if (node?._type === 'callout') return <Callout key={key} value={node} />;
     if (node?._type === 'prompt') return <PromptBlock key={key} value={node} />;
+    if (node?._type === 'checklist') return <Checklist key={key} value={node} />;
     return null;
   });
 }

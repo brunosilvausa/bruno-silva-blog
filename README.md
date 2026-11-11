@@ -48,8 +48,10 @@ O site busca os posts no servidor, então não precisa configurar CORS.
 No editor: Posts → Create. Preencha título, endereço (botão Generate), pilar, data, resumo e texto, e clique em **Publish**. O post aparece no site a partir da data de publicação.
 
 - O texto aceita títulos (H2, H3), listas, negrito, itálico, código, links, imagens com legenda, uma citação, a caixa "Dica / Atenção" e o **Prompt para copiar**.
+- Checklist: no texto, **+** → Checklist. Título opcional (ex.: "Teste de sete dias") e até 12 itens curtos. O leitor marca no site, vê "2 de 7" e pode recomeçar; o navegador dele lembra o que foi marcado. No RSS, vira uma lista.
 - Prompt para copiar: no texto, clique em **+** (Insert) → Prompt. Escreva o prompt exatamente como o leitor deve usar; as quebras de linha são mantidas. O título é opcional (ex.: "Peça assim"); rótulos de prompts anteriores continuam funcionando. No site ele vira um cartão com o botão "Copiar prompt"; no RSS, texto com título e quebras de linha.
 - SEO (opcional, grupo fechado no fim do post): **Título para o Google** (até 60 caracteres), **Descrição para o Google** (até 160) e **Imagem de compartilhamento** (1200 × 630). Mudam só a aba do navegador, o Google e os links compartilhados; o título do post continua o mesmo. Sem eles, o site usa o título, o resumo e a capa (ou a imagem gerada com a marca).
+- Mudar o endereço de um post é seguro: ao publicar, o Studio guarda o endereço antigo em **Endereços antigos** (grupo SEO), e quem abrir o link antigo vai direto para o novo (redirecionamento permanente, que o Google também segue). Para desfazer, apague o endereço da lista e publique.
 - Capa é opcional. Sem ela, o cartão usa a bandeira e o ícone do pilar. A capa aparece colorida na lista de posts e dentro do post.
 - Crie um Autor (nome, foto e bio) e escolha-o em cada post. Sem autor, o site usa o texto de `author` em `content/site.js`.
 

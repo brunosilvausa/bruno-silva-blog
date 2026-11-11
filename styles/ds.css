@@ -1064,14 +1064,17 @@ a.bs-ticker__item:focus-visible { outline: 2px solid var(--volt); outline-offset
    neurons with running signals) behind a .bs-backdrop header, drawn by components/bundle.js. Once the
    terrain runs, the section gets .has-terrain: its flag and CodeReveal step aside, a scrim darkens the middle behind the text and
    fades the top and bottom into void, and the header grows to most of the screen with its content centred. */
-.bs-terrain { position: absolute; inset: 0; z-index: 0; display: block; width: 100%; height: 100%; pointer-events: none; }
-.has-terrain > .bs-flag, .has-terrain > .bs-code { display: none; }
+.bs-terrain { position: absolute; inset: 0; z-index: 0; display: block; width: 100%; height: 100%; pointer-events: none; opacity: 0; transition: opacity 900ms var(--easing-out, ease-out); }
+.has-terrain > .bs-terrain { opacity: 1; }
+/* The header keeps its final size and hides the flag from the first paint (the scene starts a moment later); without WebGL
+   the script adds .no-terrain and the flag and CodeReveal come back. */
+.bs-js .bs-backdrop:has(> .bs-terrain):not(.no-terrain) > .bs-flag, .bs-js .bs-backdrop:has(> .bs-terrain):not(.no-terrain) > .bs-code, .has-terrain > .bs-flag, .has-terrain > .bs-code { display: none; }
 .has-terrain::before { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
   background: radial-gradient(ellipse 44% 40% at 50% 48%, rgba(2, 7, 11, .9), rgba(2, 7, 11, .55) 55%, transparent 80%),
     linear-gradient(to bottom, var(--void), rgba(2, 7, 11, 0) 24%, rgba(2, 7, 11, 0) 80%, var(--void)); }
-.has-terrain > .bs-container { position: relative; z-index: 2; }
-.bs-section.has-terrain { min-height: min(84vh, 780px); display: flex; flex-direction: column; justify-content: center; box-sizing: border-box; }
-@media (max-width: 640px) { .bs-section.has-terrain { min-height: min(78vh, 640px); }
+.has-terrain > .bs-container, .bs-section:has(> .bs-terrain) > .bs-container { position: relative; z-index: 2; }
+.bs-section:has(> .bs-terrain), .bs-section.has-terrain { min-height: min(84vh, 780px); display: flex; flex-direction: column; justify-content: center; box-sizing: border-box; }
+@media (max-width: 640px) { .bs-section:has(> .bs-terrain), .bs-section.has-terrain { min-height: min(78vh, 640px); }
   .has-terrain::before { background: radial-gradient(ellipse 72% 30% at 50% 52%, rgba(2, 7, 11, .82), rgba(2, 7, 11, .35) 60%, transparent 85%), linear-gradient(to bottom, var(--void), rgba(2, 7, 11, 0) 22%, rgba(2, 7, 11, 0) 80%, var(--void)); } }
 
 /* PromptCard: a prompt the reader can copy, inside a post. Volt left rule, a header with the </> label and the "Copiar"
@@ -1091,3 +1094,34 @@ a.bs-ticker__item:focus-visible { outline: 2px solid var(--volt); outline-offset
 .bs-prompt__text { margin: 0; padding: var(--space-4) var(--space-6) var(--space-6); white-space: pre-wrap; overflow-wrap: anywhere; font-family: var(--font-body); font-size: 18px; line-height: 30px; color: var(--white); }
 .bs-prompt__status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 @media (max-width: 560px) { .bs-prompt__text { padding: var(--space-4); font-size: 17px; line-height: 28px; } }
+
+/* ScrambleText: while the glyphs run, each word sits in a box as wide as the real word (components/bundle.js). */
+.bs-scr__w { display: inline-block; white-space: nowrap; text-align: left; }
+
+/* Checklist: steps the reader ticks inside a post (components/bundle.js remembers them). Card like the callout, a header with
+   the title and the "N de M" count, square volt check boxes in 44px rows, ticked items in silver; "Recomeçar" clears them. */
+.bs-checklist { padding: var(--space-6); background: var(--surface-raised); border: 1px solid var(--trace); border-top: 3px solid var(--volt); border-radius: var(--radius-sm); }
+.bs-checklist__head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); margin-bottom: var(--space-3); }
+.bs-checklist__title { margin: 0; font-family: var(--font-label); font-weight: 600; font-size: 14px; line-height: 20px; letter-spacing: .08em; text-transform: uppercase; color: var(--volt); }
+.bs-checklist__count { flex: none; font-family: var(--font-label); font-weight: 600; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; color: var(--silver); }
+.bs-checklist__count[hidden] { display: none; }
+.bs-checklist.is-complete .bs-checklist__count { color: var(--volt); }
+.bs-checklist.is-complete .bs-checklist__count::after { content: " ✓"; }
+.bs-prose .bs-checklist__list { margin: 0; padding: 0; list-style: none; }
+.bs-prose .bs-checklist__list li + li { margin-top: 0; }
+.bs-checklist__item { display: flex; align-items: flex-start; gap: var(--space-3); min-height: 44px; padding: var(--space-2) 0; cursor: pointer; font-size: 18px; line-height: 28px; color: var(--white); }
+.bs-checklist__box { appearance: none; -webkit-appearance: none; flex: none; width: 22px; height: 22px; margin: 3px 0 0; border: 2px solid var(--trace-strong); border-radius: var(--radius-sm); background: var(--black); cursor: pointer; display: grid; place-content: center;
+  transition: background var(--duration-fast) var(--easing-standard), border-color var(--duration-fast) var(--easing-standard); }
+.bs-checklist__box::after { content: ""; width: 11px; height: 6px; border: solid var(--on-volt); border-width: 0 0 2.5px 2.5px; transform: translateY(-1px) rotate(-45deg); opacity: 0; }
+.bs-checklist__box:checked { background: var(--volt); border-color: var(--volt); }
+.bs-checklist__box:checked::after { opacity: 1; }
+.bs-checklist__box:focus-visible { outline: 2px solid var(--volt); outline-offset: 3px; }
+.bs-checklist__item:hover .bs-checklist__box:not(:checked) { border-color: var(--volt); }
+.bs-checklist__box:checked + span { color: var(--silver); text-decoration: line-through; text-decoration-color: var(--trace-strong); }
+.bs-checklist__reset { margin-top: var(--space-3); min-height: 44px; padding: 0 var(--space-4); border: 1px solid var(--trace-strong); border-radius: var(--radius-sm); background: transparent; color: var(--white); cursor: pointer;
+  font-family: var(--font-label); font-weight: 600; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; transition: border-color var(--duration-fast) var(--easing-standard), color var(--duration-fast) var(--easing-standard); }
+.bs-checklist__reset:hover { border-color: var(--volt); color: var(--volt); }
+.bs-checklist__reset:focus-visible { outline: 2px solid var(--volt); outline-offset: 3px; }
+.bs-checklist__reset[hidden] { display: none; }
+@media (max-width: 560px) { .bs-checklist { padding: var(--space-4); } .bs-checklist__item { font-size: 17px; } }
+@media (prefers-reduced-motion: reduce) { .bs-checklist__box { transition: none; } }

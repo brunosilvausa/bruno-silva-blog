@@ -268,12 +268,27 @@
     (root || document).querySelectorAll("[data-scramble]").forEach(function (el) {
       if (el._bsScr || reduce) return; el._bsScr = true;
       function run() {
-        var nodes = textNodes(el).map(function (n) { return { node: n, text: n.nodeValue }; });
-        var total = 0; nodes.forEach(function (x) { total += x.text.length; });
-        if (!total) return;
+        var orig = textNodes(el), nodes = [], groups = [];
+        if (!orig.length) return;
         var own = el.hasAttribute("aria-label");
         if (!own) el.setAttribute("aria-label", el.textContent.replace(/\s+/g, " ").trim());
-        el.style.minHeight = el.offsetHeight + "px";
+        el.style.height = el.offsetHeight + "px";
+        /* Each word goes into a box as wide as the real word, so the random glyphs never change where the lines break and
+           nothing on the page moves. The original text nodes are put back untouched at the end. */
+        orig.forEach(function (t) {
+          var frag = document.createDocumentFragment(), list = [];
+          t.nodeValue.split(/(\s+)/).forEach(function (p) {
+            if (!p) return;
+            var n = document.createTextNode(p);
+            if (/^\s+$/.test(p)) { frag.appendChild(n); list.push(n); return; }
+            var w = document.createElement("span"); w.className = "bs-scr__w"; w.appendChild(n);
+            frag.appendChild(w); list.push(w); nodes.push({ node: n, text: p, box: w });
+          });
+          groups.push({ orig: t, list: list }); t.parentNode.replaceChild(frag, t);
+        });
+        nodes.forEach(function (x) { x.w = x.box.getBoundingClientRect().width; });
+        nodes.forEach(function (x) { x.box.style.width = x.w + "px"; });
+        var total = 0; nodes.forEach(function (x) { total += x.text.length; });
         el.classList.add("is-scrambling");
         var shown = 0, step = Math.max(1, Math.ceil(total / 40));
         function paint() {
@@ -292,8 +307,8 @@
           shown += step;
           if (shown < total) return paint();
           clearInterval(t);
-          nodes.forEach(function (x) { x.node.nodeValue = x.text; });
-          el.style.minHeight = ""; el.classList.remove("is-scrambling");
+          groups.forEach(function (g) { g.list[0].parentNode.insertBefore(g.orig, g.list[0]); g.list.forEach(function (n) { n.parentNode.removeChild(n); }); });
+          el.style.height = ""; el.classList.remove("is-scrambling");
           if (!own) el.removeAttribute("aria-label");
         }, 34);
       }
@@ -438,10 +453,10 @@
     (root || document).querySelectorAll("[data-terrain]").forEach(function (cv) {
       if (cv._bsTr) return; cv._bsTr = true;
       var gl = cv.getContext("webgl", { antialias: true, premultipliedAlpha: true }), host = cv.parentElement;
-      if (!gl) return;
+      if (!gl) { host.classList.add("no-terrain"); return; }
       function sh(type, src) { var s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return s; }
       var pr = gl.createProgram(); gl.attachShader(pr, sh(gl.VERTEX_SHADER, TV)); gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, TF)); gl.linkProgram(pr);
-      if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) return;
+      if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) { host.classList.add("no-terrain"); return; }
       host.classList.add("has-terrain");
       var small = window.matchMedia && window.matchMedia("(max-width: 640px)").matches;
       var COLS = small ? 44 : 80, ROWS = small ? 44 : 64, W = 30, D = 42, CELL = D / ROWS, FAR = D - 4;
@@ -468,6 +483,7 @@
       }
       function frame(now) {
         raf = live && !reduce && !document.hidden ? requestAnimationFrame(frame) : 0;
+        if (small && last && now - last < 30) return; /* phones: about 30 frames a second */
         var dt = last ? Math.min((now - last) / 1000, 0.05) : 0; last = now;
         var b = host.getBoundingClientRect(); s = Math.min(1, Math.max(0, -b.top / Math.max(1, b.height)));
         push *= Math.exp(-dt / 0.5); mx += (tx - mx) * (1 - Math.exp(-dt / 0.35));
@@ -514,10 +530,10 @@
     (root || document).querySelectorAll("[data-neural]").forEach(function (cv) {
       if (cv._bsNn) return; cv._bsNn = true;
     var gl = cv.getContext("webgl", { antialias: true, premultipliedAlpha: true }), host = cv.parentElement;
-    if (!gl) return;
+    if (!gl) { host.classList.add("no-terrain"); return; }
     function sh(t, s) { var o = gl.createShader(t); gl.shaderSource(o, s); gl.compileShader(o); return o; }
     var pr = gl.createProgram(); gl.attachShader(pr, sh(gl.VERTEX_SHADER, NV)); gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, NF)); gl.linkProgram(pr);
-    if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) return;
+    if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) { host.classList.add("no-terrain"); return; }
     host.classList.add("has-terrain");
     var small = window.matchMedia && window.matchMedia("(max-width: 640px)").matches;
     var LAYERS = 14, PER = small ? 16 : 26, GAP = 3.2, D = LAYERS * GAP, FAR = D - 6, R = Math.random, r = rnd(7);
@@ -560,6 +576,7 @@
     function size() { var dpr = Math.min(window.devicePixelRatio || 1, small ? 1.5 : 2); cv.width = Math.round(cv.clientWidth * dpr); cv.height = Math.round(cv.clientHeight * dpr); gl.viewport(0, 0, cv.width, cv.height); }
     function frame(now) {
       raf = live && !reduce && !document.hidden ? requestAnimationFrame(frame) : 0;
+      if (small && last && now - last < 30) return; /* phones: about 30 frames a second */
       var dt = last ? Math.min((now - last) / 1000, 0.05) : 0; last = now; t0 += dt;
       var bx = host.getBoundingClientRect(), s = Math.min(1, Math.max(0, -bx.top / Math.max(1, bx.height)));
       push *= Math.exp(-dt / 0.5); mx += (tx - mx) * (1 - Math.exp(-dt / 0.4)); my += (ty - my) * (1 - Math.exp(-dt / 0.4));
@@ -587,7 +604,7 @@
      where the clipboard is blocked it selects the text instead and says so. */
   function prompts(root) {
     (root || document).querySelectorAll(".bs-prompt").forEach(function (card) {
-      if (card._bsPr || card.dataset.promptManaged === "react") return; card._bsPr = true;
+      if (card._bsPr || card.dataset.promptManaged === "react") return; card._bsPr = true; /* a React-managed card copies on its own */
       var btn = card.querySelector(".bs-prompt__copy"), text = card.querySelector(".bs-prompt__text");
       var label = btn && btn.querySelector(".bs-prompt__copy-label"), status = card.querySelector(".bs-prompt__status"), timer = 0;
       if (!btn || !text || !label) return;
@@ -613,7 +630,35 @@
       });
     });
   }
-  window.BrunoSilvaUSA = { reveal: reveal, progress: progress, spotlight: spotlight, orbit: orbit, code: code, compare: compare, chat: chat, beams: beams, showcase: showcase, count: count, scramble: scramble, mask: mask, tilt: tilt, ticker: ticker, terrain: terrain, neural: neural, prompts: prompts };
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { reveal(); progress(); spotlight(); orbit(); code(); compare(); chat(); beams(); showcase(); count(); scramble(); mask(); tilt(); ticker(); terrain(); neural(); prompts(); });
-  else { reveal(); progress(); spotlight(); orbit(); code(); compare(); chat(); beams(); showcase(); count(); scramble(); mask(); tilt(); ticker(); terrain(); neural(); prompts(); }
+  /* Checklist: each .bs-checklist[data-checklist] remembers its ticked items in this browser (per page and checklist), shows
+     "N de M" and a "Recomeçar" button, and gets .is-complete when every item is ticked. Without the script, or where browser
+     storage is blocked, the boxes still tick; they are just not remembered. */
+  function checklists(root) {
+    (root || document).querySelectorAll(".bs-checklist[data-checklist]").forEach(function (box) {
+      if (box._bsCk) return; box._bsCk = true;
+      var inputs = Array.prototype.slice.call(box.querySelectorAll(".bs-checklist__box")), count = box.querySelector(".bs-checklist__count");
+      var reset = box.querySelector(".bs-checklist__reset"), key = "bs-checklist:" + location.pathname + ":" + box.getAttribute("data-checklist");
+      if (!inputs.length) return;
+      function load() { try { return JSON.parse(localStorage.getItem(key) || "[]"); } catch (e) { return []; } }
+      function save() {
+        var on = inputs.map(function (c, i) { return c.checked ? i : -1; }).filter(function (i) { return i >= 0; });
+        try { if (on.length) localStorage.setItem(key, JSON.stringify(on)); else localStorage.removeItem(key); } catch (e) { /* not remembered */ }
+      }
+      function update() {
+        var n = inputs.filter(function (c) { return c.checked; }).length;
+        if (count) { count.hidden = false; count.textContent = n + " de " + inputs.length; }
+        if (reset) reset.hidden = n === 0;
+        box.classList.toggle("is-complete", n === inputs.length);
+      }
+      load().forEach(function (i) { if (inputs[i]) inputs[i].checked = true; });
+      inputs.forEach(function (c) { c.addEventListener("change", function () { save(); update(); }); });
+      if (reset) reset.addEventListener("click", function () { inputs.forEach(function (c) { c.checked = false; }); save(); update(); inputs[0].focus(); });
+      update();
+    });
+  }
+  /* The WebGL headers start once the page is idle (or after 1.5s), so building the scene never delays the first paint or input. */
+  function later(fn) { if ("requestIdleCallback" in window) requestIdleCallback(function () { fn(); }, { timeout: 1500 }); else setTimeout(function () { fn(); }, 200); }
+  window.BrunoSilvaUSA = { reveal: reveal, progress: progress, spotlight: spotlight, orbit: orbit, code: code, compare: compare, chat: chat, beams: beams, showcase: showcase, count: count, scramble: scramble, mask: mask, tilt: tilt, ticker: ticker, terrain: terrain, neural: neural, prompts: prompts, checklists: checklists };
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { reveal(); progress(); spotlight(); orbit(); code(); compare(); chat(); beams(); showcase(); count(); scramble(); mask(); tilt(); ticker(); later(terrain); later(neural); prompts(); checklists(); });
+  else { reveal(); progress(); spotlight(); orbit(); code(); compare(); chat(); beams(); showcase(); count(); scramble(); mask(); tilt(); ticker(); later(terrain); later(neural); prompts(); checklists(); }
 })();

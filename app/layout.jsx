@@ -8,8 +8,9 @@ import { siteUrl } from '@/lib/site-url';
 import { FEED_TYPES } from '@/lib/feed';
 
 const orbitron = Orbitron({ subsets: ['latin'], weight: ['700', '800', '900'], variable: '--font-orbitron', display: 'swap' });
-const barlow = Barlow({ subsets: ['latin'], weight: ['400', '500', '600'], variable: '--font-barlow', display: 'swap' });
-const barlowCondensed = Barlow_Condensed({ subsets: ['latin'], weight: ['500', '600'], variable: '--font-barlow-condensed', display: 'swap' });
+// Only the weights the blog uses: fewer font files to download before the first paint.
+const barlow = Barlow({ subsets: ['latin'], weight: ['400', '600'], variable: '--font-barlow', display: 'swap' });
+const barlowCondensed = Barlow_Condensed({ subsets: ['latin'], weight: ['600'], variable: '--font-barlow-condensed', display: 'swap' });
 
 export const metadata = {
   metadataBase: siteUrl(),

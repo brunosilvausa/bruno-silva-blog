@@ -79,7 +79,7 @@ a.bs-article__kicker:hover { text-decoration: underline; text-underline-offset: 
 .blog-toc--fold { display: none; }
 .blog-toc--fold summary { display: flex; align-items: center; gap: var(--space-2); min-height: 52px; padding: 0 var(--space-4); cursor: pointer; list-style: none; }
 .blog-toc--fold summary::-webkit-details-marker { display: none; }
-.blog-toc--fold summary span { color: var(--silver); font-weight: 500; letter-spacing: .04em; text-transform: none; }
+.blog-toc--fold summary span { color: var(--silver); font-weight: 400; letter-spacing: .04em; text-transform: none; }
 .blog-toc--fold summary::after { content: ""; width: 8px; height: 8px; margin-left: auto; border-right: 2px solid var(--volt); border-bottom: 2px solid var(--volt); transform: rotate(45deg) translateY(-2px); transition: transform var(--duration-fast, 150ms) var(--easing-standard, ease); }
 .blog-toc--fold[open] summary::after { transform: rotate(225deg) translateY(-2px); }
 .blog-toc--fold nav { padding: 0 var(--space-4) var(--space-3); }

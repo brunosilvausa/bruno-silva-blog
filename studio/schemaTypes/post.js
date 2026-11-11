@@ -118,6 +118,15 @@ export const post = defineType({
         }),
       ],
     }),
+    defineField({
+      name: 'oldSlugs',
+      title: 'Endereços antigos',
+      type: 'array',
+      of: [{ type: 'string' }],
+      fieldset: 'seo',
+      description: 'Preenchido sozinho quando você muda o endereço e publica: quem abrir um destes endereços vai para o atual. Só a parte final, sem /posts/.',
+      validation: (rule) => rule.unique(),
+    }),
   ],
   orderings: [{ title: 'Mais novos primeiro', name: 'publishedAtDesc', by: [{ field: 'publishedAt', direction: 'desc' }] }],
   preview: {

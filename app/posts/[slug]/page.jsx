@@ -1,6 +1,6 @@
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import { site } from '@/content/site';
-import { getAdjacent, getAllPosts, getPost, getRelated } from '@/lib/sanity';
+import { getAdjacent, getAllPosts, getPost, getRedirect, getRelated } from '@/lib/sanity';
 import { pillarOf } from '@/lib/pillars';
 import { absolute } from '@/lib/site-url';
 import { FEED_TYPES } from '@/lib/feed';
@@ -70,8 +70,14 @@ function jsonLd(post) {
 }
 
 export default async function PostPage({ params }) {
-  const post = await getPost((await params).slug);
-  if (!post) notFound();
+  const { slug } = await params;
+  const post = await getPost(slug);
+  if (!post) {
+    // An old address of a renamed post goes to the current one (permanent redirect, also for Google).
+    const moved = await getRedirect(slug);
+    if (moved) permanentRedirect(`/posts/${moved}`);
+    notFound();
+  }
   const [related, { prev, next }] = await Promise.all([getRelated(post, 3), getAdjacent(post)]);
   return (
     <Shell>
