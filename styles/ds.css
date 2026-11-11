@@ -1059,3 +1059,27 @@ a.bs-ticker__item:focus-visible { outline: 2px solid var(--volt); outline-offset
 @keyframes bs-shine-turn { to { --bs-shine-angle: 360deg; } }
 @media (prefers-reduced-motion: reduce) { .bs-btn--shiny, .bs-btn--shiny::after { animation: none; } }
 .bs-reduced .bs-btn--shiny { animation: none; }
+
+/* DepthScroll. (1) [data-depth] on a .bs-backdrop section: while the section scrolls away, its flag and code layers lean back
+   and move away in perspective and its content shrinks a little and fades (--depth 0 → 1, set by components/bundle.js).
+   (2) [data-reveal="rise"]: a card or panel that enters lying back and stands up, once, the first time it scrolls into view.
+   Only transform and opacity change, so nothing moves the layout. Smaller angles on phones; still with reduced motion. */
+[data-depth] { --depth: 0; }
+[data-depth] > .bs-flag, [data-depth] > .bs-code { transform-origin: 50% 0%; will-change: transform;
+  transform: perspective(900px) translate3d(0, calc(var(--depth) * 36px), calc(var(--depth) * -260px)) rotateX(calc(var(--depth) * 22deg)); }
+[data-depth] > .bs-code { opacity: calc(1 - var(--depth) * 1.15); }
+[data-depth] > .bs-container { transform-origin: 50% 30%; will-change: transform, opacity;
+  transform: translate3d(0, calc(var(--depth) * -20px), 0) scale(calc(1 - var(--depth) * .06)); opacity: calc(1 - var(--depth) * 1.25); }
+[data-depth]::after { content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none; background: var(--void); opacity: calc(var(--depth) * .55); }
+.bs-js [data-reveal="rise"]:not(.is-visible) { opacity: 0; transform: perspective(1100px) translate3d(0, 64px, 0) rotateX(20deg) scale(.95); }
+.bs-js [data-reveal="rise"] { transform-origin: 50% 100%; backface-visibility: hidden;
+  transition: opacity 600ms var(--easing-out, ease-out), transform 1000ms cubic-bezier(.22, .8, .3, 1); }
+@media (max-width: 640px) {
+  [data-depth] > .bs-flag, [data-depth] > .bs-code { transform: perspective(700px) translate3d(0, calc(var(--depth) * 24px), calc(var(--depth) * -160px)) rotateX(calc(var(--depth) * 14deg)); }
+  .bs-js [data-reveal="rise"]:not(.is-visible) { transform: perspective(900px) translate3d(0, 40px, 0) rotateX(12deg) scale(.97); }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-depth] > .bs-flag, [data-depth] > .bs-code, [data-depth] > .bs-container { transform: none; }
+  [data-depth]::after { display: none; }
+  .bs-js [data-reveal="rise"], .bs-js [data-reveal="rise"]:not(.is-visible) { transform: none; }
+}

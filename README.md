@@ -78,6 +78,7 @@ Os efeitos vêm do design system (`public/ds.js` e `styles/ds.css`):
 - Ticker: faixa discreta com os quatro pilares, que corre sozinha e acelera com a rolagem;
 - Spotlight: nos cartões de post, uma luz volt segue o mouse;
 - OrbitGlow: brilho volt girando atrás do botão "Quero receber" da newsletter.
+- DepthScroll: ao rolar, o cabeçalho da home e dos pilares recua em perspectiva (`data-depth`), e os cartões de post e o bloco da newsletter entram deitados e se levantam uma vez (`data-reveal="rise"`).
 
 O corpo dos posts não se mexe. Tudo pausa fora da tela, e quem pede "reduzir movimento" no aparelho vê tudo parado. Para mudar um efeito, atualize o design system e copie de novo os dois arquivos.
 

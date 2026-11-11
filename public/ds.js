@@ -412,7 +412,28 @@
       else { live = true; wake(); }
     });
   }
-  window.BrunoSilvaUSA = { reveal: reveal, progress: progress, spotlight: spotlight, orbit: orbit, code: code, compare: compare, chat: chat, beams: beams, showcase: showcase, count: count, scramble: scramble, mask: mask, tilt: tilt, ticker: ticker };
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { reveal(); progress(); spotlight(); orbit(); code(); compare(); chat(); beams(); showcase(); count(); scramble(); mask(); tilt(); ticker(); });
-  else { reveal(); progress(); spotlight(); orbit(); code(); compare(); chat(); beams(); showcase(); count(); scramble(); mask(); tilt(); ticker(); }
+  /* DepthScroll: a [data-depth] section falls back in 3D while it scrolls away. Its --depth goes from 0 (the section's top at
+     the top of the screen) to 1 (scrolled out); the CSS pushes the backdrop layers back in perspective and fades the content.
+     It only moves while the page scrolls, and only while the section is on screen. Reduced motion: --depth stays 0.
+     The 3D entrance of cards and panels is [data-reveal="rise"], handled by reveal(). */
+  function depth(root) {
+    (root || document).querySelectorAll("[data-depth]").forEach(function (el) {
+      if (el._bsDepth || reduce) return; el._bsDepth = true;
+      var live = true, q = false, lastP = -1;
+      function paint() {
+        q = false;
+        var r = el.getBoundingClientRect(), p = Math.min(1, Math.max(0, -r.top / Math.max(1, r.height * 0.9)));
+        p = Math.round(p * 1000) / 1000;
+        if (p !== lastP) { lastP = p; el.style.setProperty("--depth", p); }
+      }
+      function ask() { if (live && !q) { q = true; requestAnimationFrame(paint); } }
+      window.addEventListener("scroll", ask, { passive: true });
+      window.addEventListener("resize", ask, { passive: true });
+      if ("IntersectionObserver" in window) new IntersectionObserver(function (es) { live = es[0].isIntersecting; ask(); }).observe(el);
+      paint();
+    });
+  }
+  window.BrunoSilvaUSA = { reveal: reveal, progress: progress, spotlight: spotlight, orbit: orbit, code: code, compare: compare, chat: chat, beams: beams, showcase: showcase, count: count, scramble: scramble, mask: mask, tilt: tilt, ticker: ticker, depth: depth };
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { reveal(); progress(); spotlight(); orbit(); code(); compare(); chat(); beams(); showcase(); count(); scramble(); mask(); tilt(); ticker(); depth(); });
+  else { reveal(); progress(); spotlight(); orbit(); code(); compare(); chat(); beams(); showcase(); count(); scramble(); mask(); tilt(); ticker(); depth(); }
 })();
