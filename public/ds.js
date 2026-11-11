@@ -412,28 +412,90 @@
       else { live = true; wake(); }
     });
   }
-  /* DepthScroll: a [data-depth] section falls back in 3D while it scrolls away. Its --depth goes from 0 (the section's top at
-     the top of the screen) to 1 (scrolled out); the CSS pushes the backdrop layers back in perspective and fades the content.
-     It only moves while the page scrolls, and only while the section is on screen. Reduced motion: --depth stays 0.
-     The 3D entrance of cards and panels is [data-reveal="rise"], handled by reveal(). */
-  function depth(root) {
-    (root || document).querySelectorAll("[data-depth]").forEach(function (el) {
-      if (el._bsDepth || reduce) return; el._bsDepth = true;
-      var live = true, q = false, lastP = -1;
-      function paint() {
-        q = false;
-        var r = el.getBoundingClientRect(), p = Math.min(1, Math.max(0, -r.top / Math.max(1, r.height * 0.9)));
-        p = Math.round(p * 1000) / 1000;
-        if (p !== lastP) { lastP = p; el.style.setProperty("--depth", p); }
+  /* Terrain3D: a [data-terrain] canvas draws a low-poly wireframe terrain in volt (WebGL, no library) that the camera flies over.
+     Scrolling the page pushes the camera forward and dips it into the terrain; a mouse pointer leans it sideways. The middle of
+     the terrain is a flat valley so the title stays readable. Runs only while on screen and while the tab is visible; fewer lines
+     on phones; reduced motion draws one still frame. Without WebGL the canvas stays empty and the section keeps its flag. */
+  var TV = "attribute vec2 a;uniform mat4 P,V;uniform float T,C,S;varying float f,h;" +
+    "float hs(vec2 p){p=fract(p*vec2(123.34,456.21));p+=dot(p,p+45.32);return fract(p.x*p.y);}" +
+    "float n(vec2 p){vec2 i=floor(p),q=fract(p),u=q*q*(3.-2.*q);return mix(mix(hs(i),hs(i+vec2(1,0)),u.x),mix(hs(i+vec2(0,1)),hs(i+vec2(1,1)),u.x),u.y);}" +
+    "float fb(vec2 p){float v=0.,k=.5;for(int j=0;j<4;j++){v+=k*n(p);p*=2.03;k*=.5;}return v;}" +
+    "void main(){float s=mod(T,C);float z=a.y+s;vec2 p=vec2(a.x,a.y+s-T)*.16;" +
+    "float c=smoothstep(1.4,7.5,abs(a.x));h=mix(.25*fb(p*2.),max(fb(p)-.3,0.)*7.,c);" +
+    "vec4 e=V*vec4(a.x,h,z,1.);gl_Position=P*e;f=clamp(-e.z/S,0.,1.);gl_PointSize=2.5;}";
+  var TF = "precision mediump float;uniform vec3 K;uniform float A,M;varying float f,h;" +
+    "void main(){float a=pow(1.-f,1.6)*smoothstep(0.,.08,f)*A*(.28+.72*smoothstep(.2,3.,h));" +
+    "if(M>.5)a*=step(2.6,h)*1.6;gl_FragColor=vec4(K*a,a);}";
+  function mat(fov, asp, nr, fr) { var t = 1 / Math.tan(fov / 2), d = nr - fr; return [t / asp, 0, 0, 0, 0, t, 0, 0, 0, 0, (fr + nr) / d, -1, 0, 0, 2 * fr * nr / d, 0]; }
+  function look(e, c) {
+    var z = [e[0] - c[0], e[1] - c[1], e[2] - c[2]], l = Math.hypot(z[0], z[1], z[2]); z = z.map(function (v) { return v / l; });
+    var x = [z[2], 0, -z[0]], m = Math.hypot(x[0], x[2]); x = [x[0] / m, 0, x[2] / m];
+    var y = [z[1] * x[2] - z[2] * x[1], z[2] * x[0] - z[0] * x[2], z[0] * x[1] - z[1] * x[0]];
+    function d(v) { return -(v[0] * e[0] + v[1] * e[1] + v[2] * e[2]); }
+    return [x[0], y[0], z[0], 0, x[1], y[1], z[1], 0, x[2], y[2], z[2], 0, d(x), d(y), d(z), 1];
+  }
+  function terrain(root) {
+    (root || document).querySelectorAll("[data-terrain]").forEach(function (cv) {
+      if (cv._bsTr) return; cv._bsTr = true;
+      var gl = cv.getContext("webgl", { antialias: true, premultipliedAlpha: true }), host = cv.parentElement;
+      if (!gl) return;
+      function sh(type, src) { var s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return s; }
+      var pr = gl.createProgram(); gl.attachShader(pr, sh(gl.VERTEX_SHADER, TV)); gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, TF)); gl.linkProgram(pr);
+      if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) return;
+      host.classList.add("has-terrain");
+      var small = window.matchMedia && window.matchMedia("(max-width: 640px)").matches;
+      var COLS = small ? 44 : 80, ROWS = small ? 44 : 64, W = 30, D = 42, CELL = D / ROWS, FAR = D - 4;
+      var pos = [], idx = [], r, c;
+      for (r = 0; r <= ROWS; r++) for (c = 0; c <= COLS; c++) pos.push((c / COLS - 0.5) * W, 2 - r * CELL);
+      for (r = 0; r < ROWS; r++) for (c = 0; c < COLS; c++) {
+        var i = r * (COLS + 1) + c;
+        idx.push(i, i + 1, i, i + COLS + 1, (r + c) % 2 ? i : i + 1, (r + c) % 2 ? i + COLS + 2 : i + COLS + 1);
       }
-      function ask() { if (live && !q) { q = true; requestAnimationFrame(paint); } }
-      window.addEventListener("scroll", ask, { passive: true });
-      window.addEventListener("resize", ask, { passive: true });
-      if ("IntersectionObserver" in window) new IntersectionObserver(function (es) { live = es[0].isIntersecting; ask(); }).observe(el);
-      paint();
+      gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer()); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(pos), gl.STATIC_DRAW);
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gl.createBuffer()); gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(idx), gl.STATIC_DRAW);
+      gl.useProgram(pr);
+      var loc = gl.getAttribLocation(pr, "a"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+      var U = {}; ["P", "V", "T", "C", "S", "K", "A", "M"].forEach(function (k) { U[k] = gl.getUniformLocation(pr, k); });
+      var col = (getComputedStyle(host).getPropertyValue("--volt").trim() || "#e1fa03").replace("#", "");
+      gl.uniform3f(U.K, parseInt(col.slice(0, 2), 16) / 255, parseInt(col.slice(2, 4), 16) / 255, parseInt(col.slice(4, 6), 16) / 255);
+      gl.uniform1f(U.C, CELL); gl.uniform1f(U.S, FAR);
+      gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE); gl.clearColor(0, 0, 0, 0);
+      var travel = 0, push = 0, mx = 0, tx = 0, s = 0, live = false, raf = 0, last = 0, lastY = window.scrollY;
+      function size() {
+        var dpr = Math.min(window.devicePixelRatio || 1, small ? 1.5 : 2);
+        cv.width = Math.round(cv.clientWidth * dpr); cv.height = Math.round(cv.clientHeight * dpr);
+        gl.viewport(0, 0, cv.width, cv.height);
+      }
+      function frame(now) {
+        raf = live && !reduce && !document.hidden ? requestAnimationFrame(frame) : 0;
+        var dt = last ? Math.min((now - last) / 1000, 0.05) : 0; last = now;
+        var b = host.getBoundingClientRect(); s = Math.min(1, Math.max(0, -b.top / Math.max(1, b.height)));
+        push *= Math.exp(-dt / 0.5); mx += (tx - mx) * (1 - Math.exp(-dt / 0.35));
+        travel += dt * (1.1 + push + s * 4);
+        if (travel > 4000) travel -= Math.floor(travel / CELL) * CELL - CELL;
+        var e = [mx * 1.6, (small ? 3.2 : 1.9) - s * 1.1, 2.4], ctr = [mx * 0.6, (small ? -3 : 0.85) - s * 1.6, -12];
+        gl.uniformMatrix4fv(U.P, false, mat(small ? 1.15 : 0.95, cv.width / Math.max(1, cv.height), 0.1, 60));
+        gl.uniformMatrix4fv(U.V, false, look(e, ctr));
+        gl.uniform1f(U.T, travel); gl.uniform1f(U.A, 1 - s * 0.6);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.uniform1f(U.M, 0); gl.drawElements(gl.LINES, idx.length, gl.UNSIGNED_SHORT, 0);
+        gl.uniform1f(U.M, 1); gl.drawArrays(gl.POINTS, 0, pos.length / 2);
+      }
+      function wake() { if (live && !raf && !document.hidden) { last = 0; raf = requestAnimationFrame(frame); } }
+      size(); frame(0);
+      if (reduce) return;
+      if ("ResizeObserver" in window) new ResizeObserver(function () { size(); if (!raf) frame(performance.now()); }).observe(cv);
+      window.addEventListener("scroll", function () { var dy = window.scrollY - lastY; lastY = window.scrollY; if (live) push = Math.max(-3, Math.min(6, push + dy * 0.01)); }, { passive: true });
+      if (fine) {
+        host.addEventListener("pointermove", function (ev) { var b = host.getBoundingClientRect(); tx = ((ev.clientX - b.left) / b.width - 0.5) * 2; });
+        host.addEventListener("pointerleave", function () { tx = 0; });
+      }
+      document.addEventListener("visibilitychange", wake);
+      if ("IntersectionObserver" in window) new IntersectionObserver(function (es) { live = es[0].isIntersecting; wake(); }).observe(host);
+      else { live = true; wake(); }
     });
   }
-  window.BrunoSilvaUSA = { reveal: reveal, progress: progress, spotlight: spotlight, orbit: orbit, code: code, compare: compare, chat: chat, beams: beams, showcase: showcase, count: count, scramble: scramble, mask: mask, tilt: tilt, ticker: ticker, depth: depth };
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { reveal(); progress(); spotlight(); orbit(); code(); compare(); chat(); beams(); showcase(); count(); scramble(); mask(); tilt(); ticker(); depth(); });
-  else { reveal(); progress(); spotlight(); orbit(); code(); compare(); chat(); beams(); showcase(); count(); scramble(); mask(); tilt(); ticker(); depth(); }
+  window.BrunoSilvaUSA = { reveal: reveal, progress: progress, spotlight: spotlight, orbit: orbit, code: code, compare: compare, chat: chat, beams: beams, showcase: showcase, count: count, scramble: scramble, mask: mask, tilt: tilt, ticker: ticker, terrain: terrain };
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { reveal(); progress(); spotlight(); orbit(); code(); compare(); chat(); beams(); showcase(); count(); scramble(); mask(); tilt(); ticker(); terrain(); });
+  else { reveal(); progress(); spotlight(); orbit(); code(); compare(); chat(); beams(); showcase(); count(); scramble(); mask(); tilt(); ticker(); terrain(); }
 })();

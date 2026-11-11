@@ -15,7 +15,7 @@ export default function NewsletterSignup({ data, latestHref, formId = 'email-new
       </svg>
       <div className="bs-backdrop__glow" style={{ left: '-80px', top: '-200px' }}></div>
       <div className="bs-container">
-        <div className="bs-news bs-glass bs-glass--strong" data-reveal="rise">
+        <div className="bs-news bs-glass bs-glass--strong" data-reveal>
           <div>
             <span className="bs-shead__kicker">{data.kicker}</span>
             <Heading className="bs-news__title" id={`${formId}-titulo`} {...(level === 1 ? { 'data-scramble': 'load' } : { 'data-mask': 'lines' })}><Title value={data.title} /></Heading>

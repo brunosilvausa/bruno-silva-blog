@@ -40,11 +40,12 @@ export default async function PostList({ page, pillar, header, current, base = '
   return (
     <Shell current={current}>
       {/* Header over the flag with CodeReveal in its gaps (title, text, buttons only), then the pillar ticker, then the pillar filter and the posts. */}
-      <section className="bs-section blog-hero bs-backdrop bs-backdrop--code" data-depth aria-labelledby="titulo">
+      <section className="bs-section blog-hero bs-backdrop bs-backdrop--code" aria-labelledby="titulo">
         <svg className="bs-flag" viewBox="0 0 1200 320" preserveAspectRatio="none" aria-hidden="true">
           {STRIPES.map((y) => <rect key={y} x="0" y={y} width="1200" height="15" />)}
         </svg>
         <div className="bs-code" aria-hidden="true"></div>
+        <canvas className="bs-terrain" data-terrain aria-hidden="true"></canvas>
         <div className="bs-container">
           <CodeDivider className="bs-shead-divider" />
           <SectionHeader level={1} id="titulo" kicker={header.kicker} title={header.title} text={header.text} />

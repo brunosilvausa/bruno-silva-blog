@@ -1060,26 +1060,15 @@ a.bs-ticker__item:focus-visible { outline: 2px solid var(--volt); outline-offset
 @media (prefers-reduced-motion: reduce) { .bs-btn--shiny, .bs-btn--shiny::after { animation: none; } }
 .bs-reduced .bs-btn--shiny { animation: none; }
 
-/* DepthScroll. (1) [data-depth] on a .bs-backdrop section: while the section scrolls away, its flag and code layers lean back
-   and move away in perspective and its content shrinks a little and fades (--depth 0 → 1, set by components/bundle.js).
-   (2) [data-reveal="rise"]: a card or panel that enters lying back and stands up, once, the first time it scrolls into view.
-   Only transform and opacity change, so nothing moves the layout. Smaller angles on phones; still with reduced motion. */
-[data-depth] { --depth: 0; }
-[data-depth] > .bs-flag, [data-depth] > .bs-code { transform-origin: 50% 0%; will-change: transform;
-  transform: perspective(900px) translate3d(0, calc(var(--depth) * 36px), calc(var(--depth) * -260px)) rotateX(calc(var(--depth) * 22deg)); }
-[data-depth] > .bs-code { opacity: calc(1 - var(--depth) * 1.15); }
-[data-depth] > .bs-container { transform-origin: 50% 30%; will-change: transform, opacity;
-  transform: translate3d(0, calc(var(--depth) * -20px), 0) scale(calc(1 - var(--depth) * .06)); opacity: calc(1 - var(--depth) * 1.25); }
-[data-depth]::after { content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none; background: var(--void); opacity: calc(var(--depth) * .55); }
-.bs-js [data-reveal="rise"]:not(.is-visible) { opacity: 0; transform: perspective(1100px) translate3d(0, 64px, 0) rotateX(20deg) scale(.95); }
-.bs-js [data-reveal="rise"] { transform-origin: 50% 100%; backface-visibility: hidden;
-  transition: opacity 600ms var(--easing-out, ease-out), transform 1000ms cubic-bezier(.22, .8, .3, 1); }
-@media (max-width: 640px) {
-  [data-depth] > .bs-flag, [data-depth] > .bs-code { transform: perspective(700px) translate3d(0, calc(var(--depth) * 24px), calc(var(--depth) * -160px)) rotateX(calc(var(--depth) * 14deg)); }
-  .bs-js [data-reveal="rise"]:not(.is-visible) { transform: perspective(900px) translate3d(0, 40px, 0) rotateX(12deg) scale(.97); }
-}
-@media (prefers-reduced-motion: reduce) {
-  [data-depth] > .bs-flag, [data-depth] > .bs-code, [data-depth] > .bs-container { transform: none; }
-  [data-depth]::after { display: none; }
-  .bs-js [data-reveal="rise"], .bs-js [data-reveal="rise"]:not(.is-visible) { transform: none; }
-}
+/* Terrain3D: a [data-terrain] canvas behind a .bs-backdrop header draws a volt wireframe terrain (components/bundle.js). Once the
+   terrain runs, the section gets .has-terrain: its flag and CodeReveal step aside, a scrim darkens the middle behind the text and
+   fades the top and bottom into void, and the header grows to most of the screen with its content centred. */
+.bs-terrain { position: absolute; inset: 0; z-index: 0; display: block; width: 100%; height: 100%; pointer-events: none; }
+.has-terrain > .bs-flag, .has-terrain > .bs-code { display: none; }
+.has-terrain::before { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: radial-gradient(ellipse 44% 40% at 50% 48%, rgba(2, 7, 11, .9), rgba(2, 7, 11, .55) 55%, transparent 80%),
+    linear-gradient(to bottom, var(--void), rgba(2, 7, 11, 0) 24%, rgba(2, 7, 11, 0) 80%, var(--void)); }
+.has-terrain > .bs-container { position: relative; z-index: 2; }
+.bs-section.has-terrain { min-height: min(84vh, 780px); display: flex; flex-direction: column; justify-content: center; box-sizing: border-box; }
+@media (max-width: 640px) { .bs-section.has-terrain { min-height: min(78vh, 640px); }
+  .has-terrain::before { background: radial-gradient(ellipse 72% 30% at 50% 52%, rgba(2, 7, 11, .82), rgba(2, 7, 11, .35) 60%, transparent 85%), linear-gradient(to bottom, var(--void), rgba(2, 7, 11, 0) 22%, rgba(2, 7, 11, 0) 80%, var(--void)); } }

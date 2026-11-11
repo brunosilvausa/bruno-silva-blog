@@ -72,13 +72,13 @@ O formulário chama `POST /api/subscribe`, com as mesmas proteções das outras 
 
 Os efeitos vêm do design system (`public/ds.js` e `styles/ds.css`):
 - CodeDivider (o ornamento `</>`) acima do título da home e dos pilares, e antes de "Posts relacionados";
-- CodeReveal: caracteres hex entre as listras da bandeira atrás do cabeçalho, que acendem em volt sob o mouse;
+- Terrain3D: no cabeçalho da home e dos pilares, um terreno de montanhas em linhas volt desenhado em 3D (WebGL, sem biblioteca), que a câmera sobrevoa; ao rolar ela acelera e mergulha, e com o mouse se inclina para o lado. Sem WebGL, volta a bandeira com o CodeReveal;
+- CodeReveal: caracteres hex entre as listras da bandeira, que acendem em volt sob o mouse (no cabeçalho, só quando o navegador não tem WebGL);
 - ScrambleText: o título principal de cada página se "decodifica" ao abrir;
 - MaskReveal: títulos de seção e subtítulos dos posts sobem ao rolar;
 - Ticker: faixa discreta com os quatro pilares, que corre sozinha e acelera com a rolagem;
 - Spotlight: nos cartões de post, uma luz volt segue o mouse;
 - OrbitGlow: brilho volt girando atrás do botão "Quero receber" da newsletter.
-- DepthScroll: ao rolar, o cabeçalho da home e dos pilares recua em perspectiva (`data-depth`), e os cartões de post e o bloco da newsletter entram deitados e se levantam uma vez (`data-reveal="rise"`).
 
 O corpo dos posts não se mexe. Tudo pausa fora da tela, e quem pede "reduzir movimento" no aparelho vê tudo parado. Para mudar um efeito, atualize o design system e copie de novo os dois arquivos.
 
