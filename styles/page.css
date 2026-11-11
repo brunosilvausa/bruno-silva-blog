@@ -33,10 +33,7 @@ a.bs-article__kicker:hover { text-decoration: underline; text-underline-offset: 
 /* Prompt: texto original preservado e ação de cópia em cada caixa. */
 .blog-prompt { min-width: 0; overflow-wrap: anywhere; }
 .blog-prompt__text { white-space: pre-wrap; overflow-wrap: anywhere; }
-.blog-prompt__actions { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-3) var(--space-4); margin-top: var(--space-4); }
-.blog-prompt__actions .bs-btn { min-height: 44px; white-space: normal; }
 .blog-prompt__status:not(:empty) { padding: 0 var(--space-4) var(--space-4); font-size: 14px; line-height: 20px; color: var(--volt); }
-@media (max-width: 560px) { .blog-prompt__actions .bs-btn { width: 100%; justify-content: center; } }
 
 /* Celular. */
 /* Títulos encolhem com a tela: palavras longas (EMPREENDEDORISMO) cabem sem rolagem lateral. */
