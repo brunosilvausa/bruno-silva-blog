@@ -47,9 +47,15 @@ O site busca os posts no servidor, então não precisa configurar CORS.
 
 No editor: Posts → Create. Preencha título, endereço (botão Generate), pilar, data, resumo e texto, e clique em **Publish**. O post aparece no site a partir da data de publicação.
 
-- O texto aceita títulos (H2, H3), listas, negrito, itálico, código, links, imagens com legenda, uma citação e a caixa "Dica / Atenção".
+- O texto aceita títulos (H2, H3), listas, negrito, itálico, código, links, imagens com legenda, uma citação e as caixas "Dica / Atenção" e "Prompt".
 - Capa é opcional. Sem ela, o cartão usa a bandeira e o ícone do pilar. A capa aparece colorida na lista de posts e dentro do post.
 - Crie um Autor (nome, foto e bio) e escolha-o em cada post. Sem autor, o site usa o texto de `author` em `content/site.js`.
+
+### Inserir um prompt para o leitor copiar
+
+No campo Texto do post, abra o menu de inserir bloco e escolha **Prompt**. Preencha o texto do prompt; o título é opcional e, quando vazio, a caixa mostra "Prompt". O texto é obrigatório e não pode conter apenas espaços. Você pode inserir várias caixas no mesmo post.
+
+No blog, **Copiar prompt** copia somente o texto original da caixa, preservando espaços, parágrafos e quebras de linha, para colar em uma IA. O resultado aparece como "Copiado!". Se o navegador bloquear a cópia, a caixa avisa e o botão permite tentar novamente. A cópia depende do acesso à área de transferência do navegador em HTTPS (ou localhost).
 
 ## Atualização na hora (opcional)
 

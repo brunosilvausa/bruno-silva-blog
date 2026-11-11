@@ -1,12 +1,35 @@
 import { defineArrayMember, defineField, defineType } from 'sanity';
 
 // The post body. Only what the blog renders (components/PortableText.jsx): paragraphs, two heading levels,
-// quotes, lists, bold/italic/code, links, images with caption and the "Dica / Atenção" box.
+// quotes, lists, bold/italic/code, links, images with caption, "Dica / Atenção" and Prompt boxes.
 export const blockContent = defineType({
   name: 'blockContent',
   title: 'Texto',
   type: 'array',
   of: [
+    defineArrayMember({
+      name: 'prompt',
+      title: 'Prompt',
+      type: 'object',
+      fields: [
+        defineField({ name: 'title', title: 'Título (opcional)', type: 'string' }),
+        defineField({
+          name: 'text',
+          title: 'Texto do prompt',
+          type: 'text',
+          rows: 8,
+          validation: (rule) => rule.required().custom((value) => (
+            typeof value === 'string' && value.trim().length > 0
+              ? true
+              : 'Escreva o texto do prompt.'
+          )),
+        }),
+      ],
+      preview: {
+        select: { title: 'title', text: 'text' },
+        prepare: ({ title, text }) => ({ title: title?.trim() || 'Prompt', subtitle: text }),
+      },
+    }),
     defineArrayMember({
       type: 'block',
       styles: [

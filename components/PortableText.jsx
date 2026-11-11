@@ -1,9 +1,10 @@
 import { safeHref } from '@/lib/safe-href';
 import { imageSrcSet } from '@/lib/image';
+import PromptBlock from '@/components/PromptBlock';
 
 // Renders the post body (Portable Text from Sanity) into the design system's .bs-prose markup.
 // Supported: paragraphs, h2/h3 (h4 shows as h3), quotes, bullet and numbered lists, bold, italic, code,
-// underline, strike-through, links, images with caption and the "callout" box (Dica / Atenção).
+// underline, strike-through, links, images with caption, "callout" (Dica / Atenção) and "prompt" boxes.
 // Unknown block types are skipped instead of breaking the page.
 
 const DECORATORS = {
@@ -98,6 +99,7 @@ export default function PortableText({ value, ids }) {
     if (node?._type === 'block') return <Block key={key} block={node} id={ids?.get(node)} />;
     if (node?._type === 'image') return <Figure key={key} value={node} />;
     if (node?._type === 'callout') return <Callout key={key} value={node} />;
+    if (node?._type === 'prompt') return <PromptBlock key={key} value={node} />;
     return null;
   });
 }
