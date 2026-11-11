@@ -1,7 +1,7 @@
 import { defineArrayMember, defineField, defineType } from 'sanity';
 
 // The post body. Only what the blog renders (components/PortableText.jsx): paragraphs, two heading levels,
-// quotes, lists, bold/italic/code, links, images with caption and the "Dica / Atenção" box.
+// quotes, lists, bold/italic/code, links, images with caption, the "Dica / Atenção" box and the prompt to copy.
 export const blockContent = defineType({
   name: 'blockContent',
   title: 'Texto',
@@ -76,6 +76,32 @@ export const blockContent = defineType({
       preview: {
         select: { tone: 'tone', text: 'text' },
         prepare: ({ tone, text }) => ({ title: tone === 'atencao' ? 'Atenção' : 'Dica', subtitle: text }),
+      },
+    }),
+    defineArrayMember({
+      name: 'prompt',
+      title: 'Prompt para copiar',
+      type: 'object',
+      fields: [
+        defineField({
+          name: 'label',
+          title: 'Rótulo',
+          type: 'string',
+          description: 'Opcional, curto. Ex.: "Peça assim". Sem ele, aparece "Prompt".',
+          validation: (rule) => rule.max(40),
+        }),
+        defineField({
+          name: 'text',
+          title: 'Prompt',
+          type: 'text',
+          rows: 6,
+          description: 'O texto exato que o leitor vai copiar. As quebras de linha são mantidas.',
+          validation: (rule) => rule.required().max(2000),
+        }),
+      ],
+      preview: {
+        select: { label: 'label', text: 'text' },
+        prepare: ({ label, text }) => ({ title: `Prompt: ${label || 'Prompt'}`, subtitle: text }),
       },
     }),
   ],

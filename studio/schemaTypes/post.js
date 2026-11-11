@@ -12,6 +12,14 @@ export const post = defineType({
   name: 'post',
   title: 'Post',
   type: 'document',
+  fieldsets: [
+    {
+      name: 'seo',
+      title: 'SEO (Google e redes sociais)',
+      description: 'Opcional. Muda só como o post aparece no Google e nos links compartilhados; o post continua igual.',
+      options: { collapsible: true, collapsed: true },
+    },
+  ],
   fields: [
     defineField({
       name: 'title',
@@ -63,7 +71,7 @@ export const post = defineType({
       name: 'coverImage',
       title: 'Capa',
       type: 'image',
-      description: 'Opcional. Foto do próprio post (aparece em preto e branco). Sem capa, o cartão mostra a bandeira e o ícone do pilar.',
+      description: 'Opcional. Foto do próprio post, colorida. Sem capa, o cartão mostra a bandeira e o ícone do pilar.',
       options: { hotspot: true },
       fields: [
         defineField({
@@ -78,12 +86,37 @@ export const post = defineType({
     defineField({ name: 'body', title: 'Texto', type: 'blockContent', validation: (rule) => rule.required() }),
     defineField({ name: 'author', title: 'Autor', type: 'reference', to: [{ type: 'author' }] }),
     defineField({
+      name: 'seoTitle',
+      title: 'Título para o Google',
+      type: 'string',
+      fieldset: 'seo',
+      description: 'Até 60 caracteres. Aparece na aba do navegador, no Google e nos links compartilhados. Sem ele, usa o título do post.',
+      validation: (rule) => rule.max(60).warning('Acima de 60 caracteres o Google corta o título.'),
+    }),
+    defineField({
       name: 'seoDescription',
       title: 'Descrição para o Google',
       type: 'text',
       rows: 2,
-      description: 'Opcional, até 160 caracteres. Sem ela, usa o resumo.',
+      fieldset: 'seo',
+      description: 'Até 160 caracteres. Sem ela, usa o resumo.',
       validation: (rule) => rule.max(160),
+    }),
+    defineField({
+      name: 'ogImage',
+      title: 'Imagem de compartilhamento',
+      type: 'image',
+      fieldset: 'seo',
+      description: 'Aparece quando o link é compartilhado (WhatsApp, LinkedIn, X). Use 1200 × 630. Sem ela, usa a capa; sem capa, a imagem gerada com a marca.',
+      options: { hotspot: true },
+      fields: [
+        defineField({
+          name: 'alt',
+          title: 'Texto alternativo',
+          type: 'string',
+          validation: (rule) => rule.custom((alt, ctx) => (ctx.parent?.asset && !alt ? 'Descreva a imagem para quem não pode vê-la.' : true)),
+        }),
+      ],
     }),
   ],
   orderings: [{ title: 'Mais novos primeiro', name: 'publishedAtDesc', by: [{ field: 'publishedAt', direction: 'desc' }] }],

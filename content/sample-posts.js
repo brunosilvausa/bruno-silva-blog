@@ -15,6 +15,7 @@ const code = (text) => span(text, ['code']);
 const ul = (...items) => items.map((t) => block('normal', [span(t)], { listItem: 'bullet', level: 1 }));
 const ol = (...items) => items.map((t) => block('normal', [span(t)], { listItem: 'number', level: 1 }));
 const callout = (tone, text) => ({ _type: 'callout', _key: key(), tone, text });
+const prompt = (label, text) => ({ _type: 'prompt', _key: key(), label, text });
 
 export const SAMPLE_POSTS = [
   {
@@ -76,6 +77,7 @@ export const SAMPLE_POSTS = [
     _id: 'exemplo-automatize',
     title: 'Automatize sua primeira tarefa',
     slug: 'automatize-sua-primeira-tarefa',
+    seoTitle: 'Automação para iniciantes: sua primeira tarefa automática',
     pillar: 'inovacao',
     publishedAt: '2026-10-16T12:00:00Z',
     excerpt: 'Um passo a passo para quem nunca automatizou nada no trabalho.',
@@ -84,6 +86,8 @@ export const SAMPLE_POSTS = [
       p('Escolha uma tarefa repetida, com começo e fim claros. Copiar dados de um formulário para uma planilha é um ótimo começo.'),
       h2('Passo a passo'),
       ...ol('Anote os passos que você faz à mão', 'Escolha a ferramenta de automação', 'Monte o fluxo com dados de teste', 'Deixe rodar uma semana e confira'),
+      p('Para o primeiro passo, peça ajuda à IA para listar o que você faz à mão:'),
+      prompt('Peça assim', 'Vou descrever uma tarefa que faço toda semana. Liste os passos em ordem, numerados, e marque quais dependem de uma decisão minha.\n\nTarefa: copiar os pedidos do formulário do site para a planilha de controle.'),
       quote('Automatize o que você já entende, não o que ainda está confuso.'),
     ],
   },

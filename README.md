@@ -47,7 +47,9 @@ O site busca os posts no servidor, então não precisa configurar CORS.
 
 No editor: Posts → Create. Preencha título, endereço (botão Generate), pilar, data, resumo e texto, e clique em **Publish**. O post aparece no site a partir da data de publicação.
 
-- O texto aceita títulos (H2, H3), listas, negrito, itálico, código, links, imagens com legenda, uma citação e a caixa "Dica / Atenção".
+- O texto aceita títulos (H2, H3), listas, negrito, itálico, código, links, imagens com legenda, uma citação, a caixa "Dica / Atenção" e o **Prompt para copiar**.
+- Prompt para copiar: no texto, clique em **+** (Insert) → Prompt para copiar. Escreva o prompt exatamente como o leitor deve usar; as quebras de linha são mantidas. O rótulo é opcional (ex.: "Peça assim"). No site ele vira um cartão com o botão "Copiar"; no RSS, uma citação.
+- SEO (opcional, grupo fechado no fim do post): **Título para o Google** (até 60 caracteres), **Descrição para o Google** (até 160) e **Imagem de compartilhamento** (1200 × 630). Mudam só a aba do navegador, o Google e os links compartilhados; o título do post continua o mesmo. Sem eles, o site usa o título, o resumo e a capa (ou a imagem gerada com a marca).
 - Capa é opcional. Sem ela, o cartão usa a bandeira e o ícone do pilar. A capa aparece colorida na lista de posts e dentro do post.
 - Crie um Autor (nome, foto e bio) e escolha-o em cada post. Sem autor, o site usa o texto de `author` em `content/site.js`.
 
@@ -55,7 +57,7 @@ No editor: Posts → Create. Preencha título, endereço (botão Generate), pila
 
 Sem configurar nada, as páginas se atualizam sozinhas em até 1 minuto depois de publicar. Para atualizar na hora:
 
-1. Gere um segredo longo e coloque em `SANITY_REVALIDATE_SECRET` na Vercel (e faça um novo deploy).
+1. Gere um segredo longo (no Terminal: `openssl rand -hex 32 | pbcopy` copia um pronto) e coloque em `SANITY_REVALIDATE_SECRET` na Vercel (e faça um novo deploy).
 2. Em sanity.io/manage → API → Webhooks → Create webhook:
    - URL: `https://<seu-blog>/api/revalidate`
    - Dataset: `production`; Trigger on: Create, Update, Delete

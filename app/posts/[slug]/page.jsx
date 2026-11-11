@@ -21,24 +21,26 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }) {
   const post = await getPost((await params).slug);
   if (!post) return {};
-  // Cover photo when there is one; otherwise the generated brand preview with the post's title.
-  const image = post.cover ? `${post.cover.url}?w=1200&h=630&fit=crop&auto=format` : `/og/posts/${post.slug}`;
+  // Share image: the SEO image, else the cover photo, else the generated brand preview with the post's title.
+  const photo = post.ogImage || post.cover;
+  const image = photo ? `${photo.url}?w=1200&h=630&fit=crop&auto=format` : `/og/posts/${post.slug}`;
+  const imageAlt = photo?.alt || post.title;
   return {
-    title: `${post.title} | Bruno Silva USA`,
+    title: `${post.seoTitle} | Bruno Silva USA`,
     description: post.description,
     alternates: { canonical: `/posts/${post.slug}`, types: FEED_TYPES },
     openGraph: {
       type: 'article',
       locale: 'pt_BR',
       siteName: 'Bruno Silva USA',
-      title: post.title,
+      title: post.seoTitle,
       description: post.description,
       publishedTime: post.publishedAt,
       modifiedTime: post.updatedAt,
       section: pillarOf(post.pillar).label,
-      images: [{ url: image, width: 1200, height: 630, alt: post.cover?.alt || post.title }],
+      images: [{ url: image, width: 1200, height: 630, alt: imageAlt }],
     },
-    twitter: { card: 'summary_large_image', title: post.title, description: post.description, images: [image] },
+    twitter: { card: 'summary_large_image', title: post.seoTitle, description: post.description, images: [image] },
   };
 }
 

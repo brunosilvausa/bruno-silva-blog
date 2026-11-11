@@ -3,7 +3,8 @@ import { imageSrcSet } from '@/lib/image';
 
 // Renders the post body (Portable Text from Sanity) into the design system's .bs-prose markup.
 // Supported: paragraphs, h2/h3 (h4 shows as h3), quotes, bullet and numbered lists, bold, italic, code,
-// underline, strike-through, links, images with caption and the "callout" box (Dica / Atenção).
+// underline, strike-through, links, images with caption, the "callout" box (Dica / Atenção) and the prompt to copy
+// (DS PromptCard: the "Copiar" button is switched on by public/ds.js).
 // Unknown block types are skipped instead of breaking the page.
 
 const DECORATORS = {
@@ -74,6 +75,24 @@ function Callout({ value }) {
   return <div className="bs-callout"><b>{value.tone === 'atencao' ? 'Atenção' : 'Dica'}</b>{withBreaks(value.text, value._key)}</div>;
 }
 
+function Prompt({ value }) {
+  if (!value?.text) return null;
+  const label = (value.label || '').trim() || 'Prompt';
+  return (
+    <div className="bs-prompt" role="group" aria-label={label}>
+      <div className="bs-prompt__head">
+        <span className="bs-prompt__label">{label}</span>
+        <button type="button" className="bs-prompt__copy" aria-label={`Copiar: ${label}`} hidden>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="1" /><path d="M5 15V5a1 1 0 0 1 1-1h10" /></svg>
+          <span className="bs-prompt__copy-label">Copiar</span>
+        </button>
+      </div>
+      <p className="bs-prompt__text">{value.text}</p>
+      <span className="bs-prompt__status" role="status" aria-live="polite"></span>
+    </div>
+  );
+}
+
 /** Groups consecutive list items into <ul>/<ol>; nested levels are shown flat. */
 function group(blocks) {
   const out = [];
@@ -98,6 +117,7 @@ export default function PortableText({ value, ids }) {
     if (node?._type === 'block') return <Block key={key} block={node} id={ids?.get(node)} />;
     if (node?._type === 'image') return <Figure key={key} value={node} />;
     if (node?._type === 'callout') return <Callout key={key} value={node} />;
+    if (node?._type === 'prompt') return <Prompt key={key} value={node} />;
     return null;
   });
 }
