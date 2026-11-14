@@ -67,7 +67,7 @@ test('sample series: list, detail, counts and the post series block', async () =
   assert.deepEqual(series.parts.map((p) => p.slug), ['como-escolher-o-estado-da-sua-llc', 'o-que-e-o-ein', 'receber-em-dolar-de-clientes-no-brasil']);
   assert.ok(series.parts[0].minutes > 0 && series.parts[0].title);
   assert.equal(await getSeries('nao-existe'), null);
-  assert.deepEqual(await getContentCounts(), { terms: 4, series: 1 });
+  assert.deepEqual(await getContentCounts(), { terms: 4, series: 1, materials: 3 });
   const post = await getPost('o-que-e-o-ein');
   assert.equal(post.series.index, 2);
   assert.equal(post.series.total, 3);
@@ -97,7 +97,7 @@ test('real GROQ: series ignore unpublished parts and renumber', async () => {
     const c = await getPost('c');
     assert.deepEqual({ index: c.series.index, total: c.series.total, parts: c.series.parts }, { index: 2, total: 2, parts: [{ title: 'a', slug: 'a' }, { title: 'c', slug: 'c' }] });
     assert.equal((await getPost('solo')).series, null);
-    assert.deepEqual(await getContentCounts(), { terms: 2, series: 1 });
+    assert.deepEqual(await getContentCounts(), { terms: 2, series: 1, materials: 0 });
     const terms = await getTerms();
     assert.deepEqual(terms.map((t) => [t.slug, t.fullName, t.aliases]), [['ein', 'Employer Identification Number', []], ['itin', '', ['A']]]);
     assert.equal((await getTerm('itin')).term, 'ITIN');

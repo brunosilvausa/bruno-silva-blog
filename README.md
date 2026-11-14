@@ -87,6 +87,33 @@ No editor: Série → Create. Preencha título, endereço, descrição e, se qui
 - Rodapé: os links "Séries" e "Glossário" (coluna Blog) **só aparecem quando já existe conteúdo**. O mapa do site (`/sitemap.xml`) também só lista páginas que existem.
 - Depois de mudar o editor, rode `npm run deploy` (dentro de `studio/`) para publicar os novos tipos.
 
+## Central de Conteúdo
+
+Biblioteca de materiais ligados aos vídeos (prompts, passos, checklists e guias), em `/central`.
+
+### Criar um Material
+
+No editor: Central → Create. Preencha:
+- **Título** (até 80 caracteres) e **Endereço** (botão Generate);
+- **Tipo**: Prompt, Passo a passo, Checklist ou Guia;
+- **Resumo** (até 160 caracteres): aparece no cartão e na descrição para buscadores;
+- **Minutos** (opcional, de 1 a 30), **Link do vídeo** e **Data do vídeo** (opcionais);
+- **Conteúdo**: os mesmos blocos dos posts (Prompt com botão copiar, checklist, imagem, Dica/Atenção);
+- **Próximo material** (opcional): sem escolha, o site sugere o mais recente;
+- **Data de publicação**: com data futura o material fica agendado e não aparece.
+
+### Endereço para o vídeo
+
+Depois de **Publish**, o endereço do material é `/central/<endereço>` (ex.: `https://<seu-blog>/central/prompt-ein`). Coloque esse link na descrição ou no comentário fixado do vídeo. Se você mudar o endereço e publicar de novo, o antigo continua funcionando e leva ao novo.
+
+A página `/central` só existe quando há ao menos um material publicado; o link "Central" no menu e no rodapé aparece junto.
+
+### Link do Instagram
+
+Para mostrar a linha "Siga para os próximos vídeos" no fim de cada material, defina `NEXT_PUBLIC_URL_INSTAGRAM` (endereço completo `https://...`) na Vercel e faça um novo deploy. Sem ele, ou com um endereço inválido, a linha não aparece.
+
+Depois de mudar o editor, rode `npm run deploy` (dentro de `studio/`) para publicar o novo tipo.
+
 ## Atualização na hora (opcional)
 
 Sem configurar nada, as páginas se atualizam sozinhas em até 1 minuto depois de publicar. Para atualizar na hora:
@@ -95,10 +122,10 @@ Sem configurar nada, as páginas se atualizam sozinhas em até 1 minuto depois d
 2. Em sanity.io/manage → API → Webhooks → Create webhook:
    - URL: `https://<seu-blog>/api/revalidate`
    - Dataset: `production`; Trigger on: Create, Update, Delete
-   - Filter: `_type in ["post", "author", "term", "series"]`
+   - Filter: `_type in ["post", "author", "term", "series", "material"]`
    - HTTP method: POST; Secret: o mesmo segredo do passo 1.
 
-Se você já criou o webhook antes, edite o filtro em sanity.io/manage para incluir `term` e `series`; senão termos e séries novos aparecem só depois de até 1 minuto.
+Se você já criou o webhook antes, edite o filtro em sanity.io/manage para incluir `term`, `series` e `material`; senão termos, séries e materiais novos aparecem só depois de até 1 minuto.
 
 O endpoint confere a assinatura do Sanity e recusa pedidos sem ela ou com mais de 5 minutos.
 

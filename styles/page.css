@@ -44,6 +44,13 @@ a.bs-article__kicker:hover { text-decoration: underline; text-underline-offset: 
   .bs-nav__inner { min-height: 60px; gap: var(--space-4); }
   html { scroll-padding-top: calc(61px + var(--space-4)); }
 }
+/* Tablet pequeno: com 5 links (Central + 4 pilares) a barra precisa de menos folga para não rolar para o lado. */
+@media (min-width: 721px) and (max-width: 860px) {
+  .bs-nav__inner { gap: var(--space-4); }
+  .bs-nav__links { gap: var(--space-3); }
+  .bs-nav__links a { font-size: 13px; letter-spacing: .04em; }
+  .bs-nav .bs-btn { white-space: nowrap; }
+}
 /* Tablet com toque: links da barra com 44px de altura. */
 @media (pointer: coarse) and (min-width: 721px) { .bs-nav__links a { display: inline-flex; align-items: center; min-height: 44px; padding-block: 0; box-sizing: border-box; } }
 
@@ -152,3 +159,16 @@ main#conteudo:focus { outline: none; }
 .bs-prose .blog-about__links a { text-decoration: none; }
 .blog-author__more { display: inline-flex; align-items: center; gap: var(--space-2); margin-top: var(--space-2); color: var(--volt); }
 @media (pointer: coarse) { .blog-author__more { min-height: 44px; } }
+
+/* Página do material (Central de Conteúdo). */
+.blog-back { display: inline-flex; align-items: center; min-height: 44px; margin-bottom: var(--space-2); font-family: var(--font-label); font-weight: 600; font-size: 15px; letter-spacing: .08em; text-transform: uppercase; color: var(--silver); text-decoration: none; }
+.blog-back:hover { color: var(--volt); }
+.blog-fromvideo { margin: var(--space-4) 0 0; font-family: var(--font-body); font-size: 17px; line-height: 26px; color: var(--silver); }
+.blog-fromvideo a { display: inline-flex; align-items: center; min-height: 44px; padding-inline: var(--space-2); color: var(--volt); text-underline-offset: 3px; }
+.blog-material { margin-top: var(--space-6); }
+.blog-mend { margin-top: var(--space-12); display: flex; flex-direction: column; gap: var(--space-6); padding-top: var(--space-6); border-top: 1px solid var(--trace); }
+.blog-mend .bs-seriesnext { margin-top: 0; }
+.blog-mend__follow { display: inline-flex; align-items: center; min-height: 44px; font-family: var(--font-label); font-weight: 600; font-size: 15px; letter-spacing: .08em; text-transform: uppercase; color: var(--volt); }
+.blog-mend__offers { margin: 0; font-size: 17px; line-height: 26px; color: var(--silver); overflow-wrap: anywhere; }
+.blog-mend__offers a { display: inline-flex; align-items: center; min-height: 44px; color: var(--volt); text-underline-offset: 3px; }
+@media (max-width: 560px) { .blog-mend__sep { display: none; } .blog-mend__offers > span:not(.blog-mend__sep) { display: block; } }

@@ -22,15 +22,19 @@ export default defineConfig({
               .title('Glossário')
               .schemaType('term')
               .child(S.documentTypeList('term').title('Glossário').defaultOrdering([{ field: 'term', direction: 'asc' }])),
+            S.listItem()
+              .title('Central')
+              .schemaType('material')
+              .child(S.documentTypeList('material').title('Central').defaultOrdering([{ field: 'publishedAt', direction: 'desc' }])),
             S.documentTypeListItem('author').title('Autores'),
           ]),
     }),
     visionTool(),
   ],
   schema: { types: schemaTypes },
-  // Publishing a post whose address changed keeps the old address, so old links still work.
+  // Publishing a post or material whose address changed keeps the old address, so old links still work.
   document: {
     actions: (prev, context) =>
-      context.schemaType === 'post' ? prev.map((action) => (action.action === 'publish' ? keepOldSlug(action, context) : action)) : prev,
+      ['post', 'material'].includes(context.schemaType) ? prev.map((action) => (action.action === 'publish' ? keepOldSlug(action, context) : action)) : prev,
   },
 });

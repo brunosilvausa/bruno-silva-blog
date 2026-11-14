@@ -6,7 +6,10 @@ import { PILLARS } from '@/lib/pillars';
 const URL_CURSO = safeHref(process.env.NEXT_PUBLIC_URL_CURSO, 'https://bruno-silva-vendas.vercel.app');
 const URL_CONSULTORIA = safeHref(process.env.NEXT_PUBLIC_URL_CONSULTORIA, 'https://bruno-silva-consultoria.vercel.app');
 const URL_IA_DO_ZERO = safeHref(process.env.NEXT_PUBLIC_URL_IA_DO_ZERO, 'https://bruno-silva-ia-do-zero.vercel.app');
+const URL_INSTAGRAM = safeHref(process.env.NEXT_PUBLIC_URL_INSTAGRAM, null);
 const URL_BIO = safeHref(process.env.NEXT_PUBLIC_URL_BIO, 'https://bruno-silva-bio.vercel.app');
+
+export { URL_CONSULTORIA, URL_IA_DO_ZERO, URL_INSTAGRAM };
 
 export const site = {
   meta: {
@@ -78,8 +81,19 @@ export const site = {
       { title: 'Acompanhe', links: [{ label: 'Sobre', href: '/sobre' }, { label: 'Newsletter', href: '/newsletter' }, { label: 'RSS', href: '/rss.xml' }, { label: 'Todos os links', href: URL_BIO }] },
     ],
     // Added to the "Blog" column after the pillars, only when there is content.
-    extra: { series: { label: 'Séries', href: '/series' }, glossary: { label: 'Glossário', href: '/glossario' } },
+    extra: { central: { label: 'Central', href: '/central' }, series: { label: 'Séries', href: '/series' }, glossary: { label: 'Glossário', href: '/glossario' } },
     copyright: '© 2026 Bruno Silva USA',
     legal: [{ label: 'Privacidade', href: '/privacidade' }, { label: 'Termos', href: '/termos' }],
   },
 };
+
+/** Top-menu links: "Central" comes first, only when there are materials to show. */
+export function navLinks(counts) {
+  return counts?.materials > 0 ? [{ label: 'Central', href: '/central' }, ...site.nav.links] : site.nav.links;
+}
+
+/** Extra links for the footer "Blog" column, only for content that exists. */
+export function footerExtra(counts) {
+  const e = site.footer.extra;
+  return [counts?.materials > 0 && e.central, counts?.series > 0 && e.series, counts?.terms > 0 && e.glossary].filter(Boolean);
+}

@@ -720,9 +720,37 @@
       run();
     });
   }
+  /* Material filter: [data-material-filter] (hidden until this script runs) gets a "Todos" button plus one per type found in the
+     .bs-matlist that follows it (li > .bs-material[data-kind][data-kind-label]). Clicking a button hides the other types' items and
+     sets aria-pressed; the first button ("Todos") starts pressed. Without the script the filter stays hidden and every card shows. */
+  function materialFilter(root) {
+    (root || document).querySelectorAll("[data-material-filter]").forEach(function (box) {
+      if (box._bsMf) return;
+      var scope = box.parentNode, list = scope && scope.querySelector(".bs-matlist"); if (!list) return; box._bsMf = true;
+      var items = Array.prototype.slice.call(list.querySelectorAll("li")), kinds = [], labels = {};
+      items.forEach(function (li) {
+        var c = li.querySelector(".bs-material[data-kind]"); if (!c) return;
+        var k = c.getAttribute("data-kind"); li._bsKind = k;
+        if (kinds.indexOf(k) < 0) { kinds.push(k); labels[k] = c.getAttribute("data-kind-label") || k; }
+      });
+      if (kinds.length < 2) return;
+      var buttons = [];
+      function add(kind, text) {
+        var b = document.createElement("button"); b.type = "button"; b.textContent = text; b.setAttribute("data-kind", kind); b.setAttribute("aria-pressed", "false");
+        b.addEventListener("click", function () { select(kind); }); box.appendChild(b); buttons.push(b);
+      }
+      function select(kind) {
+        items.forEach(function (li) { li.hidden = !!kind && li._bsKind !== kind; });
+        buttons.forEach(function (b) { b.setAttribute("aria-pressed", String((b.getAttribute("data-kind") || "") === (kind || ""))); });
+      }
+      add("", "Todos"); kinds.forEach(function (k) { add(k, labels[k]); });
+      select("");
+      box.hidden = false;
+    });
+  }
   /* The WebGL headers start once the page is idle (or after 1.5s), so building the scene never delays the first paint or input. */
   function later(fn) { if ("requestIdleCallback" in window) requestIdleCallback(function () { fn(); }, { timeout: 1500 }); else setTimeout(function () { fn(); }, 200); }
-  window.BrunoSilvaUSA = { reveal: reveal, progress: progress, spotlight: spotlight, orbit: orbit, code: code, compare: compare, chat: chat, beams: beams, showcase: showcase, count: count, scramble: scramble, mask: mask, tilt: tilt, ticker: ticker, terrain: terrain, neural: neural, prompts: prompts, checklists: checklists, terms: terms, glossaryFilter: glossaryFilter };
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { reveal(); progress(); spotlight(); orbit(); code(); compare(); chat(); beams(); showcase(); count(); scramble(); mask(); tilt(); ticker(); later(terrain); later(neural); prompts(); checklists(); terms(); glossaryFilter(); });
-  else { reveal(); progress(); spotlight(); orbit(); code(); compare(); chat(); beams(); showcase(); count(); scramble(); mask(); tilt(); ticker(); later(terrain); later(neural); prompts(); checklists(); terms(); glossaryFilter(); }
+  window.BrunoSilvaUSA = { reveal: reveal, progress: progress, spotlight: spotlight, orbit: orbit, code: code, compare: compare, chat: chat, beams: beams, showcase: showcase, count: count, scramble: scramble, mask: mask, tilt: tilt, ticker: ticker, terrain: terrain, neural: neural, prompts: prompts, checklists: checklists, terms: terms, glossaryFilter: glossaryFilter, materialFilter: materialFilter };
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { reveal(); progress(); spotlight(); orbit(); code(); compare(); chat(); beams(); showcase(); count(); scramble(); mask(); tilt(); ticker(); later(terrain); later(neural); prompts(); checklists(); terms(); glossaryFilter(); materialFilter(); });
+  else { reveal(); progress(); spotlight(); orbit(); code(); compare(); chat(); beams(); showcase(); count(); scramble(); mask(); tilt(); ticker(); later(terrain); later(neural); prompts(); checklists(); terms(); glossaryFilter(); materialFilter(); }
 })();
