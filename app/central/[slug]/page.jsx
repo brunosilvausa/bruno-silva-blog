@@ -1,7 +1,7 @@
 import { notFound, permanentRedirect } from 'next/navigation';
 import { site, URL_INSTAGRAM } from '@/content/site';
 import { getMaterial, getMaterialRedirect, getMaterials, getTerms } from '@/lib/sanity';
-import { MATERIAL_KINDS, materialKicker } from '@/lib/materials';
+import { MATERIAL_KINDS, kindAccent } from '@/lib/materials';
 import { linkTerms } from '@/lib/terms';
 import { safeHref } from '@/lib/safe-href';
 import { absolute } from '@/lib/site-url';
@@ -13,13 +13,6 @@ import MaterialEnd from '@/components/MaterialEnd';
 export const revalidate = 60;
 
 const kindLabel = (kind) => MATERIAL_KINDS.find((k) => k.value === kind)?.label || 'Material';
-
-/** "DD/MM" of the video date (as published, UTC), or ''. */
-function shortDate(iso) {
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return '';
-  return `${String(d.getUTCDate()).padStart(2, '0')}/${String(d.getUTCMonth() + 1).padStart(2, '0')}`;
-}
 
 export async function generateStaticParams() {
   return (await getMaterials()).map((m) => ({ slug: m.slug }));
@@ -80,21 +73,24 @@ export default async function MaterialPage({ params }) {
   const terms = await getTerms().catch(() => []);
   const body = linkTerms(m.body, terms);
   const video = safeHref(m.videoUrl, null);
-  const videoDay = m.videoDate ? shortDate(m.videoDate) : '';
   return (
     <Shell current="/central">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(m) }} />
       <article className="bs-article">
         <header>
           <a className="blog-back" href="/central">‹ Central</a>
-          <p className="bs-article__kicker">{materialKicker(m.kind, m.minutes)}</p>
-          <h1 className="bs-article__title" data-scramble="load">{m.title}</h1>
-          {video ? (
-            <p className="blog-fromvideo">
-              {videoDay ? `Do vídeo de ${videoDay}` : 'Do vídeo'}{' '}
-              <a href={video} target="_blank" rel="noopener">▸ assistir</a>
-            </p>
-          ) : null}
+          <div className="bs-matcover" style={{ '--accent': kindAccent(m.kind) }}>
+            {m.cover ? (
+              <div className="bs-matcover__media"><img src={m.cover.url} alt={m.cover.alt || ''} style={{ objectPosition: `${(m.cover.fpX ?? 0.5) * 100}% ${(m.cover.fpY ?? 0.5) * 100}%` }} /></div>
+            ) : (
+              <div className="bs-matcover__media" aria-hidden="true" />
+            )}
+            {video ? <a className="bs-matcover__play" href={video} target="_blank" rel="noopener" aria-label="Assistir ao vídeo" /> : null}
+            <div className="bs-matcover__over">
+              <span className="bs-matcover__kind">{kindLabel(m.kind)}</span>
+              <h1 className="bs-matcover__title" data-scramble="load">{m.title}</h1>
+            </div>
+          </div>
         </header>
         <div className="bs-prose blog-material">
           <PortableText value={body} />

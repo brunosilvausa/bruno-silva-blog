@@ -15,7 +15,7 @@ registerHooks({
 });
 const { getMaterials, getMaterial, getMaterialRedirect, getContentCounts, getPosts, getFeedPosts, getRedirect } = await import('../lib/sanity.js');
 const { navLinks, footerExtra, site } = await import('../content/site.js');
-const { MATERIAL_KINDS } = await import('../lib/materials.js');
+const { MATERIAL_KINDS, kindAccent, shortDate } = await import('../lib/materials.js');
 const { parse, evaluate } = await import('../studio/node_modules/groq-js/dist/index.js');
 
 async function withDataset(dataset, fn) {
@@ -51,7 +51,12 @@ test('sample materials: list, detail, next, counts, isolation from posts', async
   const list = await getMaterials();
   assert.equal(list.length, 3);
   assert.deepEqual(list.map((m) => m.slug), ['logo-da-llc-com-ia', 'nome-da-llc-com-ia', 'checklist-abrir-llc']);
-  assert.deepEqual(Object.keys(list[0]).sort(), ['id', 'kind', 'minutes', 'publishedAt', 'slug', 'summary', 'title']);
+  assert.deepEqual(Object.keys(list[0]).sort(), ['cover', 'id', 'kind', 'minutes', 'publishedAt', 'slug', 'summary', 'title', 'videoDate']);
+  assert.deepEqual(list[0].cover, { url: '/img/avatar.webp', alt: 'Bruno Silva', fpX: null, fpY: null });
+  assert.equal(list[1].cover, null);
+  assert.equal(list[2].cover, null);
+  assert.deepEqual((await getMaterial('logo-da-llc-com-ia')).cover, list[0].cover);
+  assert.equal((await getMaterial('nome-da-llc-com-ia')).cover, null);
   const nome = await getMaterial('nome-da-llc-com-ia');
   assert.deepEqual(nome.next, { title: 'Logo da LLC com IA', slug: 'logo-da-llc-com-ia' });
   assert.ok(nome.body.some((b) => b._type === 'prompt'));
@@ -123,4 +128,62 @@ test('footerExtra: Central only when there are materials; order central, series,
   assert.deepEqual(footerExtra({ materials: 1 }).map((l) => l.href), ['/central']);
   assert.deepEqual(footerExtra({ terms: 1, series: 1, materials: 1 }).map((l) => l.href), ['/central', '/series', '/glossario']);
   assert.deepEqual(site.footer.extra.central, { label: 'Central', href: '/central' });
+});
+
+test('kindAccent: per-kind colour, unknown falls back to volt', () => {
+  assert.equal(kindAccent('prompt'), '#4fd8ff');
+  assert.equal(kindAccent('checklist'), '#ff5fa8');
+  assert.equal(kindAccent('guia'), '#e1fa03');
+  assert.equal(kindAccent('passo-a-passo'), '#e1fa03');
+  assert.equal(kindAccent('x'), '#e1fa03');
+  assert.equal(kindAccent(undefined), '#e1fa03');
+});
+
+test('real GROQ: cover url built from the asset ref, alt defaults to empty', async () => {
+  const mk = (id, extra = {}) => ({ _id: id, _type: 'material', title: id, slug: { current: id }, kind: 'guia', summary: 's', publishedAt: '2020-01-01T00:00:00Z', body: [], ...extra });
+  const img = (alt) => ({ _type: 'image', asset: { _type: 'reference', _ref: 'image-abc123def-1600x2000-jpg' }, ...(alt ? { alt } : {}) });
+  const url = 'https://cdn.sanity.io/images/test-project/production/abc123def-1600x2000.jpg?w=900&h=1125&fit=crop&auto=format';
+  await withDataset([mk('with', { cover: img('Foto') }), mk('noalt', { cover: img() }), mk('none'), mk('empty', { cover: { _type: 'image' } })], async () => {
+    const by = Object.fromEntries((await getMaterials()).map((m) => [m.slug, m]));
+    assert.deepEqual(by.with.cover, { url, alt: 'Foto', fpX: null, fpY: null });
+    assert.deepEqual(by.noalt.cover, { url, alt: '', fpX: null, fpY: null });
+    assert.equal(by.none.cover, null);
+    assert.equal(by.empty.cover, null);
+    assert.deepEqual((await getMaterial('with')).cover, { url, alt: 'Foto', fpX: null, fpY: null });
+    assert.equal((await getMaterial('none')).cover, null);
+  });
+});
+
+test('real GROQ: cover hotspot adds focal point params, none keeps the plain url', async () => {
+  const mk = (id, cover) => ({ _id: id, _type: 'material', title: id, slug: { current: id }, kind: 'guia', summary: 's', publishedAt: '2020-01-01T00:00:00Z', body: [], cover });
+  const asset = { _type: 'reference', _ref: 'image-abc123def-1600x2000-jpg' };
+  const base = 'https://cdn.sanity.io/images/test-project/production/abc123def-1600x2000.jpg?w=900&h=1125&fit=crop&auto=format';
+  await withDataset([
+    mk('hot', { _type: 'image', asset, hotspot: { x: 0.25, y: 0.75, width: 0.5, height: 0.5 } }),
+    mk('plain', { _type: 'image', asset }),
+  ], async () => {
+    const by = Object.fromEntries((await getMaterials()).map((m) => [m.slug, m]));
+    assert.equal(by.hot.cover.url, `${base}&crop=focalpoint&fp-x=0.25&fp-y=0.75`);
+    assert.equal(by.plain.cover.url, base);
+    assert.deepEqual([by.hot.cover.fpX, by.hot.cover.fpY], [0.25, 0.75]);
+    assert.deepEqual([by.plain.cover.fpX, by.plain.cover.fpY], [null, null]);
+    assert.equal((await getMaterial('hot')).cover.url, `${base}&crop=focalpoint&fp-x=0.25&fp-y=0.75`);
+  });
+});
+
+test('shortDate: DD/MM of a valid date, empty for invalid', () => {
+  assert.equal(shortDate('2026-11-12'), '12/11');
+  assert.equal(shortDate('2026-01-05T23:30:00Z'), '05/01');
+  assert.equal(shortDate('nope'), '');
+  assert.equal(shortDate(null), '');
+});
+
+test('og cover: forceJpeg drops auto=format so the CDN cannot return WebP/AVIF', async () => {
+  const { forceJpeg } = await import('../lib/og-card.js');
+  const u = forceJpeg(new URL('https://cdn.sanity.io/images/p/d/x-1600x2000.jpg?w=900&h=1125&fit=crop&auto=format&crop=focalpoint&fp-x=0.25&fp-y=0.75'));
+  assert.equal(u.searchParams.has('auto'), false);
+  assert.equal(u.searchParams.get('fm'), 'jpg');
+  assert.equal(u.searchParams.get('w'), '1200');
+  assert.equal(u.searchParams.get('h'), '630');
+  assert.equal(u.searchParams.get('fp-x'), '0.25');
 });

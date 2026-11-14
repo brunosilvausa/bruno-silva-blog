@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import { getMaterials } from '@/lib/sanity';
-import { MATERIAL_KINDS } from '@/lib/materials';
+import { MATERIAL_KINDS, kindAccent, shortDate } from '@/lib/materials';
 import { breadcrumb, jsonLd } from '@/lib/jsonld';
 import Shell from '@/components/Shell';
 import SectionHeader from '@/components/SectionHeader';
@@ -32,21 +32,24 @@ export default async function CentralPage() {
         <div className="bs-container">
           <SectionHeader level={1} title={{ before: '', em: 'Central de Conteúdo', after: '' }} text={DESCRIPTION} />
           <MaterialFilter />
-          <ul className="bs-matlist">
-            {materials.map((m) => {
+          <ul className="bs-matlist" data-spotlight>
+            {materials.map((m, i) => {
               const label = labelOf(m.kind);
-              return (
-                <li key={m.id}>
-                  <a className="bs-material" href={`/central/${m.slug}`} data-kind={m.kind} data-kind-label={label}>
-                    <span className="bs-material__head">
-                      <span className="bs-material__kind">{label}</span>
-                      {typeof m.minutes === 'number' ? <span className="bs-material__min">{m.minutes} min</span> : null}
-                    </span>
+              const day = m.videoDate ? shortDate(m.videoDate) : '';
+              const card = (
+                <a className="bs-material bs-spotlight" style={{ '--accent': kindAccent(m.kind) }} href={`/central/${m.slug}`} data-kind={m.kind} data-kind-label={label}>
+                  <span className="bs-material__media" aria-hidden={m.cover ? undefined : 'true'}>
+                    {m.cover ? <img src={m.cover.url} alt={m.cover.alt || ''} loading="lazy" /> : null}
+                  </span>
+                  {day ? <span className="bs-material__date">▸ {day}</span> : null}
+                  <span className="bs-material__body">
+                    <span className="bs-material__kind">{label}</span>
                     <h2 className="bs-material__title">{m.title}</h2>
                     <p className="bs-material__summary">{m.summary}</p>
-                  </a>
-                </li>
+                  </span>
+                </a>
               );
+              return <li key={m.id}>{i === 0 ? <div className="bs-orbit">{card}</div> : card}</li>;
             })}
           </ul>
         </div>

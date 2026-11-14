@@ -19,6 +19,7 @@ export const SAMPLE_MATERIALS = [
     kind: 'prompt',
     summary: 'Um prompt para gerar ideias de logo para a sua LLC em minutos, sem designer.',
     minutes: 2,
+    cover: { url: '/img/avatar.webp', alt: 'Bruno Silva' },
     publishedAt: '2026-11-12T12:00:00Z',
     videoUrl: 'https://www.instagram.com/',
     videoDate: '2026-11-12',

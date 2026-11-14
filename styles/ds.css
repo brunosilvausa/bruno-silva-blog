@@ -1195,17 +1195,24 @@ a.bs-ticker__item:focus-visible { outline: 2px solid var(--volt); outline-offset
 @media (prefers-reduced-motion: reduce) { .bs-seriesbar > summary::after, .bs-seriesnext { transition: none; } }
 .bs-reduced .bs-seriesbar > summary::after, .bs-reduced .bs-seriesnext { transition: none; }
 
-/* MaterialCard + material filter: the /central list (cards with a type label, title, summary and minutes; type filter buttons) */
-.bs-matlist { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: var(--space-6); margin: var(--space-8) 0 0; padding: 0; list-style: none; }
+/* MaterialCard + material filter: the /central list. Tall "reel" cards (cover or generated gradient, type chip, title, summary) in a grid; type filter buttons.
+   --accent (set inline per card) colours the chip and the cover fallback; volt when unset. */
+.bs-matlist { display: grid; grid-template-columns: minmax(0, 420px); gap: var(--space-6); margin: var(--space-8) 0 0; padding: 0; list-style: none; }
+.bs-matlist > li { min-width: 0; display: grid; }
 .bs-matlist > li[hidden] { display: none; }
-.bs-material { display: flex; flex-direction: column; gap: var(--space-3); height: 100%; box-sizing: border-box; padding: var(--space-6); background: var(--surface-raised); border: 1px solid var(--trace); border-left: 3px solid var(--volt); border-radius: var(--radius-sm); text-decoration: none; color: inherit; }
-.bs-material__head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); }
-.bs-material__kind { font-family: var(--font-label); font-weight: 600; font-size: 14px; line-height: 18px; letter-spacing: .08em; text-transform: uppercase; color: var(--volt); }
-.bs-material__min { font-family: var(--font-label); font-weight: 600; font-size: 14px; line-height: 18px; letter-spacing: .08em; text-transform: uppercase; color: var(--silver); }
-.bs-material__title { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: 20px; line-height: 26px; letter-spacing: .02em; text-transform: uppercase; color: var(--white); overflow-wrap: anywhere; transition: color var(--duration-fast, 150ms) var(--easing-standard, ease); }
-.bs-material__summary { margin: 0; font-family: var(--font-body); font-size: 16px; line-height: 24px; color: var(--silver); }
-.bs-material:hover { border-color: var(--volt); }
-.bs-material:hover .bs-material__title { color: var(--volt); }
+@media (min-width: 721px) { .bs-matlist { grid-template-columns: repeat(2, minmax(0, 400px)); } }
+@media (min-width: 1024px) { .bs-matlist { grid-template-columns: repeat(3, minmax(0, 380px)); } }
+.bs-material { --accent: var(--volt); position: relative; display: grid; grid-template: minmax(0, 1fr) / minmax(0, 1fr); box-sizing: border-box; min-width: 0; overflow-wrap: anywhere; background: var(--surface-raised); border: 1px solid var(--trace); border-radius: var(--radius-sm); box-shadow: 0 12px 32px rgba(0, 0, 0, .45); text-decoration: none; color: inherit; transition: border-color var(--duration-fast, 150ms) var(--easing-standard, ease); }
+.bs-material__media { grid-area: 1 / 1; position: relative; aspect-ratio: 4 / 5; overflow: hidden; border-radius: inherit; background: radial-gradient(100% 60% at 70% 0%, color-mix(in srgb, var(--accent) 35%, transparent), transparent 65%), var(--surface-raised); }
+.bs-material__media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.bs-material__date { position: absolute; top: var(--space-3); left: var(--space-3); z-index: 1; padding: 2px var(--space-2); background: rgba(2, 7, 11, .72); border-radius: 6px; font-family: var(--font-label); font-weight: 600; font-size: 14px; line-height: 18px; letter-spacing: .1em; color: var(--white); }
+.bs-material__body { grid-area: 1 / 1; align-self: end; position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-2); justify-items: start; padding: 64px var(--space-4) var(--space-4); border-radius: 0 0 var(--radius-sm) var(--radius-sm); background: linear-gradient(to bottom, transparent, rgba(2, 7, 11, .93) 56px); }
+.bs-material__kind { padding: 2px var(--space-2); background: rgba(2, 7, 11, .7); border: 1px solid var(--accent); border-radius: 6px; font-family: var(--font-label); font-weight: 600; font-size: 14px; line-height: 18px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+.bs-material__title { margin: 0; font-family: var(--font-label); font-weight: 600; font-size: 26px; line-height: 28px; letter-spacing: .02em; text-transform: uppercase; color: var(--white); overflow-wrap: anywhere; transition: color var(--duration-fast, 150ms) var(--easing-standard, ease); }
+.bs-material__summary { margin: 0; font-family: var(--font-body); font-size: 15px; line-height: 22px; color: var(--silver); }
+@media (min-width: 721px) { .bs-material { aspect-ratio: 9 / 14; } .bs-material__media { aspect-ratio: auto; height: 100%; } }
+.bs-material:hover { border-color: var(--accent); }
+.bs-material:hover .bs-material__title { color: var(--accent); }
 .bs-material:focus-visible { outline: 2px solid var(--volt); outline-offset: 4px; }
 .bs-matfilter { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-6); }
 .bs-matfilter[hidden] { display: none; }
@@ -1213,5 +1220,17 @@ a.bs-ticker__item:focus-visible { outline: 2px solid var(--volt); outline-offset
 .bs-matfilter button:hover { border-color: var(--volt); color: var(--volt); }
 .bs-matfilter button[aria-pressed="true"] { background: var(--volt); border-color: var(--volt); color: var(--black); }
 .bs-matfilter button:focus-visible { outline: 2px solid var(--volt); outline-offset: 3px; }
-@media (prefers-reduced-motion: reduce) { .bs-material__title { transition: none; } }
-.bs-reduced .bs-material__title { transition: none; }
+@media (prefers-reduced-motion: reduce) { .bs-material, .bs-material__title { transition: none; } }
+.bs-reduced .bs-material, .bs-reduced .bs-material__title { transition: none; }
+/* MaterialCover — video cover at the top of a material page */
+.bs-matcover { --accent: var(--volt); position: relative; display: grid; grid-template: minmax(0, 1fr) / minmax(0, 1fr); box-sizing: border-box; width: 100%; min-width: 0; max-width: 720px; margin: var(--space-2) auto 0; overflow: hidden; background: var(--surface-raised); border: 1px solid var(--trace); border-radius: var(--radius-sm); box-shadow: 0 12px 32px rgba(0, 0, 0, .45); }
+.bs-matcover__media { grid-area: 1 / 1; position: relative; aspect-ratio: 4 / 5; overflow: hidden; background: radial-gradient(100% 60% at 70% 0%, color-mix(in srgb, var(--accent) 35%, transparent), transparent 65%), var(--surface-raised); }
+.bs-matcover__media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.bs-matcover__play { position: absolute; top: var(--space-3); right: var(--space-3); z-index: 2; width: 48px; height: 48px; display: grid; place-items: center; border-radius: 50%; background: var(--volt); box-shadow: 0 4px 14px rgba(0, 0, 0, .5); text-decoration: none; }
+.bs-matcover__play::after { content: ""; margin-left: 4px; border-left: 14px solid var(--void); border-top: 9px solid transparent; border-bottom: 9px solid transparent; }
+.bs-matcover__play:hover { background: var(--white); }
+.bs-matcover__play:focus-visible { outline: 3px solid var(--volt); outline-offset: 3px; box-shadow: 0 0 0 3px var(--void), 0 4px 14px rgba(0, 0, 0, .5); }
+.bs-matcover__over { grid-area: 1 / 1; align-self: end; position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-2); justify-items: start; padding: 96px var(--space-4) var(--space-4); background: linear-gradient(to bottom, transparent, rgba(2, 7, 11, .93) 72px); }
+.bs-matcover__kind { padding: 2px var(--space-2); background: rgba(2, 7, 11, .7); border: 1px solid var(--accent); border-radius: 6px; font-family: var(--font-label); font-weight: 600; font-size: 14px; line-height: 18px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+.bs-matcover__title { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: clamp(24px, 6.4vw, 34px); line-height: 1.14; letter-spacing: .01em; text-transform: uppercase; color: var(--white); overflow-wrap: anywhere; }
+@media (min-width: 721px) { .bs-matcover__media { aspect-ratio: 16 / 9; } .bs-matcover__over { padding-inline: var(--space-6); padding-bottom: var(--space-6); } }

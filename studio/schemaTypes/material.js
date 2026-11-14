@@ -43,6 +43,21 @@ export const material = defineType({
       validation: (rule) => rule.required().max(160),
     }),
     defineField({
+      name: 'cover',
+      title: 'Capa',
+      type: 'image',
+      description: 'Opcional. Formato vertical (4:5), como o vídeo. Sem capa, o site usa um fundo colorido do tipo.',
+      options: { hotspot: true },
+      fields: [
+        defineField({
+          name: 'alt',
+          title: 'Texto alternativo',
+          type: 'string',
+          description: 'Opcional. Deixe vazio se a imagem for só decorativa: o título já aparece em texto.',
+        }),
+      ],
+    }),
+    defineField({
       name: 'minutes',
       title: 'Minutos',
       type: 'number',
