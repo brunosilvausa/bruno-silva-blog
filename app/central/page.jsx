@@ -39,7 +39,7 @@ export default async function CentralPage() {
               const card = (
                 <a className="bs-material bs-spotlight" style={{ '--accent': kindAccent(m.kind) }} href={`/central/${m.slug}`} data-kind={m.kind} data-kind-label={label}>
                   <span className="bs-material__media" aria-hidden={m.cover ? undefined : 'true'}>
-                    {m.cover ? <img src={m.cover.url} alt={m.cover.alt || ''} loading="lazy" /> : null}
+                    {m.cover ? <img src={m.cover.url} alt={m.cover.alt || ''} loading="lazy" style={{ objectPosition: `${(m.cover.fpX ?? 0.5) * 100}% ${(m.cover.fpY ?? 0.5) * 100}%` }} /> : null}
                   </span>
                   {day ? <span className="bs-material__date">▸ {day}</span> : null}
                   <span className="bs-material__body">

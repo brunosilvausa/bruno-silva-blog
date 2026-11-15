@@ -28,3 +28,11 @@ Busca, destaque separado, contagem de prompts, menu de celular.
 
 ## Testes
 Unidade: `getMaterials`/`getMaterial` trazem `cover` (URL + alt) ou `null`; cor de fallback por tipo. Navegador (harness, 390/1280px): 1 coluna no celular, 3 no desktop, cartão inteiro clicável, sem rolagem lateral em 360px, título legível sobre a capa com e sem imagem, OrbitGlow só no primeiro cartão.
+
+## Ajuste aprovado em 14/11/2026 — formato único 4:5
+
+A capa tinha três cortes (cartão 9:14 no desktop, topo 16:9 no desktop, imagem baixada 4:5). Decisão do usuário: **4:5 em tudo**, celular e desktop.
+- Cartão da lista: mídia 4:5 em todas as larguras; o texto fica abaixo/sobre a parte inferior como hoje; o cartão não força 9:14.
+- Topo do material no desktop (≥721px): capa 4:5 à esquerda (até ~360px de largura) e, à direita, tipo, título (h1) e o ▸ do vídeo; no celular segue como está (capa 4:5 com o texto por cima).
+- A URL da imagem continua 900×1125 (4:5) com o ponto de foco; o `object-position` do ponto de foco vale nos dois lugares.
+- Imagem de compartilhamento (1200×630) não muda.

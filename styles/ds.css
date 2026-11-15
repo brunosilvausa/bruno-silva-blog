@@ -1210,7 +1210,6 @@ a.bs-ticker__item:focus-visible { outline: 2px solid var(--volt); outline-offset
 .bs-material__kind { padding: 2px var(--space-2); background: rgba(2, 7, 11, .7); border: 1px solid var(--accent); border-radius: 6px; font-family: var(--font-label); font-weight: 600; font-size: 14px; line-height: 18px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
 .bs-material__title { margin: 0; font-family: var(--font-label); font-weight: 600; font-size: 26px; line-height: 28px; letter-spacing: .02em; text-transform: uppercase; color: var(--white); overflow-wrap: anywhere; transition: color var(--duration-fast, 150ms) var(--easing-standard, ease); }
 .bs-material__summary { margin: 0; font-family: var(--font-body); font-size: 15px; line-height: 22px; color: var(--silver); }
-@media (min-width: 721px) { .bs-material { aspect-ratio: 9 / 14; } .bs-material__media { aspect-ratio: auto; height: 100%; } }
 .bs-material:hover { border-color: var(--accent); }
 .bs-material:hover .bs-material__title { color: var(--accent); }
 .bs-material:focus-visible { outline: 2px solid var(--volt); outline-offset: 4px; }
@@ -1230,7 +1229,12 @@ a.bs-ticker__item:focus-visible { outline: 2px solid var(--volt); outline-offset
 .bs-matcover__play::after { content: ""; margin-left: 4px; border-left: 14px solid var(--void); border-top: 9px solid transparent; border-bottom: 9px solid transparent; }
 .bs-matcover__play:hover { background: var(--white); }
 .bs-matcover__play:focus-visible { outline: 3px solid var(--volt); outline-offset: 3px; box-shadow: 0 0 0 3px var(--void), 0 4px 14px rgba(0, 0, 0, .5); }
-.bs-matcover__over { grid-area: 1 / 1; align-self: end; position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-2); justify-items: start; padding: 96px var(--space-4) var(--space-4); background: linear-gradient(to bottom, transparent, rgba(2, 7, 11, .93) 72px); }
+.bs-matcover__over { grid-area: 1 / 1; align-self: end; z-index: 1; display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-2); justify-items: start; padding: 96px var(--space-4) var(--space-4); background: linear-gradient(to bottom, transparent, rgba(2, 7, 11, .93) 72px); }
 .bs-matcover__kind { padding: 2px var(--space-2); background: rgba(2, 7, 11, .7); border: 1px solid var(--accent); border-radius: 6px; font-family: var(--font-label); font-weight: 600; font-size: 14px; line-height: 18px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
 .bs-matcover__title { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: clamp(24px, 6.4vw, 34px); line-height: 1.14; letter-spacing: .01em; text-transform: uppercase; color: var(--white); overflow-wrap: anywhere; }
-@media (min-width: 721px) { .bs-matcover__media { aspect-ratio: 16 / 9; } .bs-matcover__over { padding-inline: var(--space-6); padding-bottom: var(--space-6); } }
+@media (min-width: 721px) {
+  .bs-matcover { grid-template: auto / minmax(0, 360px) minmax(0, 1fr); max-width: 720px; }
+  .bs-matcover__over { grid-area: 1 / 2; align-self: center; padding: var(--space-6); background: none; }
+  .bs-matcover__title { font-size: clamp(26px, 3.2vw, 34px); }
+  .bs-matcover__play { position: static; margin-top: var(--space-2); }
+}
