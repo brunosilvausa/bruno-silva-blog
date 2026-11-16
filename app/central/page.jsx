@@ -14,6 +14,15 @@ export const metadata = {
   title: 'Central de Conteúdo | Bruno Silva USA',
   description: DESCRIPTION,
   alternates: { canonical: '/central' },
+  openGraph: {
+    type: 'website',
+    locale: 'pt_BR',
+    siteName: 'Bruno Silva USA',
+    title: 'Central de Conteúdo | Bruno Silva USA',
+    description: DESCRIPTION,
+    images: [{ url: '/og/central', width: 1200, height: 630, alt: 'Central de Conteúdo' }],
+  },
+  twitter: { card: 'summary_large_image', title: 'Central de Conteúdo | Bruno Silva USA', description: DESCRIPTION, images: ['/og/central'] },
 };
 
 const labelOf = (kind) => MATERIAL_KINDS.find((k) => k.value === kind)?.label || 'Material';
