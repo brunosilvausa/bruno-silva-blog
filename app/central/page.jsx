@@ -41,9 +41,11 @@ export default async function CentralPage() {
                   <span className="bs-material__media" aria-hidden={m.cover ? undefined : 'true'}>
                     {m.cover ? <img src={m.cover.url} alt={m.cover.alt || ''} loading="lazy" style={{ objectPosition: `${(m.cover.fpX ?? 0.5) * 100}% ${(m.cover.fpY ?? 0.5) * 100}%` }} /> : null}
                   </span>
-                  {day ? <span className="bs-material__date">▸ {day}</span> : null}
                   <span className="bs-material__body">
-                    <span className="bs-material__kind">{label}</span>
+                    <span className="bs-material__meta">
+                      <span className="bs-material__kind">{label}</span>
+                      {day ? <span className="bs-material__date">▸ {day}</span> : null}
+                    </span>
                     <h2 className="bs-material__title">{m.title}</h2>
                     <p className="bs-material__summary">{m.summary}</p>
                   </span>

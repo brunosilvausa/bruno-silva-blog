@@ -85,10 +85,11 @@ export default async function MaterialPage({ params }) {
             ) : (
               <div className="bs-matcover__media" aria-hidden="true" />
             )}
-            <div className="bs-matcover__over">
+            <div className="bs-matcover__text">
               <span className="bs-matcover__kind">{kindLabel(m.kind)}</span>
-              <h1 className="bs-matcover__title" data-scramble="load">{m.title}</h1>
-              {video ? <a className="bs-matcover__play" href={video} target="_blank" rel="noopener" aria-label="Assistir ao vídeo"></a> : null}
+              <h1 className="bs-matcover__title">{m.title}</h1>
+              {m.summary ? <p className="bs-matcover__summary">{m.summary}</p> : null}
+              {video ? <a className="bs-matcover__play" href={video} target="_blank" rel="noopener">▸ Assistir ao vídeo</a> : null}
             </div>
           </div>
         </header>

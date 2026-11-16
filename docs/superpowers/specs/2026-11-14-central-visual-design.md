@@ -36,3 +36,12 @@ A capa tinha três cortes (cartão 9:14 no desktop, topo 16:9 no desktop, imagem
 - Topo do material no desktop (≥721px): capa 4:5 à esquerda (até ~360px de largura) e, à direita, tipo, título (h1) e o ▸ do vídeo; no celular segue como está (capa 4:5 com o texto por cima).
 - A URL da imagem continua 900×1125 (4:5) com o ponto de foco; o `object-position` do ponto de foco vale nos dois lugares.
 - Imagem de compartilhamento (1200×630) não muda.
+
+## Revisão aprovada em 15/11/2026 — capa limpa + título sempre
+
+Motivo: as capas reais são peças diagramadas (título, marca e arte já na imagem). Texto do site sobre a capa embolava, e o título em Orbitron grande quebrava palavras ("REPOSITÓRIO/S").
+Decisão do usuário: capa + título aparecem sempre, em qualquer modelo. Mockup de referência: artifact "Central com capa pronta" (Lista A, Topo A).
+- **Nada sobre a capa**, nem chip, nem título, nem selo de data. Capa 4:5 limpa (ou fundo gerado pela cor do tipo quando não há capa).
+- **Cartão:** abaixo da capa, linha com chip do tipo e "▸ DD/MM" (se houver data); título em Barlow Condensed uppercase, até 3 linhas (clamp); resumo até 2 linhas (clamp). Cartão inteiro clicável; OrbitGlow só no primeiro; Spotlight mantido.
+- **Topo, computador (≥721px):** capa 4:5 à esquerda; à direita tipo, h1 em Barlow Condensed (~36px, `overflow-wrap: normal`, `hyphens: manual`, `text-wrap: balance`), resumo, botão "▸ Assistir ao vídeo" (só com vídeo válido). **Celular:** capa em cima, o mesmo bloco embaixo.
+- Nenhum título quebra palavra no meio em 360–1440px.
