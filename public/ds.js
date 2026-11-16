@@ -720,32 +720,20 @@
       run();
     });
   }
-  /* Material filter: [data-material-filter] (hidden until this script runs) gets a "Todos" button plus one per type found in the
-     .bs-matlist that follows it (li > .bs-material[data-kind][data-kind-label]). Clicking a button hides the other types' items and
-     sets aria-pressed; the first button ("Todos") starts pressed. Without the script the filter stays hidden and every card shows. */
+  /* Material filter: [data-material-filter] is server-rendered (same pills as .blog-pillars): a button per type with data-kind
+     ("" = Todos) and aria-pressed. It filters the [data-material-list] that follows it: children carry data-kind and are hidden
+     unless they match the pressed button. Without the script every card stays visible. */
   function materialFilter(root) {
     (root || document).querySelectorAll("[data-material-filter]").forEach(function (box) {
       if (box._bsMf) return;
-      var scope = box.parentNode, list = scope && scope.querySelector(".bs-matlist"); if (!list) return; box._bsMf = true;
-      var items = Array.prototype.slice.call(list.querySelectorAll("li")), kinds = [], labels = {};
-      items.forEach(function (li) {
-        var c = li.querySelector(".bs-material[data-kind]"); if (!c) return;
-        var k = c.getAttribute("data-kind"); li._bsKind = k;
-        if (kinds.indexOf(k) < 0) { kinds.push(k); labels[k] = c.getAttribute("data-kind-label") || k; }
-      });
-      if (kinds.length < 2) return;
-      var buttons = [];
-      function add(kind, text) {
-        var b = document.createElement("button"); b.type = "button"; b.textContent = text; b.setAttribute("data-kind", kind); b.setAttribute("aria-pressed", "false");
-        b.addEventListener("click", function () { select(kind); }); box.appendChild(b); buttons.push(b);
-      }
+      var scope = box.parentNode, list = scope && scope.querySelector("[data-material-list]"); if (!list) return; box._bsMf = true;
+      var items = Array.prototype.slice.call(list.querySelectorAll("[data-kind]")), buttons = Array.prototype.slice.call(box.querySelectorAll("button[data-kind]"));
       function select(kind) {
-        items.forEach(function (li) { li.hidden = !!kind && li._bsKind !== kind; });
-        buttons.forEach(function (b) { b.setAttribute("aria-pressed", String((b.getAttribute("data-kind") || "") === (kind || ""))); });
+        items.forEach(function (el) { el.hidden = !!kind && el.getAttribute("data-kind") !== kind; });
+        buttons.forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-kind") === kind)); });
       }
-      add("", "Todos"); kinds.forEach(function (k) { add(k, labels[k]); });
+      buttons.forEach(function (b) { b.addEventListener("click", function () { select(b.getAttribute("data-kind")); }); });
       select("");
-      box.hidden = false;
     });
   }
   /* The WebGL headers start once the page is idle (or after 1.5s), so building the scene never delays the first paint or input. */

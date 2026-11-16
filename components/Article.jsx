@@ -1,6 +1,7 @@
 import PortableText from './PortableText';
 import ShareButton from './ShareButton';
 import TableOfContents from './TableOfContents';
+import ArticleHeader from './ArticleHeader';
 import PostNav from './PostNav';
 import SeriesBar from './SeriesBar';
 import SeriesNext from './SeriesNext';
@@ -25,16 +26,16 @@ export default function Article({ post, fallbackAuthor, shareUrl, prev, next }) 
     <>
       <div className="bs-progress" role="progressbar" aria-label="Progresso da leitura" aria-valuemin={0} aria-valuemax={100} aria-valuenow={0} data-progress=".bs-article"></div>
       <article className="bs-article">
-        <header>
-          <a className="bs-article__kicker" href={`/pilar/${pillar.slug}`}>{pillar.label}</a>
-          <h1 className="bs-article__title" data-scramble="load">{post.title}</h1>
-          {post.lead ? <p className="bs-article__lead" data-mask="lines">{post.lead}</p> : null}
-          <div className="bs-article__byline">
-            <img src={author.image} alt="" width="72" height="72" decoding="async" />
-            <span><b>{author.name}</b> • <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time> • {post.minutes} min de leitura{revised ? <> • Atualizado em <time dateTime={post.updatedAt}>{formatDate(post.updatedAt)}</time></> : null}</span>
-          </div>
+        <ArticleHeader
+          kicker={<a className="bs-article__kicker" href={`/pilar/${pillar.slug}`}>{pillar.label}</a>}
+          title={post.title}
+          lead={post.lead}
+          author={author}
+          date={post.publishedAt}
+          extra={<> • {post.minutes} min de leitura{revised ? <> • Atualizado em <time dateTime={post.updatedAt}>{formatDate(post.updatedAt)}</time></> : null}</>}
+        >
           <SeriesBar series={post.series} />
-        </header>
+        </ArticleHeader>
         <div className="bs-prose">
           {post.cover ? (
             // The cover keeps its colours inside the post; cards (and images in the text) stay black and white.

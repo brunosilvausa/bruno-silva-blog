@@ -2,6 +2,7 @@ import Img from './Img';
 import { imageSrcSet, imageUrl } from '@/lib/image';
 import { pillarOf } from '@/lib/pillars';
 import { formatDate } from '@/lib/format';
+import { kindAccent, kindLabel, videoSuffix } from '@/lib/materials';
 
 const STRIPES = [13, 58, 103, 148, 193];
 
@@ -31,8 +32,51 @@ function Cover({ post, pillar, featured }) {
   );
 }
 
-/** DS BlogCard: the whole card is one link. `featured` spans the row (newest post). `headingLevel` keeps the outline right. */
-export default function BlogCard({ post, featured = false, headingLevel = 3, spotlight = false }) {
+/** 4:5 cover of a material (reel variant): the 900x1125 crop with its focal point, or the kind colour when there is no image. */
+function ReelCover({ material }) {
+  const c = material.cover;
+  return (
+    <div className="bs-bcard__cover bs-bcard__cover--reel">
+      {c ? (
+        <img
+          src={c.url}
+          alt={c.alt || ''}
+          width="900"
+          height="1125"
+          loading="lazy"
+          decoding="async"
+          style={{ objectPosition: `${(c.fpX ?? 0.5) * 100}% ${(c.fpY ?? 0.5) * 100}%` }}
+        />
+      ) : null}
+    </div>
+  );
+}
+
+/** Reel variant of the DS BlogCard for a material of the Central: 4:5 cover, kicker = kind, same title and meta line as posts. */
+function ReelCard({ material, headingLevel, spotlight }) {
+  const Heading = `h${headingLevel}`;
+  return (
+    <a
+      className={`bs-bcard bs-bcard--reel${spotlight ? ' bs-spotlight' : ''}`}
+      style={{ '--accent': kindAccent(material.kind) }}
+      href={`/central/${material.slug}`}
+      data-kind={material.kind}
+      data-reveal
+    >
+      <ReelCover material={material} />
+      <span className="bs-bcard__kicker">{kindLabel(material.kind)}</span>
+      <Heading className="bs-bcard__title">{material.title}</Heading>
+      <span className="bs-bcard__meta">
+        <time dateTime={material.publishedAt}>{formatDate(material.publishedAt)}</time>
+        {videoSuffix(material)}
+      </span>
+    </a>
+  );
+}
+
+/** DS BlogCard: the whole card is one link. `variant="reel"` renders a `material` instead of a `post`. `featured` spans the row (newest post). `headingLevel` keeps the outline right. */
+export default function BlogCard({ post, material, variant, featured = false, headingLevel = 3, spotlight = false }) {
+  if (variant === 'reel') return <ReelCard material={material} headingLevel={headingLevel} spotlight={spotlight} />;
   const pillar = pillarOf(post.pillar);
   const Heading = `h${headingLevel}`;
   const date = formatDate(post.publishedAt);

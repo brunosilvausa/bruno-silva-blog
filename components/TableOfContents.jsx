@@ -1,10 +1,12 @@
+import { hasToc } from '@/lib/headings';
+
 /**
  * "Neste post": links to the post's subtitles. Shown only when the post has `min` or more H2s.
  * Open list on wider screens; on phones a tap-to-open <details>, so it doesn't push the text down.
  * (Only one of the two is ever displayed, so screen readers meet a single index.)
  */
 export default function TableOfContents({ items, min = 3, title = 'Neste post' }) {
-  if (!items || items.length < min) return null;
+  if (!hasToc(items, min)) return null;
   const list = (
     <ol>
       {items.map((i) => (

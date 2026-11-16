@@ -15,7 +15,7 @@ registerHooks({
 });
 const { getMaterials, getMaterial, getMaterialRedirect, getContentCounts, getPosts, getFeedPosts, getRedirect } = await import('../lib/sanity.js');
 const { navLinks, footerExtra, site } = await import('../content/site.js');
-const { MATERIAL_KINDS, kindAccent, shortDate } = await import('../lib/materials.js');
+const { MATERIAL_KINDS, kindAccent, shortDate, kindCounts, materialMeta } = await import('../lib/materials.js');
 const { parse, evaluate } = await import('../studio/node_modules/groq-js/dist/index.js');
 
 async function withDataset(dataset, fn) {
@@ -51,7 +51,7 @@ test('sample materials: list, detail, next, counts, isolation from posts', async
   const list = await getMaterials();
   assert.equal(list.length, 3);
   assert.deepEqual(list.map((m) => m.slug), ['logo-da-llc-com-ia', 'nome-da-llc-com-ia', 'checklist-abrir-llc']);
-  assert.deepEqual(Object.keys(list[0]).sort(), ['cover', 'id', 'kind', 'minutes', 'publishedAt', 'slug', 'summary', 'title', 'videoDate']);
+  assert.deepEqual(Object.keys(list[0]).sort(), ['cover', 'id', 'kind', 'minutes', 'publishedAt', 'slug', 'summary', 'title', 'videoDate', 'videoUrl']);
   assert.deepEqual(list[0].cover, { url: '/img/avatar.webp', alt: 'Bruno Silva', fpX: null, fpY: null });
   assert.equal(list[1].cover, null);
   assert.equal(list[2].cover, null);
@@ -186,4 +186,27 @@ test('og cover: forceJpeg drops auto=format so the CDN cannot return WebP/AVIF',
   assert.equal(u.searchParams.get('w'), '1200');
   assert.equal(u.searchParams.get('h'), '630');
   assert.equal(u.searchParams.get('fp-x'), '0.25');
+});
+
+test('kindCounts: total plus one count per kind, in kind order, only kinds present', () => {
+  const m = (kind) => ({ kind });
+  assert.deepEqual(kindCounts([m('prompt'), m('checklist'), m('prompt')]), { all: 3, prompt: 2, checklist: 1 });
+  assert.deepEqual(kindCounts([m('guia')]), { all: 1, guia: 1 });
+  assert.deepEqual(kindCounts([]), { all: 0 });
+  assert.deepEqual(Object.keys(kindCounts([m('guia'), m('prompt')])), ['all', 'prompt', 'guia']);
+});
+
+test('materialMeta: formatDate of publishedAt, plus "· ▸ Vídeo" only with a video', () => {
+  assert.equal(materialMeta({ publishedAt: '2026-11-12T12:00:00Z', videoUrl: 'https://x.test/v' }), '12 de novembro de 2026 · ▸ Vídeo');
+  assert.equal(materialMeta({ publishedAt: '2026-11-12T12:00:00Z', videoUrl: null }), '12 de novembro de 2026');
+  assert.equal(materialMeta({ publishedAt: '2026-11-12T12:00:00Z' }), '12 de novembro de 2026');
+});
+
+test('material card list query carries videoUrl', async () => {
+  const mk = (id, extra = {}) => ({ _id: id, _type: 'material', title: id, slug: { current: id }, kind: 'guia', summary: 's', publishedAt: '2020-01-01T00:00:00Z', body: [], ...extra });
+  await withDataset([mk('v', { videoUrl: 'https://x.test/v' }), mk('n')], async () => {
+    const by = Object.fromEntries((await getMaterials()).map((m) => [m.slug, m]));
+    assert.equal(by.v.videoUrl, 'https://x.test/v');
+    assert.equal(by.n.videoUrl, null);
+  });
 });

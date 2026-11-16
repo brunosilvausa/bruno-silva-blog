@@ -1,18 +1,19 @@
 import { notFound, permanentRedirect } from 'next/navigation';
 import { site, URL_INSTAGRAM } from '@/content/site';
 import { getMaterial, getMaterialRedirect, getMaterials, getTerms } from '@/lib/sanity';
-import { MATERIAL_KINDS, kindAccent } from '@/lib/materials';
+import { MATERIAL_TOC_MIN, kindAccent, kindLabel } from '@/lib/materials';
+import { tableOfContents } from '@/lib/headings';
 import { linkTerms } from '@/lib/terms';
 import { safeHref } from '@/lib/safe-href';
 import { absolute } from '@/lib/site-url';
 import { AUTHOR, breadcrumb, jsonLd as toJson } from '@/lib/jsonld';
 import Shell from '@/components/Shell';
 import PortableText from '@/components/PortableText';
+import ArticleHeader from '@/components/ArticleHeader';
 import MaterialEnd from '@/components/MaterialEnd';
+import TableOfContents from '@/components/TableOfContents';
 
 export const revalidate = 60;
-
-const kindLabel = (kind) => MATERIAL_KINDS.find((k) => k.value === kind)?.label || 'Material';
 
 export async function generateStaticParams() {
   return (await getMaterials()).map((m) => ({ slug: m.slug }));
@@ -73,28 +74,28 @@ export default async function MaterialPage({ params }) {
   const terms = await getTerms().catch(() => []);
   const body = linkTerms(m.body, terms);
   const video = safeHref(m.videoUrl, null);
+  const toc = tableOfContents(body);
   return (
     <Shell current="/central">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(m) }} />
       <article className="bs-article">
-        <header>
-          <a className="blog-back" href="/central">‹ Central</a>
-          <div className="bs-matcover" style={{ '--accent': kindAccent(m.kind) }}>
-            {m.cover ? (
-              <div className="bs-matcover__media"><img src={m.cover.url} alt={m.cover.alt || ''} style={{ objectPosition: `${(m.cover.fpX ?? 0.5) * 100}% ${(m.cover.fpY ?? 0.5) * 100}%` }} /></div>
-            ) : (
-              <div className="bs-matcover__media" aria-hidden="true" />
-            )}
-            <div className="bs-matcover__text">
-              <span className="bs-matcover__kind">{kindLabel(m.kind)}</span>
-              <h1 className="bs-matcover__title">{m.title}</h1>
-              {m.summary ? <p className="bs-matcover__summary">{m.summary}</p> : null}
-              {video ? <a className="bs-matcover__play" href={video} target="_blank" rel="noopener">▸ Assistir ao vídeo</a> : null}
-            </div>
-          </div>
-        </header>
+        <ArticleHeader
+          before={<a className="blog-back" href="/central">‹ Central</a>}
+          kicker={<span className="bs-article__kicker">{kindLabel(m.kind)}</span>}
+          title={m.title}
+          lead={m.summary}
+          author={site.author}
+          date={m.publishedAt}
+          extra={video ? <> • <a className="blog-byline__video" href={video} target="_blank" rel="noopener">▸ Assistir ao vídeo</a></> : null}
+        />
+        <figure className="blog-matcover" style={{ '--accent': kindAccent(m.kind) }}>
+          {m.cover ? (
+            <img src={m.cover.url} alt={m.cover.alt || ''} width="900" height="1125" fetchPriority="high" decoding="async" style={{ objectPosition: `${(m.cover.fpX ?? 0.5) * 100}% ${(m.cover.fpY ?? 0.5) * 100}%` }} />
+          ) : null}
+        </figure>
         <div className="bs-prose blog-material">
-          <PortableText value={body} />
+          <TableOfContents items={toc.items} min={MATERIAL_TOC_MIN} title="Neste material" />
+          <PortableText value={body} ids={toc.ids} />
         </div>
         <MaterialEnd next={m.next} instagram={URL_INSTAGRAM} />
       </article>
