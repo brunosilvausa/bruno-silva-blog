@@ -167,3 +167,9 @@ O corpo dos posts não se mexe. Tudo pausa fora da tela, e quem pede "reduzir mo
 5. Cada push na branch `main` publica sozinho.
 
 Depois de criar ou mudar uma variável de ambiente, faça um novo deploy (Deployments → Redeploy): variáveis `NEXT_PUBLIC_*` só valem a partir da próxima publicação.
+
+## Desenvolvimento assistido e verificações
+
+Instale também as dependências do Studio (`npm --prefix studio ci`) antes dos testes de GROQ. `npm run check` reúne lint, self-check das regras e testes offline. Builds do blog e Studio continuam separados. Para validar sem carregar serviços configurados, siga [onboarding](docs/onboarding.md#validar-sem-serviços-reais).
+
+[Produto](PRODUCT.md) · [Instruções dos agentes](AGENTS.md) · [Arquitetura](docs/architecture.md) · [Design](docs/design.md) · [Qualidade e segurança](docs/quality.md) · [Setup e evidências](docs/setup.md).

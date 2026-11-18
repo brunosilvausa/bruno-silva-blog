@@ -5,7 +5,11 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "test": "node --import ./tests/offline.mjs --experimental-default-type=module --test tests/*.test.mjs",
+    "lint": "eslint .",
+    "check:rules": "node scripts/verify-quality-rules.mjs",
+    "check": "npm run lint && npm run check:rules && npm test"
   },
   "dependencies": {
     "next": "^15.5.28",
@@ -13,6 +17,16 @@
     "react-dom": "^19.3.1"
   },
   "engines": {
-    "node": "22.x"
+    "node": "^22.22.2"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.7",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^15.5.29"
+  },
+  "overrides": {
+    "next": {
+      "postcss": "8.5.33"
+    }
   }
 }

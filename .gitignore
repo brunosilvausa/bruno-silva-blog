@@ -6,3 +6,13 @@ out/
 .vercel/
 .DS_Store
 npm-debug.log*
+
+# Local setup and generated graphs
+graphify-out/
+.superpowers/
+studio/dist/
+playwright-report/
+test-results/
+
+# Sanity generated runtime
+**/.sanity/
