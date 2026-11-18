@@ -1,5 +1,7 @@
 # Bruno Silva Blog
 
+Em cada nova sessão, comece lendo integralmente a seção [Contexto e memória em camadas](docs/setup.md#contexto-e-memória-em-camadas), em uma leitura separada. Só depois consulte o índice abaixo e abra os arquivos da tarefa, incluindo produto e arquitetura.
+
 Node 22.22.2+ na linha 22, Next.js 15 App Router, React 19 e JavaScript; Sanity Studio independente em `studio/`. Leia [produto](PRODUCT.md), [arquitetura](docs/architecture.md) e o código afetado antes de editar.
 
 ## Comandos

@@ -70,7 +70,32 @@ Verificar instalação: `npx --yes skills@latest list --agent codex --json`. Res
 
 Entrada do Codex: AGENTS.md, carregamento nativo do cliente por caminho do projeto. CLAUDE.md é ponte documental não testada no Claude. Detalhes: PRODUCT e cinco documentos de docs, com mapa no README. Fonte: código atual e evidências deste setup, verificados em 2026-11-17. Specs/planos históricos são decisões anteriores, não prova de runtime atual.
 
-A memória global do cliente continua no escopo do usuário; nenhum conteúdo global foi escrito/exportado. Mudanças de stack, contratos, comandos, serviços, regras ou ferramentas invalidam as partes correspondentes destas notas. Handoffs temporários ficam no plano, separados de conhecimento durável. Contexto novo de subagente não equivale a cliente reiniciado.
+O índice fica em [Contexto sob demanda](../AGENTS.md#contexto-sob-demanda). Use uma linha por lição selecionada, com descrição e link para a fonte. O conteúdo detalhado fica na documentação versionada e é consultado por assunto.
+
+Salve apenas lições verificadas que poupem uma descoberta difícil em outra sessão: correções recorrentes de rumo, decisões cuja razão não aparece no código, regras de negócio implícitas ou referências externas aprovadas. Deixe fatos recuperáveis pelo código ou Git, receitas de depuração e dados temporários em suas fontes. Registre objetivo, arquivos, checks, bloqueios e próximo passo no plano da tarefa.
+
+Reutilize o documento responsável pelo assunto: [arquitetura](architecture.md), [qualidade](quality.md), [design](design.md), [produto](../PRODUCT.md), [README](../README.md) ou este setup. Para decisões de design, consulte as specs em `docs/superpowers/`. Use links relativos e preserve a estrutura do destino. Se nenhum documento comportar a lição, abra uma nota em `docs/` com este frontmatter:
+
+```yaml
+---
+name: nome-em-kebab-case
+description: resumo em uma linha
+metadata:
+  type: feedback | architecture | business-rule | reference
+source: caminho ou referência aprovada
+evidence: observação que sustenta a lição
+last_verified: YYYY-MM-DD
+invalidate_when: mudança que exige revalidação
+---
+```
+
+Escolha um único tipo. Registre os mesmos dados junto à seção pertinente ao reutilizar um documento. Antes de aplicar uma lição, confira a fonte e a condição de invalidação. Revalide ou marque a entrada como desatualizada, apontando a sucessora quando houver. Use apenas evidências e datas observadas. Mantenha credenciais, valores de configuração, dados pessoais e conteúdo privado fora da memória versionada. A memória global continua sob controle do usuário.
+
+Antes de incluir uma entrada, conte as linhas não vazias de todo o `AGENTS.md`. Se a inclusão ultrapassar 130 linhas, priorize as lições por recência, especificidade e chance de evitar um erro real. Para cada lição a retirar do índice, procure o assunto no destino, siga sua estrutura, registre ou complemente o conteúdo e releia o resultado. Só então retire a linha e, se houver, a nota dedicada que ficou redundante, após conferir e ajustar referências. Preserve comandos, acordos, documentos canônicos e evidências. Se não houver migração segura, preserve a origem e adie a inclusão.
+
+Para verificar o carregamento, abra um novo chat do Codex na raiz e peça uma revisão documental simples sem mencionar a memória. Confira se o índice aparece nas instruções carregadas e se a sessão abre esta seção antes do primeiro trabalho da tarefa. A presença do link comprova a configuração. A leitura precisa ser observada no novo chat, separadamente para cada cliente.
+
+Em 18/11/2026, o novo chat do Codex `01a1ef63-9b3e-7643-8a44-b0709d1ddcfb`, aberto na raiz do projeto, recebeu um pedido de revisão documental sem menção à memória. O histórico de comandos mostra que a primeira leitura abriu esta seção inteira em `docs/setup.md`. As leituras de `PRODUCT.md` e `docs/architecture.md` ocorreram depois, nessa ordem. A evidência cobre a ordem de leitura nesse chat do Codex. O Claude e o reinício do aplicativo ficaram fora da verificação.
 
 ## Evidências e limites do setup inicial
 
