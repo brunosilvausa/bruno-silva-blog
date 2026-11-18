@@ -99,6 +99,8 @@ Em 18/11/2026, o novo chat do Codex `01a1ef63-9b3e-7643-8a44-b0709d1ddcfb`, aber
 
 Em 18/11/2026, o deploy automático da `main` terminou com status `READY`. A Vercel confirmou que o domínio de produção apontava para o deploy do commit `91f9b98`. A página inicial respondeu com HTTP 200. [Deploy na Vercel](https://vercel.com/brunosilvausa/bruno-silva-blog/CWHYubQtGoEUhLPMMpzXuGeWQusH) · [Site em produção](https://bruno-silva-blog.vercel.app/)
 
+Na verificação seguinte, o deploy automático da `main` para o commit `ac10b27` terminou com status `READY`. A Vercel confirmou que o domínio de produção apontava para esse commit, e a página inicial respondeu com HTTP 200. [Deploy na Vercel](https://vercel.com/brunosilvausa/bruno-silva-blog/4pnWVydPTBryenv6ihCM8oPbrqRL) · [Página inicial](https://bruno-silva-blog.vercel.app/)
+
 ## Evidências e limites do setup inicial
 
 Baseline: 36/36 testes, build blog e build Studio passaram. Não havia comando de lint; tipos não se aplicam. Avisos anteriores: package sem type em Node e faixa styled-components incompatível no manifesto, apesar da versão instalada compatível. Test runner agora declara default-type=module; faixa Studio reconciliada. Resultados finais e limites estão registrados abaixo.
