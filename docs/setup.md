@@ -101,6 +101,8 @@ Em 18/11/2026, o deploy automático da `main` terminou com status `READY`. A Ver
 
 Na verificação seguinte, o deploy automático da `main` para o commit `ac10b27` terminou com status `READY`. A Vercel confirmou que o domínio de produção apontava para esse commit, e a página inicial respondeu com HTTP 200. [Deploy na Vercel](https://vercel.com/brunosilvausa/bruno-silva-blog/4pnWVydPTBryenv6ihCM8oPbrqRL) · [Página inicial](https://bruno-silva-blog.vercel.app/)
 
+O deploy automático seguinte da `main`, para o commit `dc20b29`, terminou com status `READY`. A Vercel confirmou que o domínio de produção apontava para esse commit, e a página inicial respondeu com HTTP 200. [Deploy na Vercel](https://vercel.com/brunosilvausa/bruno-silva-blog/6cvFA3oj86JPQwASAHxQ9dpvJEbZ) · [Página inicial](https://bruno-silva-blog.vercel.app/)
+
 ## Evidências e limites do setup inicial
 
 Baseline: 36/36 testes, build blog e build Studio passaram. Não havia comando de lint; tipos não se aplicam. Avisos anteriores: package sem type em Node e faixa styled-components incompatível no manifesto, apesar da versão instalada compatível. Test runner agora declara default-type=module; faixa Studio reconciliada. Resultados finais e limites estão registrados abaixo.
