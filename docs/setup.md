@@ -126,6 +126,10 @@ Harness descartável, avaliador da revisão fixa: três baselines confirmaram 5/
 
 Harness2 permanece adaptação nativa. Uma rechecagem revelou divergência de hash após adicionar LICENSE dentro de caveman; o dry-run retornou 0, mas informou a diferença. Um candidato mínimo moveu o aviso para fora da pasta da skill. Com o mesmo comando, lock e fontes, o dry-run passou a informar nove já instaladas, sem divergência ou reinstalação. Essa comparação de integração foi a única rodada nativa; a lição e seu gatilho de invalidação estão em quality. Listagem e restore dry-run validaram inventário; não provam reaplicação integral do setup. Links locais, unicidade de arquivos de instrução, manifestos/lockfiles e identidade dos módulos/self-check com upstream foram conferidos. Reinício de cliente, Claude, pause/resume, conflitos concorrentes e reinstalação limpa de node_modules não foram executados. Dependências existentes foram reutilizadas.
 
+Em 17/11/2026, no checkout `b34cfa8`, a rechecagem da fixture intacta com o avaliador da revisão fixada confirmou o baseline de 5/7. As duas falhas esperadas foram isolamento entre tenants e identidade inválida.
+
+Em um novo chat do Codex, segundo o relato enviado pelo usuário, o agente identificou as regras de `AGENTS.md`, localizou e leu a skill `vercel-react-best-practices` e encontrou `npm run check` e `docs/quality.md`. A evidência disponível é a resposta final do agente. A descoberta das outras oito skills e o carregamento após reinício do cliente continuam sem verificação independente.
+
 ## Decisões de execução e recuperação
 
 - O plano aprovado prevalece sobre defaults de skill que criariam worktree, commits e hooks; tudo permanece em diff no checkout. Risco: ainda cabe ao usuário integrar/versionar depois da revisão.
